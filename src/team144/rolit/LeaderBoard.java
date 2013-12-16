@@ -36,6 +36,30 @@ public class LeaderBoard{
 		else return scores.subList(index, scores.size());
 	}
 	
+	public List<Score> getScoresBelow(int score){
+		int index = -1;
+		
+		for(int i = scores.size() - 1; i >= 0; i--){
+			if(scores.get(i).getScore() <= score){
+				index = i;
+				break;
+			}
+		}
+		
+		if(index == -1) throw new IllegalArgumentException("No score lower than the specified score exists!");
+		else return scores.subList(0, index + 1);
+	}
+	
+	public float getAverage(int day){
+		int n = 0, sum = 0;
+		
+		for(Score score : scores){
+			System.out.println(score.getScore());
+		}
+		
+		return 0;
+	}
+	
 	public void print(){
 		for(Score score : scores){
 			System.out.println(score.getScore());
@@ -52,5 +76,11 @@ public class LeaderBoard{
 		leaderBoard.addScore(new Score(9, player));
 		
 		leaderBoard.print();
+		
+//		List<Score> list = leaderBoard.getScoresBelow(15);
+//		
+//		for(Score score : list){
+//			System.out.println(score.getScore());
+//		}
 	}
 }

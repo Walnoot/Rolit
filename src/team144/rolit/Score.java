@@ -1,17 +1,17 @@
 package team144.rolit;
 
-import java.util.Date;
+import java.util.Calendar;
 
 public class Score implements Comparable<Score>{
 	private final int score;
 	private final Player player;
-	private final Date date;
+	private final Calendar date;
 	
 	public Score(int score, Player player){
-		this(score, player, new Date());
+		this(score, player, Calendar.getInstance());
 	}
 	
-	public Score(int score, Player player, Date date){
+	public Score(int score, Player player, Calendar date){
 		this.score = score;
 		this.player = player;
 		this.date = date;
@@ -32,7 +32,7 @@ public class Score implements Comparable<Score>{
 		return player;
 	}
 	
-	public Date getDate(){
+	public Calendar getDate(){
 		return date;
 	}
 }
