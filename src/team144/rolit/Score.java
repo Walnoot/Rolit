@@ -5,13 +5,13 @@ import java.util.Calendar;
 public class Score implements Comparable<Score>{
 	private final Player player;
 	private final int points;
-	private final Calendar date;
+	private final Calendar calendar;
 	private final boolean winner;
 	
-	public Score(int score, Player player, Calendar date, boolean winner){
+	public Score(int score, Player player, Calendar calendar, boolean winner){
 		this.points = score;
 		this.player = player;
-		this.date = date;
+		this.calendar = calendar;
 		this.winner = winner;
 	}
 	
@@ -30,8 +30,8 @@ public class Score implements Comparable<Score>{
 		return player;
 	}
 	
-	public Calendar getDate(){
-		return date;
+	public Calendar getCalendar(){
+		return calendar;
 	}
 	
 	public boolean getWinner(){
