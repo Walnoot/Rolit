@@ -7,6 +7,7 @@ import java.util.List;
 
 //@author Willem Siers
 public class LeaderBoard {
+	
 	private ArrayList<Score> scores = new ArrayList<Score>();
 
 	public LeaderBoard() {
@@ -14,7 +15,6 @@ public class LeaderBoard {
 
 	public void addScore(Score score) {
 		scores.add(score);
-
 		Collections.sort(scores);
 	}
 
@@ -63,11 +63,13 @@ public class LeaderBoard {
 	public static void main(String[] args) {
 		LeaderBoard leaderBoard = new LeaderBoard();
 		HumanPlayer player = new HumanPlayer();
+		
+		Calendar cal = Calendar.getInstance();
 
-		leaderBoard.addScore(new Score(14, player));
-		leaderBoard.addScore(new Score(13, player));
-		leaderBoard.addScore(new Score(15, player));
-		leaderBoard.addScore(new Score(9, player));
+		leaderBoard.addScore(new Score(14, player,cal,true));
+		leaderBoard.addScore(new Score(13, player,cal,false));
+		leaderBoard.addScore(new Score(15, player,cal,true));
+		leaderBoard.addScore(new Score(9, player,cal,true));
 
 		leaderBoard.print();
 	}
