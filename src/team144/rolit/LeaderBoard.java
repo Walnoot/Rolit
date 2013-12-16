@@ -22,6 +22,20 @@ public class LeaderBoard{
 		return scores.subList(scores.size() - n, scores.size());
 	}
 	
+	public List<Score> getScoresAbove(int score){
+		int index = -1;
+		
+		for(int i = 0; i < scores.size(); i++){
+			if(scores.get(i).getScore() >= score){
+				index = i;
+				break;
+			}
+		}
+		
+		if(index == -1) throw new IllegalArgumentException("No score higher than the specified score exists!");
+		else return scores.subList(index, scores.size());
+	}
+	
 	public void print(){
 		for(Score score : scores){
 			System.out.println(score.getScore());
