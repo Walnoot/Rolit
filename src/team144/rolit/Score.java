@@ -5,7 +5,7 @@ import java.util.Calendar;
 public class Score implements Comparable<Score>{
 	private final int score;
 	private final Player player;
-	private final Calendar date;
+	private final Calendar calendar;
 	
 	public Score(int score, Player player){
 		this(score, player, Calendar.getInstance());
@@ -14,7 +14,7 @@ public class Score implements Comparable<Score>{
 	public Score(int score, Player player, Calendar date){
 		this.score = score;
 		this.player = player;
-		this.date = date;
+		this.calendar = date;
 	}
 	
 	@Override
@@ -32,7 +32,7 @@ public class Score implements Comparable<Score>{
 		return player;
 	}
 	
-	public Calendar getDate(){
-		return date;
+	public Calendar getCalendar(){
+		return calendar;
 	}
 }

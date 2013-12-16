@@ -1,9 +1,11 @@
 package team144.rolit;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
+//@author Willem Siers
 public class LeaderBoard{
 	private ArrayList<Score> scores = new ArrayList<Score>();
 	
@@ -36,6 +38,32 @@ public class LeaderBoard{
 		else return scores.subList(index, scores.size());
 	}
 	
+	public float getAverageScore(){
+		int totalScore = 0;
+		for(Score score : scores){
+			totalScore += score.getScore();
+		}
+		
+		return (float) totalScore / scores.size();
+	}
+	
+	public float getAverageScoreOfDay(Calendar day){
+		int n = 0, sum = 0;
+		
+		for(Score score : scores){
+			Calendar calendar = score.getCalendar();
+			if(calendar.get(Calendar.YEAR) != day.get(Calendar.YEAR)) continue;
+			if(calendar.get(Calendar.MONTH) != day.get(Calendar.MONTH)) continue;
+			if(calendar.get(Calendar.DAY_OF_MONTH) != day.get(Calendar.DAY_OF_MONTH)) continue;
+			
+			n++;
+			sum += score.getScore();
+		}
+		
+		if(n == 0) throw new IllegalArgumentException("No scores exist for that day ");
+		return (float) sum / n;
+	}
+	
 	public List<Score> getScoresBelow(int score){
 		int index = -1;
 		
@@ -48,16 +76,6 @@ public class LeaderBoard{
 		
 		if(index == -1) throw new IllegalArgumentException("No score lower than the specified score exists!");
 		else return scores.subList(0, index + 1);
-	}
-	
-	public float getAverage(int day){
-		int n = 0, sum = 0;
-		
-		for(Score score : scores){
-			System.out.println(score.getScore());
-		}
-		
-		return 0;
 	}
 	
 	public void print(){
