@@ -5,7 +5,10 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
-//@author Willem Siers
+/*
+ * @author Willem Siers (@WILL3M #NOFILTER)
+ */
+
 public class LeaderBoard{
 	private ArrayList<Score> scores = new ArrayList<Score>();
 	
@@ -101,7 +104,17 @@ public class LeaderBoard{
 //		List<Score> list = leaderBoard.getScoresBelow(15);
 //		
 //		for(Score score : list){
-//			System.out.println(score.getScore());
+//			System.out.println(score.getSco///re());
 //		}
 	}
+	
+//	public void print(List<Score> scores){
+//		for(Score score : scores){
+//			System.out.println(formatScore(score));
+//		}
+//	}
+//	
+//	private String formatScore(Score score){
+//		return String.format(, arg1)
+//	}
 }
