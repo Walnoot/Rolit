@@ -39,12 +39,13 @@ public class LeaderBoard{
 	}
 	
 	public float getAverageScore(){
-		int totalScore = 0;
+		int sum = 0;
+		
 		for(Score score : scores){
-			totalScore += score.getScore();
+			sum += score.getScore();
 		}
 		
-		return (float) totalScore / scores.size();
+		return (float) sum / scores.size();
 	}
 	
 	public float getAverageScoreOfDay(Calendar day){
@@ -89,11 +90,11 @@ public class LeaderBoard{
 		HumanPlayer player = new HumanPlayer();
 		
 		Calendar cal = Calendar.getInstance();
-
-		leaderBoard.addScore(new Score(14, player,cal,true));
-		leaderBoard.addScore(new Score(13, player,cal,false));
-		leaderBoard.addScore(new Score(15, player,cal,true));
-		leaderBoard.addScore(new Score(9, player,cal,true));
+		
+		leaderBoard.addScore(new Score(14, player, cal, true));
+		leaderBoard.addScore(new Score(13, player, cal, false));
+		leaderBoard.addScore(new Score(15, player, cal, true));
+		leaderBoard.addScore(new Score(9, player, cal, true));
 		
 		leaderBoard.print();
 		
