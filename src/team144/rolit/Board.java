@@ -8,37 +8,64 @@ public class Board {
      * The dimension of the board, so that width and height equals DIMENSION.
      */
     public static final int DIMENSION = 8;
-
+    
     /**
      * 1D array representing the 2D game board.
      */
-    private Ball[] field = new Ball[DIMENSION * DIMENSION];
-
+    private Tile[] field = new Tile[DIMENSION * DIMENSION];
+    
     /**
      * Construct a new Board with an empty play field.
      */
     public Board() {
         for (int i = 0; i < field.length; i++) {
-            field[i] = Ball.EMPTY;
+            field[i] = Tile.EMPTY;
         }
     }
-
+    
+    public void setTile(int index, Tile tile) {
+        field[index] = tile;
+    }
+    
+    public void setTile(int x, int y, Tile tile) {
+        field[getIndex(x, y)] = tile;
+    }
+    
     /**
-     * Gets the ball state at the specified index.
-     * @param i - The index.
-     * @return - The ball state at the specified index.
+     * Gets the tile state at the specified index.
+     * 
+     * @param i
+     *            - The index.
+     * @return - The tile state at the specified index, or null if the index is out of bounds.
      */
-    public final Ball getBall(final int i) {
+    public final Tile getTile(final int i) {
+        if(i < 0 || i >= field.length) return null;
         return field[i];
     }
-
+    
     /**
-     * Gets the ball state at the specified coordinates.
-     * @param x - The x coordinate.
-     * @param y - The y coordinate.
-     * @return - The ball state at the specified coordinates.
+     * Gets the tile state at the specified coordinates.
+     * 
+     * @param x
+     *            - The x coordinate.
+     * @param y
+     *            - The y coordinate.
+     * @return - The tile state at the specified coordinates, or null if the coordinates are out of bounds.
      */
-    public final Ball getBall(final int x, final int y) {
-        return field[x + y * DIMENSION];
+    public final Tile getTile(final int x, final int y) {
+        if(x < 0 || y < 0 || x >= DIMENSION || y >= DIMENSION) return null;
+        return field[getIndex(x, y)];
+    }
+    
+    public int getIndex(int x, int y){
+        return x + y * DIMENSION;
+    }
+    
+    public int getX(int index){
+        return index % DIMENSION;
+    }
+    
+    public int getY(int index){
+        return index / DIMENSION;
     }
 }
