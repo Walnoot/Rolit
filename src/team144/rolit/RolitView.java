@@ -14,7 +14,7 @@ import java.util.Observer;
 
 import javax.swing.JFrame;
 
-public class RolitView implements Observer {
+public class RolitView extends Panel implements Observer {
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
     private static final String FRAME_TITLE = "Rolit";
@@ -23,13 +23,14 @@ public class RolitView implements Observer {
     private Label infoLabel;
     
     public RolitView(Game game) {
-        JFrame frame = new JFrame(FRAME_TITLE);
+//        JFrame frame = new JFrame(FRAME_TITLE);
+        game.addObserver(this);
         
-        frame.getContentPane().setLayout(new BorderLayout());
+        setLayout(new BorderLayout());
         
         Panel playPanel = new Panel();
         playPanel.setLayout(new GridLayout(Board.DIMENSION, Board.DIMENSION));
-        frame.add(playPanel, BorderLayout.CENTER);
+        add(playPanel, BorderLayout.CENTER);
         
         for (int i = 0; i < Board.DIMENSION * Board.DIMENSION; i++) {
             Button button = new Button();
@@ -40,11 +41,11 @@ public class RolitView implements Observer {
         }
         
         infoLabel = new Label("test");
-        frame.add(infoLabel, BorderLayout.NORTH);
+        add(infoLabel, BorderLayout.NORTH);
         
         Panel textPanel = new Panel();
         textPanel.setLayout(new BorderLayout());
-        frame.add(textPanel, BorderLayout.SOUTH);
+        add(textPanel, BorderLayout.SOUTH);
         
         final TextArea textArea = new TextArea();
 //        textArea.setEditable(false);
@@ -64,12 +65,6 @@ public class RolitView implements Observer {
         
         //update initial state
         update(game, null);
-        
-        //set frame size, position, and close operation
-        frame.setSize(WIDTH, HEIGHT);
-        frame.setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
     }
     
     @Override
@@ -115,6 +110,16 @@ public class RolitView implements Observer {
     public static void main(String[] args) {
         Game game = new Game(new Player(Tile.BLUE, "Michiel"), new Player(Tile.GREEN, "Willem"));
         RolitView rolitView = new RolitView(game);
-        game.addObserver(rolitView);
+        
+        JFrame frame = new JFrame(FRAME_TITLE);
+        
+        frame.setContentPane(rolitView);
+//        frame.setContentPane(new LoginPanel());
+        
+        //set frame size, position, and close operation
+        frame.setSize(WIDTH, HEIGHT);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
     }
 }
