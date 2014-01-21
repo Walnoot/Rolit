@@ -1,44 +1,88 @@
 package team144.rolit.network;
 
 import java.net.ServerSocket;
-import java.net.Socket;
 
-import team144.util.Util;
+import team144.rolit.Game;
+import team144.rolit.Player;
+import team144.rolit.Tile;
 
 public class Server implements NetworkListener {
 
-	private Socket socket;
+	private Peer[] clients;
+	private Player[] players;
+	private int clientsConnected;
 	private ServerSocket serverSocket;
-	private Peer listener;
 	private String name;
+	private ServerMonitor monitor;
 	
 	public static void main(String[] args) {
-		Server server = new Server(1337, "Willem");
+		Server server = new Server(1337, "Willem", 4);
 	}
 
-	public Server(int port, String name) {
+	public Server(int port, String name, int roomSize) {
+		monitor = new ServerMonitor(this);
 		try {
 			this.name = name;
+			clients = new Peer[roomSize];
+			players = new Player[roomSize];
 			serverSocket = new ServerSocket(port);
-			socket = serverSocket.accept();
-			printMessage("Client connected");
-			listener = new Peer(socket, this);
-			listener.start();
+			
+			while(clientsConnected < clients.length){ //kan fout gaan
+				Peer client = new Peer(serverSocket.accept(),this);
+				clients[clientsConnected++] = client;
+				client.start();
+				executeCommand("CONNECTED", new String[]{client.getName()});
+				//printMessage("Client connected: "+client.getName());
+			}
+			startGame();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
+	private void startGame(){
+		for(int i = 0; i<clientsConnected; i++){
+			players[i] = new Player(Tile.values()[i+1],clients[i].getName());
+		}
+		Game game = new Game(players);
+		monitor.setGame(game);
+		sendCommand("START", players);
+	}
 
-	private void printMessage(String m) {
-		System.out.println(name + ":\t" + m);
+//	private void printMessage(String m) {
+//		monitor.print(name + ":\t" + m);
+//	}
+	
+	
+	public void sendCommand( String cmd, Object[] parameters) {
+		if(cmd.equals("START")){
+			String[] names = new String[parameters.length];
+				for(int i = 0; i<parameters.length; i++){
+					names[i] = ((Player)parameters[i]).getName();
+				}
+			sendCommand(cmd, names);
+		}
+	}
+	
+	public void sendCommand(Peer client, String cmd, String[] parameters) {
+		//printMessage("sendCommand()\t" + cmd + " " + Util.concat(parameters));
+		client.write(cmd, parameters);
+	}
+	
+	public void sendCommand(String cmd, String[] parameters) {
+		for(Peer client: clients){
+			//printMessage("sendCommand()\t" + cmd + " " + Util.concat(parameters));
+			client.write(cmd, parameters);
+		}
 	}
 
 	@Override
 	public boolean executeCommand(String cmd, String[] parameters) {
-		printMessage("ExecuteCommand()\t"+cmd+" "+Util.concat(parameters));
+		monitor.executeCommand(cmd,parameters);
+//		printMessage("ExecuteCommand()\t"+cmd+" "+Util.concat(parameters));
 		switch (cmd) {
-		case ("SHOW"): {
-			printMessage(parameters[0]);
+		case ("SHOW"): {	//message to server, otherwise needs clientname argument
+			monitor.executeCommand(cmd, parameters); 
 			break;
 		}
 		}

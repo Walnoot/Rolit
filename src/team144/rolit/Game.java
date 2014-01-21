@@ -105,20 +105,20 @@ public class Game extends Observable {
      * @param index
      * @return - True iff the move is valid.
      */
-    public boolean isValidMove(int index) {
-        if (board.getTile(index) != Tile.EMPTY) return false;
-        
-        int x = board.getX(index);
-        int y = board.getY(index);
-        
-        boolean hasNeighbour = false;
-        for(int i = 0; i < Direction.values().length && !hasNeighbour; i++){
-            Tile tile = board.getTile(x + Direction.values()[i].xOffset, y + Direction.values()[i].yOffset);
-            if(!(tile == null || tile == Tile.EMPTY)) hasNeighbour = true;
-        }
-        
-        if(!hasNeighbour) return false;
-    }
+//    public boolean isValidMove(int index) {
+//        if (board.getTile(index) != Tile.EMPTY) return false;
+//        
+//        int x = board.getX(index);
+//        int y = board.getY(index);
+//        
+//        boolean hasNeighbour = false;
+//        for(int i = 0; i < Direction.values().length && !hasNeighbour; i++){
+//            Tile tile = board.getTile(x + Direction.values()[i].xOffset, y + Direction.values()[i].yOffset);
+//            if(!(tile == null || tile == Tile.EMPTY)) hasNeighbour = true;
+//        }
+//        
+//        if(!hasNeighbour) return false;
+//    }
     
     public Player getCurrentPlayer() {
         return players[currentPlayerIndex];
@@ -135,4 +135,5 @@ public class Game extends Observable {
             this.yOffset = yOffset;
         }
     }
+    
 }
