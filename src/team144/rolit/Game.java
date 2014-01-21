@@ -10,6 +10,7 @@ public class Game extends Observable {
     
     private final Player[] players;
     private int currentPlayerIndex = 0;
+    private boolean gameOver = false;
     
     /**
      * @param players
@@ -22,10 +23,11 @@ public class Game extends Observable {
     public Game(Player... players) {
         if (players.length < MIN_PLAYERS || players.length > MAX_PLAYERS)
             throw new IllegalArgumentException("Too few or much players: " + players.length);
-        
-        for (int i = 0; i < players.length; i++) {
-            board.setTile(Board.DIMENSION / 2 + i % 2 - 1, Board.DIMENSION / 2 + i / 2 - 1, players[i].getTile());
-        }
+
+        board.setTile(Board.DIMENSION / 2 - 1, Board.DIMENSION / 2 - 1, Tile.RED);
+        board.setTile(Board.DIMENSION / 2, Board.DIMENSION / 2 - 1, Tile.YELLOW);
+        board.setTile(Board.DIMENSION / 2 - 1, Board.DIMENSION / 2, Tile.BLUE);
+        board.setTile(Board.DIMENSION / 2, Board.DIMENSION / 2, Tile.GREEN);
         
         this.players = players;
     }
@@ -55,6 +57,13 @@ public class Game extends Observable {
             board.setTile(index, player.getTile());
             
             currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+            
+            boolean boardFull = true;
+            for(int i = 0; i < Board.DIMENSION; i++){
+                if(board.getTile(i) == Tile.EMPTY) boardFull = false;
+            }
+            
+            if(boardFull) gameOver  = true;
             
             setChanged();
             notifyObservers();
@@ -89,7 +98,9 @@ public class Game extends Observable {
             if (testX < 0 || testY < 0 || testX >= Board.DIMENSION || testY >= Board.DIMENSION) {
                 break;
             } else {
-                if (board.getTile(testX, testY) == tile) {
+                Tile testTile = board.getTile(testX, testY);
+                if(testTile == Tile.EMPTY) return -1;
+                if (testTile == tile) {
                     steps = i;
                     break;
                 }
@@ -111,13 +122,31 @@ public class Game extends Observable {
         int x = board.getX(index);
         int y = board.getY(index);
         
-        boolean hasNeighbour = false;
-        for(int i = 0; i < Direction.values().length && !hasNeighbour; i++){
-            Tile tile = board.getTile(x + Direction.values()[i].xOffset, y + Direction.values()[i].yOffset);
-            if(!(tile == null || tile == Tile.EMPTY)) hasNeighbour = true;
+        boolean hasOtherColorNeighbour = false;
+        boolean canMove = false;//whether this moves takes over any tiles
+        for(Direction dir: Direction.values()){
+            Tile tile = board.getTile(x + dir.xOffset, y + dir.yOffset);
+            if(tile != null && tile != Tile.EMPTY && tile != getCurrentPlayer().getTile()){
+                hasOtherColorNeighbour = true;
+                
+                if(getSteps(x, y, dir, getCurrentPlayer().getTile()) > 1) canMove = true;
+            }
         }
         
-        if(!hasNeighbour) return false;
+        if(!hasOtherColorNeighbour) return false;
+        
+        boolean hasTile = false;//if the current player owns any tiles
+        for(int i = 0; i < Board.DIMENSION * Board.DIMENSION && !hasTile; i++){
+            if(board.getTile(i) == getCurrentPlayer().getTile()) hasTile = true;
+        }
+        
+        if(!hasTile) return true;
+        
+        return canMove;
+    }
+    
+    public boolean isGameOver() {
+        return gameOver;
     }
     
     public Player getCurrentPlayer() {

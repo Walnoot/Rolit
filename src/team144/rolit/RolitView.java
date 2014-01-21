@@ -20,7 +20,7 @@ public class RolitView implements Observer {
     private static final String FRAME_TITLE = "Rolit";
     
     private Button[] buttonArray = new Button[Board.DIMENSION * Board.DIMENSION];
-    private Label playerTurnLabel;
+    private Label infoLabel;
     
     public RolitView(Game game) {
         JFrame frame = new JFrame(FRAME_TITLE);
@@ -39,8 +39,8 @@ public class RolitView implements Observer {
             playPanel.add(button);
         }
         
-        playerTurnLabel = new Label("test");
-        frame.add(playerTurnLabel, BorderLayout.NORTH);
+        infoLabel = new Label("test");
+        frame.add(infoLabel, BorderLayout.NORTH);
         
         Panel textPanel = new Panel();
         textPanel.setLayout(new BorderLayout());
@@ -83,7 +83,13 @@ public class RolitView implements Observer {
                 buttonArray[i].setBackground(tile.getColor());
             }
             
-            playerTurnLabel.setText(game.getCurrentPlayer().getTile().name());
+            if (game.isGameOver()) {
+                infoLabel.setText("Game over");
+            } else {
+                infoLabel.setText(String.format("%s's turn (%s)", game.getCurrentPlayer().getName(), game
+                        .getCurrentPlayer().getTile().name()));
+            }
+            
         } else {
             throw new IllegalStateException("Can only observe a Game object");
         }
@@ -99,15 +105,15 @@ public class RolitView implements Observer {
         @Override
         public void actionPerformed(ActionEvent event) {
             for (int i = 0; i < buttonArray.length; i++) {
-                if (buttonArray[i] == event.getSource()) game.makeMove(game.getCurrentPlayer(), i);
+                if (buttonArray[i] == event.getSource()) {
+                    if (game.isValidMove(i)) game.makeMove(game.getCurrentPlayer(), i);
+                }
             }
         }
     }
     
     public static void main(String[] args) {
-        Game game =
-            new Game(new Player(Tile.BLUE, "henk"), new Player(Tile.GREEN, "niet henk"), new Player(Tile.RED, "sdfsd"),
-                    new Player(Tile.YELLOW, "afgsadf"));
+        Game game = new Game(new Player(Tile.BLUE, "Michiel"), new Player(Tile.GREEN, "Willem"));
         RolitView rolitView = new RolitView(game);
         game.addObserver(rolitView);
     }
