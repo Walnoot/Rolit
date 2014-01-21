@@ -3,6 +3,8 @@ package team144.rolit.network;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import team144.util.Util;
+
 public class Server implements NetworkListener {
 
 	private Socket socket;
@@ -33,6 +35,7 @@ public class Server implements NetworkListener {
 
 	@Override
 	public boolean executeCommand(String cmd, String[] parameters) {
+		printMessage("ExecuteCommand()\t"+cmd+" "+Util.concat(parameters));
 		switch (cmd) {
 		case ("SHOW"): {
 			printMessage(parameters[0]);
