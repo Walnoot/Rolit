@@ -13,15 +13,15 @@ public class Peer extends Thread {
 
 	private Socket socket;
 	private NetworkListener listener;
-	private BufferedWriter output;
-	private BufferedReader input;
+	private BufferedWriter out;
+	private BufferedReader in;
 
 	public Peer(Socket socket, NetworkListener listener) {
 		this.listener = listener;
 		this.socket = socket;
 		try {
-			output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-			input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -32,9 +32,14 @@ public class Peer extends Thread {
 		try {
 			boolean running = true;
 			while (running) {
-				String message = input.readLine();
-				String[] contents = decryptMessage(message);
-				running = listener.executeCommand(contents[0], Arrays.copyOfRange(contents, 1, contents.length));
+				synchronized (in) {
+					String message;
+					while ((message = in.readLine()) != null) {
+						String[] contents = decryptMessage(message);
+						running = listener
+								.executeCommand(contents[0], Arrays.copyOfRange(contents, 1, contents.length));
+					}
+				}
 			}
 		} catch (IOException e) {
 			terminate();
@@ -53,10 +58,30 @@ public class Peer extends Thread {
 		return contents;
 	}
 
+	private String encryptMessage(String cmd, String[] message) {
+		String result = cmd + " " + message[0];
+		for (int i = 1; i < message.length; i++) {
+			result += " " + message[i];
+		}
+		return result;
+
+	}
+
+	public void write(String cmd, String[] parameters) {
+		String output = encryptMessage(cmd, parameters);
+		try {
+//			System.out.println("write: " + output);
+			out.write(output + System.lineSeparator());
+			out.flush(); // /!!!!!!
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void terminate() {
 		try {
-			input.close();
-			output.close();
+			in.close();
+			out.close();
 			socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
