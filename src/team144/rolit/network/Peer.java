@@ -6,15 +6,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.Arrays;
 
-public class MessageHandler extends Thread {
+public class Peer extends Thread {
 	private static final String SEPERATOR = " ";
 
 	private Socket socket;
+	private NetworkListener listener;
 	private BufferedWriter output;
 	private BufferedReader input;
 
-	public MessageHandler(Socket socket) {
+	public Peer(Socket socket, NetworkListener listener) {
+		this.listener = listener;
 		this.socket = socket;
 		try {
 			output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -30,8 +33,8 @@ public class MessageHandler extends Thread {
 			boolean running = true;
 			while (running) {
 				String message = input.readLine();
-				String[] contents = message.split(SEPERATOR);
-				running = executeCommand(contents[0], contents[1].toCharArray()) >= 0;
+				String[] contents = decryptMessage(message);
+				running = listener.executeCommand(contents[0], Arrays.copyOfRange(contents, 1, contents.length));
 			}
 		} catch (IOException e) {
 			terminate();
@@ -41,11 +44,13 @@ public class MessageHandler extends Thread {
 		super.run();
 	}
 
-	private int executeCommand(String cmd, char[] flags) {
-		switch(cmd){
-		
+	private String[] decryptMessage(String message) {
+		String[] contents = message.split(SEPERATOR);
+		String[] parameters = new String[contents.length - 1];
+		for (int i = 1; i < contents.length; i++) {
+			parameters[i - 1] = contents[i];
 		}
-		return 0; //shutdown -> -1
+		return contents;
 	}
 
 	public void terminate() {

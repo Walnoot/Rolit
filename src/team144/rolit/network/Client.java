@@ -1,34 +1,30 @@
 package team144.rolit.network;
 
-import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server implements NetworkListener {
+public class Client implements NetworkListener {
 
 	private Socket socket;
-	private ServerSocket serverSocket;
-	private Peer listener;
+	private Peer peer;
 	private String name;
-	
+
 	public static void main(String[] args) {
-		Server server = new Server(1337, "Willem");
+		Client client = new Client("127.0.0.1", 1337, "Michiel");
 	}
 
-	public Server(int port, String name) {
+	public Client(String ip, int port, String name) {
 		try {
 			this.name = name;
-			serverSocket = new ServerSocket(port);
-			socket = serverSocket.accept();
-			printMessage("Client connected");
-			listener = new Peer(socket, this);
-			listener.start();
+			socket = new Socket(ip, port);
+			peer = new Peer(socket, this);
+			peer.start();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	private void printMessage(String m) {
-		System.out.println(name + ":\t" + m);
+		System.out.println(name + " " + m);
 	}
 
 	@Override
@@ -39,7 +35,6 @@ public class Server implements NetworkListener {
 			break;
 		}
 		}
-
 		return false;
 	}
 
