@@ -47,7 +47,7 @@ public class RolitView extends Panel implements Observer {
             playPanel.add(button);
         }
         
-        infoLabel = new Label("test");
+        infoLabel = new Label();
         add(infoLabel, BorderLayout.NORTH);
         
         Panel textPanel = new Panel();
@@ -143,7 +143,7 @@ public class RolitView extends Panel implements Observer {
         JFrame frame = new JFrame(FRAME_TITLE);
         
 //        frame.setContentPane(rolitView);
-        frame.setContentPane(new LoginPanel());
+        frame.setContentPane(new LoginPanel(frame));
         
         //set frame size, position, and close operation
         frame.setSize(WIDTH, HEIGHT);
