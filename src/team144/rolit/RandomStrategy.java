@@ -4,16 +4,17 @@ public class RandomStrategy implements Strategy{
 
 	@Override
 	public String getName() {
+		return "random";
+	}
+
+	@Override
+	public Player getPlayer() {
 		return null;
 	}
 
 	@Override
-	public String getPlayer() {
-		return null;
-	}
-
-	@Override
-	public void makeMove() {
+	public void determineMove() {
+	    
 	}
 	
 }
