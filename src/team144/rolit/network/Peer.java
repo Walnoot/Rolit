@@ -19,6 +19,7 @@ public class Peer extends Thread {
 	public Peer(Socket socket, NetworkListener listener) {
 		this.listener = listener;
 		this.socket = socket;
+		setName(listener.getName());
 		try {
 			out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -42,8 +43,8 @@ public class Peer extends Thread {
 				}
 			}
 		} catch (IOException e) {
-			terminate();
 			e.printStackTrace();
+			System.exit(0); //ez
 		}
 		terminate();
 		super.run();

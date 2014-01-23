@@ -8,12 +8,12 @@ public class PerfectStrategy implements Strategy {
 	}
 
 	@Override
-	public String getPlayer() {
+	public Player getPlayer() {
 		return null;
 	}
 
 	@Override
-	public void makeMove() {
+	public void determineMove() {
 	}
 
 
