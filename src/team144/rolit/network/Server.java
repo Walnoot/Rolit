@@ -45,7 +45,7 @@ public class Server implements NetworkListener {
     
     private void createRoom(int roomSize) {
         try {
-            while (connections.size() < roomSize) { //kan fout gaan
+            while (connections.size() < roomSize) {
                 Connection conn = new Connection(serverSocket.accept(), this);
                 connections.add(conn);
                 conn.start();
