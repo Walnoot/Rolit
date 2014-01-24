@@ -16,6 +16,8 @@ public class Connection extends Thread {
     private BufferedWriter out;
     private BufferedReader in;
     
+    private boolean running;
+    
     public Connection(Socket socket, NetworkListener listener) {
         this.listener = listener;
         this.socket = socket;
@@ -31,7 +33,7 @@ public class Connection extends Thread {
     @Override
     public void run() {
         try {
-            boolean running = true;
+            running = true;
             while (running) {
                 synchronized (in) {
                     String message;
@@ -86,5 +88,9 @@ public class Connection extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setRunning(boolean b) {
+        running = b;
     }
 }

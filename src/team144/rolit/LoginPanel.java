@@ -14,12 +14,13 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import team144.rolit.network.Client;
+import team144.rolit.network.Client.ClientListener;
 import team144.rolit.network.Server;
 import team144.util.Util;
 
 import com.esotericsoftware.tablelayout.swing.Table;
 
-public class LoginPanel extends Panel implements ActionListener {
+public class LoginPanel extends Panel implements ActionListener, ClientListener{
     private static final float TEXTFIELD_WIDTH = 200f;
     
     private JTextField usernameField;
@@ -92,19 +93,11 @@ public class LoginPanel extends Panel implements ActionListener {
                 return;
             }
             
-            client = new Client(ip, port, usernameField.getText());
-            
             setInfoText("Waiting for server response");
-            
-            //TODO: verander dit maar ooit
-            //moet maar even, later veranderen? Waarschijnlijk niet.
-            while (client.getGame() == null) {
-                Thread.sleep(100);
-            }
-            
-//            frame.removeAll();
-            frame.setContentPane(new RolitView(client.getGame(), client));
-            frame.validate();
+            client = new Client(ip, port, usernameField.getText());
+            client.setClientListener(this);
+            client.login(passwordField.getText());
+            //now wait for onHello() or loginError()
             
             //TODO: goede error messages
         } catch (UnknownHostException e1) {
@@ -114,5 +107,22 @@ public class LoginPanel extends Panel implements ActionListener {
         } catch (Exception e) {
             setInfoText("Something went wrong");
         }
+    }
+
+    @Override
+    public void onHello(String flag) {
+        setInfoText("Login successful! Server supports the "+flag);
+       // frame.setContentPane(new RolitView(client.getGame(), client));
+       // frame.validate();
+    }
+
+    @Override
+    public void gameReady() {
+    }
+    
+    @Override
+    public void loginError() {
+      setInfoText("Login failed! Please try again...");
+      client.shutdown();
     }
 }
