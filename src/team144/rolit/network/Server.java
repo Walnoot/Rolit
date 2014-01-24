@@ -107,6 +107,9 @@ public class Server implements NetworkListener {
                 }
                 //if !legit sendMessage fuckoff no legit
                 break;
+            case("NGAME"):
+                Room.assignRoom(peer, parameters);
+                break;
             case ("SHOW"):  //message to server, otherwise needs clientname argument
                 monitor.executeCommand(cmd, parameters);
                 break;
