@@ -16,15 +16,11 @@ public class Client implements NetworkListener {
     private Authenticator authenticator;
     private String name;
     private Game game;
+    private Player player;
     
     public static void main(String[] args) throws UnknownHostException, IOException {
         Client client = new Client("127.0.0.1", Server.DEFAULT_PORT, "Michiel");
 //        client.requestNewGame(2);
-    }
-    
-    public void sendCommand(String cmd, String...parameters) {
-        printMessage("sendCommand()\t" + cmd + " " + Util.concat(parameters));
-        peer.write(cmd, parameters);
     }
     
     public Client(String ip, int port, String name) throws UnknownHostException, IOException {
@@ -37,6 +33,11 @@ public class Client implements NetworkListener {
         peer.start();
         
         login();
+    }
+    
+    public void sendCommand(String cmd, String...parameters) {
+        printMessage("sendCommand()\t" + cmd + " " + Util.concat(parameters));
+        peer.write(cmd, parameters);
     }
     
     private void login() {
@@ -62,8 +63,13 @@ public class Client implements NetworkListener {
             case ("START"): //  START [Bob, Alice, Lol]
                 Player[] players = new Player[parameters.length];
                 for (int i = 0; i < parameters.length; i++) {
-                    players[i] = new Player(Tile.values()[i + 1], parameters[i]);
+                    Player player = new Player(Tile.values()[i + 1], parameters[i]);
+                    players[i] = player;
+                    
+                    if(player.getName().equals(name)) this.player = player;
                 }
+                
+                if(player == null) System.out.println("Controlled player not found?!");
                 
                 game = new Game(players);
 //                JFrame frame = new JFrame("CLIENT");
@@ -89,6 +95,10 @@ public class Client implements NetworkListener {
     
     public Game getGame() {
         return game;
+    }
+    
+    public Player getPlayer() {
+        return player;
     }
     
     @Override

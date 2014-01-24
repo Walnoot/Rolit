@@ -69,8 +69,8 @@ public class RolitView extends Panel implements Observer {
         textField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-               showMessage(textField.getText());
-               textField.setText(null);
+                showMessage(textField.getText());
+                textField.setText(null);
             }
         });
         
@@ -115,14 +115,14 @@ public class RolitView extends Panel implements Observer {
         
         public RolitController(Game game, Client client) {
             this.game = game;
-            this.client = client;       
+            this.client = client;
         }
         
         @Override
         public void actionPerformed(ActionEvent event) {
             for (int i = 0; i < buttonArray.length; i++) {
                 if (buttonArray[i] == event.getSource()) {
-                    if (game.isValidMove(i)) {
+                    if (client.getPlayer() == game.getCurrentPlayer() && game.isValidMove(i)) {
                         Board board = game.getBoard();
                         String[] par =
                             new String[] { Integer.toString(board.getX(i)), Integer.toString(board.getY(i)) };

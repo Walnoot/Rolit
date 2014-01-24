@@ -96,6 +96,7 @@ public class LoginPanel extends Panel implements ActionListener {
             
             setInfoText("Waiting for server response");
             
+            //TODO: verander dit maar ooit
             //moet maar even, later veranderen? Waarschijnlijk niet.
             while (client.getGame() == null) {
                 Thread.sleep(100);
