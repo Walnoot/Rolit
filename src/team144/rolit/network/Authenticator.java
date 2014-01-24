@@ -61,6 +61,14 @@ public class Authenticator implements NetworkListener {
         }
     }
     
+    /**
+     * login to the authentication server
+     * @param username registered username on pki-server
+     * @param password matching password
+     * @return PrivateKey object
+     * 
+     * all params are in default encoding
+     */
     public PrivateKey login(String username, String password) {
         synchronized (lock) {
             try {
@@ -133,9 +141,13 @@ public class Authenticator implements NetworkListener {
         return Base64.encodeBase64String(signature);
     }
     
+    /**
+     * sets PrivateKey pk to represent the private key string
+     * @param b64key in base64 encoded privatekey
+     */
     private void setPrivateKey(String b64key) {
         try {
-            byte[] bytes = Base64.decodeBase64(b64key.getBytes());
+            byte[] bytes = Base64.decodeBase64(b64key);
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(bytes);
             KeyFactory fact = KeyFactory.getInstance("RSA");
             pk = fact.generatePrivate(keySpec);

@@ -24,18 +24,7 @@ public class Client implements NetworkListener {
 //        client.requestNewGame(2);
     }
     
-    
-    public Client(String ip, int port, String name) throws UnknownHostException, IOException {
-        this.name = name;
-        socket = new Socket(ip, port);
-        peer = new Peer(socket, this);
-        
-        authenticator = new Authenticator();
-        authenticator.login("player_willemsiers", "Ouleid9E");
-        peer.start();
-    }
-    
-    public void sendCommand(String cmd, String[] parameters) {
+    public void sendCommand(String cmd, String...parameters) {
         printMessage("sendCommand()\t" + cmd + " " + Util.concat(parameters));
         peer.write(cmd, parameters);
     }
@@ -45,8 +34,23 @@ public class Client implements NetworkListener {
         sendCommand(cmd, new String[] { parameter });
     }
     
+    public Client(String ip, int port, String name) throws UnknownHostException, IOException {
+        this.name = name;
+        socket = new Socket(ip, port);
+        peer = new Peer(socket, this);
+        
+        authenticator = new Authenticator();
+        authenticator.login(name, "Ouleid9E");
+        peer.start();
+        
+        login();
+    }
+    
+    /**
+     * Login to game server
+     */
     private void login() {
-        sendCommand("LOGIN", name);
+        sendCommand("LOGIN", this.name);
     }
     
     private void requestNewGame(int numPlayers) {

@@ -77,7 +77,7 @@ public class Server implements NetworkListener {
         }
     }
     
-    public void sendCommand(Peer client, String cmd, String[] parameters) {
+    public void sendCommand(Peer client, String cmd, String...parameters) {
         //printMessage("sendCommand()\t" + cmd + " " + Util.concat(parameters));
         client.write(cmd, parameters);
     }
@@ -90,7 +90,7 @@ public class Server implements NetworkListener {
             case("LOGIN"):
                 logginInPeer = peer;
                 peer.setName(parameters[0]);
-                sendCommand(peer, "VSIGN", new String[]{Base64.encodeBase64String("VerySecureRandomText".getBytes())});
+                sendCommand(peer, "VSIGN", Base64.encodeBase64("VerySecureRandomText".getBytes()));
                 break;
             case("VSIGN"):
                 System.out.println("VSIGN");
