@@ -47,7 +47,7 @@ public class Client implements NetworkListener {
         }
     }
     
-    private void requestNewGame(String...flags) {
+    public void requestNewGame(String...flags) {
         sendCommand("NGAME", flags);
     }
     
