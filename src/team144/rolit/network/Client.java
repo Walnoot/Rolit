@@ -22,7 +22,7 @@ public class Client implements NetworkListener {
 //        client.requestNewGame(2);
     }
     
-    public void sendCommand(String cmd, String[] parameters) {
+    public void sendCommand(String cmd, String...parameters) {
         printMessage("sendCommand()\t" + cmd + " " + Util.concat(parameters));
         peer.write(cmd, parameters);
     }
@@ -40,6 +40,8 @@ public class Client implements NetworkListener {
         authenticator = new Authenticator();
         authenticator.login("player_willemsiers", "Ouleid9E");
         peer.start();
+        
+        login();
     }
     
     private void login() {

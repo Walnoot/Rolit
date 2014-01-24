@@ -77,7 +77,7 @@ public class Server implements NetworkListener {
         }
     }
     
-    public void sendCommand(Peer client, String cmd, String[] parameters) {
+    public void sendCommand(Peer client, String cmd, String...parameters) {
         //printMessage("sendCommand()\t" + cmd + " " + Util.concat(parameters));
         client.write(cmd, parameters);
     }
