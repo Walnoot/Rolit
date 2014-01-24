@@ -1,13 +1,11 @@
 package team144.rolit.network;
 
+import java.io.IOException;
 import java.net.Socket;
-
-import javax.swing.JFrame;
+import java.net.UnknownHostException;
 
 import team144.rolit.Game;
 import team144.rolit.Player;
-import team144.rolit.RolitView;
-import team144.rolit.RolitView.RolitController;
 import team144.rolit.Tile;
 import team144.util.Util;
 
@@ -17,12 +15,10 @@ public class Client implements NetworkListener {
     private Peer peer;
     private Authenticator authenticator;
     private String name;
-    private RolitController controller;
-    private RolitView view;
+    private Game game;
     
-    public static void main(String[] args) {
-        Client client = new Client("127.0.0.1", 1337, "player_willemsiers");
-        client.login();
+    public static void main(String[] args) throws UnknownHostException, IOException {
+        Client client = new Client("130.89.183.86", 1337, "Michiel");
 //        client.requestNewGame(2);
     }
     
@@ -32,26 +28,21 @@ public class Client implements NetworkListener {
     }
     
     public void sendCommand(String cmd, String parameter) {
-        System.out.println("ExecuteCommand()\t"+cmd+" "+parameter);
+        System.out.println("ExecuteCommand()\t" + cmd + " " + parameter);
         sendCommand(cmd, new String[] { parameter });
     }
     
-    public Client(String ip, int port, String name) {
-        try {
-            this.name = name;
-            socket = new Socket(ip, port);
-            peer = new Peer(socket, this);
-            
-            authenticator = new Authenticator();
-            authenticator.login("player_willemsiers","Ouleid9E");
-            peer.start();
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public Client(String ip, int port, String name) throws UnknownHostException, IOException {
+        this.name = name;
+        socket = new Socket(ip, port);
+        peer = new Peer(socket, this);
+        
+        authenticator = new Authenticator();
+        authenticator.login("player_willemsiers", "Ouleid9E");
+        peer.start();
     }
     
-    private void login(){
+    private void login() {
         sendCommand("LOGIN", name);
     }
     
@@ -76,25 +67,31 @@ public class Client implements NetworkListener {
                 for (int i = 0; i < parameters.length; i++) {
                     players[i] = new Player(Tile.values()[i + 1], parameters[i]);
                 }
-                Game game = new Game(players);
-                JFrame frame = new JFrame("CLIENT");
-                view = new RolitView(game, this);
-                controller = view.getController();
-                frame.add(view);
-                frame.setSize(500, 500);
-                frame.setVisible(true);
+                
+                game = new Game(players);
+//                JFrame frame = new JFrame("CLIENT");
+//                RolitView view = new RolitView(game, this);
+//                setController(view.getController());
+//                frame.add(view);
+//                frame.setSize(500, 500);
+//                frame.setVisible(true);
                 break;
             case ("GMOVE"): //GMOVE x y
                 int x = Integer.parseInt(parameters[0]);
                 int y = Integer.parseInt(parameters[1]);
-                controller.makeMove(x, y);
+                game.makeMove(game.getCurrentPlayer(), x, y);
                 break;
             case ("BCAST"): //BCAST text text to client text
-                view.showMessage(Util.concat(parameters));
+//                controller.showMessage(Util.concat(parameters));
+                System.out.println(Util.concat(parameters));
                 break;
         }
         
         return false;
+    }
+    
+    public Game getGame() {
+        return game;
     }
     
     @Override

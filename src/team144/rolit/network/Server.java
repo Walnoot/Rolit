@@ -12,6 +12,7 @@ import team144.rolit.Tile;
 import team144.util.Util;
 
 public class Server implements NetworkListener {
+    public static final int DEFAULT_PORT = 2014;
     
     private ArrayList<Peer> clients;
     private Player[] players;
@@ -22,7 +23,7 @@ public class Server implements NetworkListener {
     private Peer logginInPeer;//peer currently in login session
     
     public static void main(String[] args) {
-        Server server = new Server(1337);
+        Server server = new Server(DEFAULT_PORT);
         server.createRoom(3);
     }
     

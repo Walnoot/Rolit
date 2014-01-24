@@ -36,6 +36,10 @@ public class Game extends Observable {
         return board;
     }
     
+    public void makeMove(Player player, int x, int y) {
+        makeMove(player, board.getIndex(x, y));
+    }
+    
     public void makeMove(Player player, int index) {
         if (players[currentPlayerIndex] == player) {
             int x = board.getX(index);
