@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 
-import org.apache.commons.codec.binary.Base64;
-
 import team144.rolit.Game;
 import team144.rolit.Player;
 import team144.rolit.Tile;
@@ -93,11 +91,11 @@ public class Server implements NetworkListener {
             case("LOGIN"):
                 logginInPeer = peer;
                 peer.setName(parameters[0]);
-                sendCommand(peer, "VSIGN", Base64.encodeBase64("VerySecureRandomText".getBytes()));
+                sendCommand(peer, "VSIGN", "VerySecureRandomText");
                 break;
             case("VSIGN"):
                 System.out.println("VSIGN");
-                boolean legit = authenticator.verifySignature(logginInPeer.getName(), Base64.encodeBase64String("VerySecureRandomText".getBytes()) , parameters[0]);
+                boolean legit = authenticator.verifySignature(logginInPeer.getName(), "VerySecureRandomText" , parameters[0]);
                 System.out.println("Player " + logginInPeer.getName() +" is legit:"+legit);
                 //if !legit sendMessage fuckoff no legit
                 break;

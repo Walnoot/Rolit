@@ -37,8 +37,6 @@ public class Client implements NetworkListener {
         authenticator = new Authenticator();
         authenticator.login(name, "Ouleid9E");
         peer.start();
-        
-        login();
     }
     
     /**
@@ -61,6 +59,7 @@ public class Client implements NetworkListener {
         printMessage("ExecuteCommand()\t" + cmd + " " + Util.concat(parameters));
         switch (cmd) {
             case ("VSIGN"): //   VSIGN TEXT
+                System.out.println("text "+ parameters[0]);
                 String signature = authenticator.signMessage(parameters[0]);
                 sendCommand("VSIGN", signature);
                 break;

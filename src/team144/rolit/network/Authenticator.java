@@ -86,7 +86,7 @@ public class Authenticator implements NetworkListener {
         System.out.println(name + ":\t" + m);
     }
     
-    private void sendCommand(String cmd, String[] parameters) {
+    private void sendCommand(String cmd, String... parameters) {
         peer.write(cmd, parameters);
     }
     
@@ -117,11 +117,10 @@ public class Authenticator implements NetworkListener {
     }
     
     /**
-     * @param base64
-     *            encoded String message
+     * @param  String message (DEFAULT ENCODEING!!)
      * @return base64 encoded String signature
      */
-    public String signMessage(String b64msg) {
+    public String signMessage(String msg) {
         while (pk == null) {
             try {
                 Thread.sleep(20);
@@ -133,7 +132,7 @@ public class Authenticator implements NetworkListener {
         try {
             Signature sig = Signature.getInstance("SHA1withRSA");
             sig.initSign(pk);
-            sig.update(Base64.decodeBase64(b64msg));
+            sig.update(msg.getBytes());
             signature = sig.sign();
         } catch (InvalidKeyException | SignatureException | NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -166,24 +165,24 @@ public class Authenticator implements NetworkListener {
      * @param name
      *            - pki username
      * @param signature
-     *            - Base64 encoded String
+     *            - base64 encoded String
      * @param message
-     *            - message that was to be signed
+     *            - message that was to be signed (DEFAULT JAAV ENCODEIGN)
      * @return - true if message is signed by user
      */
     public boolean verifySignature(String name, String message, String signature) {
         boolean check = false;
         try {
-            sendCommand("PUBLICKEY", new String[] { name });
+            sendCommand("PUBLICKEY", name);
             synchronized (lock) {
                 lock.wait();
                 KeyFactory fact = KeyFactory.getInstance("RSA");
-                X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.decodeBase64(pubkey));
+                X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.decodeBase64(pubkey.getBytes()));
                 PublicKey publicKey = fact.generatePublic(keySpec);
                 Signature sig = Signature.getInstance("SHA1withRSA");
                 sig.initVerify(publicKey);
-                sig.update(message.getBytes()); //encodign???
-                check = sig.verify(Base64.decodeBase64(signature.getBytes()));
+                sig.update(message.getBytes());
+                check = sig.verify(Base64.decodeBase64(signature));
                 
             }
         } catch (Exception e) {
