@@ -15,6 +15,7 @@ import javax.swing.JTextField;
 
 import team144.rolit.network.Client;
 import team144.rolit.network.Server;
+import team144.util.Util;
 
 import com.esotericsoftware.tablelayout.swing.Table;
 
@@ -63,6 +64,11 @@ public class LoginPanel extends Panel implements ActionListener {
         table.addCell(infoLabel).colspan(2);
     }
     
+    private void setInfoText(String message){
+        infoLabel.setText(message);
+        validate();
+    }
+    
     @Override
     public void actionPerformed(ActionEvent event) {
         try {
@@ -81,8 +87,16 @@ public class LoginPanel extends Panel implements ActionListener {
                 port = Server.DEFAULT_PORT;
             }
             
+            if(!Util.isValidName(usernameField.getText())){
+                setInfoText("Invalid name");
+                return;
+            }
+            
             client = new Client(ip, port, usernameField.getText());
             
+            setInfoText("Waiting for server response");
+            
+            //moet maar even, later veranderen? Waarschijnlijk niet.
             while (client.getGame() == null) {
                 Thread.sleep(100);
             }
@@ -93,14 +107,11 @@ public class LoginPanel extends Panel implements ActionListener {
             
             //TODO: goede error messages
         } catch (UnknownHostException e1) {
-            infoLabel.setText("Unknown host");
-            validate();
-        } catch (IOException e1) {
-            infoLabel.setText("Something went wrong");
-            validate();
+            setInfoText("Unknown host");
+        } catch (IOException e) {
+            setInfoText("Something went wrong");
         } catch (Exception e) {
-            infoLabel.setText("Something else went wrong");
-            validate();
+            setInfoText("Something went wrong");
         }
     }
 }
