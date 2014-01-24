@@ -17,6 +17,11 @@ import javax.swing.JFrame;
 import team144.rolit.network.Client;
 
 public class RolitView extends Panel implements Observer {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4223398494630548955L;
+    
     private static final int WIDTH = 400;
     private static final int HEIGHT = 600;
     private static final String FRAME_TITLE = "Rolit";
@@ -28,7 +33,6 @@ public class RolitView extends Panel implements Observer {
     private RolitController controller;
     
     public RolitView(Game game, Client client) {
-//        JFrame frame = new JFrame(FRAME_TITLE);
         game.addObserver(this);
         
         setLayout(new BorderLayout());
@@ -137,8 +141,8 @@ public class RolitView extends Panel implements Observer {
     }
     
     public static void main(String[] args) {
-        Game game = new Game(new Player(Tile.BLUE, "Michiel"), new Player(Tile.GREEN, "Willem"));
-        RolitView rolitView = new RolitView(game, null);
+//        Game game = new Game(new Player(Tile.BLUE, "Michiel"), new Player(Tile.GREEN, "Willem"));
+//        RolitView rolitView = new RolitView(game, null);
         
         JFrame frame = new JFrame(FRAME_TITLE);
         
