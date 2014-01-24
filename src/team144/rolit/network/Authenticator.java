@@ -17,6 +17,7 @@ import org.apache.commons.codec.binary.Base64;
 
 import team144.util.Util;
 
+
 public class Authenticator implements NetworkListener {
     
     /*

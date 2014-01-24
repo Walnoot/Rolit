@@ -18,8 +18,21 @@ public class Client implements NetworkListener {
     private Game game;
     
     public static void main(String[] args) throws UnknownHostException, IOException {
-        Client client = new Client("127.0.0.1", Server.DEFAULT_PORT, "Michiel");
+        Client client = new Client("127.0.0.1", Server.DEFAULT_PORT, "player_willemsiers");
+        
+        client.login();
 //        client.requestNewGame(2);
+    }
+    
+    
+    public Client(String ip, int port, String name) throws UnknownHostException, IOException {
+        this.name = name;
+        socket = new Socket(ip, port);
+        peer = new Peer(socket, this);
+        
+        authenticator = new Authenticator();
+        authenticator.login("player_willemsiers", "Ouleid9E");
+        peer.start();
     }
     
     public void sendCommand(String cmd, String[] parameters) {
@@ -30,16 +43,6 @@ public class Client implements NetworkListener {
     public void sendCommand(String cmd, String parameter) {
         System.out.println("ExecuteCommand()\t" + cmd + " " + parameter);
         sendCommand(cmd, new String[] { parameter });
-    }
-    
-    public Client(String ip, int port, String name) throws UnknownHostException, IOException {
-        this.name = name;
-        socket = new Socket(ip, port);
-        peer = new Peer(socket, this);
-        
-        authenticator = new Authenticator();
-        authenticator.login("player_willemsiers", "Ouleid9E");
-        peer.start();
     }
     
     private void login() {
