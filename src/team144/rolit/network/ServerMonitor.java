@@ -49,7 +49,7 @@ public class ServerMonitor {
                 String message = textField.getText();
                 textArea.append(message + "\n");
                 String[] contents = message.split(" ");
-                server.sendCommand(contents[0], Arrays.copyOfRange(contents, 1, contents.length));
+                server.sendCommandToAll(contents[0], Arrays.copyOfRange(contents, 1, contents.length));
 //              server.sendCommand("SHOW", new String[] { message });
                 textField.setText(null);
             }

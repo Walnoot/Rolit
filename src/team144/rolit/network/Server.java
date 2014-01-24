@@ -60,26 +60,29 @@ public class Server implements NetworkListener {
         }
         Game game = new Game(players);
         monitor.setGame(game);
-        sendCommand("START", players);
+        
+        String[] playerNames = new String[players.length];
+        
+        for (int i = 0; i < players.length; i++) {
+            playerNames[i] = players[i].getName();
+        }
+        
+        sendCommandToAll("START", playerNames);
     }
     
 //	private void printMessage(String m) {
 //		monitor.print(name + ":\t" + m);
 //	}
     
-    public void sendCommand(String cmd, Object[] parameters) {
-        if (cmd.equals("START")) {
-            String[] names = new String[parameters.length];
-            for (int i = 0; i < parameters.length; i++) {
-                names[i] = ((Player) parameters[i]).getName();
-            }
-            sendCommand(cmd, names);
-        }
-    }
-    
     public void sendCommand(Peer client, String cmd, String...parameters) {
         //printMessage("sendCommand()\t" + cmd + " " + Util.concat(parameters));
         client.write(cmd, parameters);
+    }
+    
+    public void sendCommandToAll(String cmd, String...parameters){
+        for (int i = 0; i < clients.size(); i++) {
+            sendCommand(clients.get(i), cmd, parameters);
+        }
     }
     
     @Override
@@ -107,7 +110,7 @@ public class Server implements NetworkListener {
 //                }
 //                break;
             case ("GMOVE"): //GMOVE x y
-                sendCommand(cmd, parameters);
+                sendCommandToAll(cmd, parameters);
                 monitor.executeCommand(cmd, parameters);
                 break;
         }

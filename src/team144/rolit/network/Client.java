@@ -27,11 +27,6 @@ public class Client implements NetworkListener {
         peer.write(cmd, parameters);
     }
     
-    public void sendCommand(String cmd, String parameter) {
-        System.out.println("ExecuteCommand()\t" + cmd + " " + parameter);
-        sendCommand(cmd, new String[] { parameter });
-    }
-    
     public Client(String ip, int port, String name) throws UnknownHostException, IOException {
         this.name = name;
         socket = new Socket(ip, port);
