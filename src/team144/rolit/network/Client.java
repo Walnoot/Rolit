@@ -18,12 +18,7 @@ public class Client implements NetworkListener {
     private Game game;
     private Player player;
     
-    public static void main(String[] args) throws UnknownHostException, IOException {
-        Client client = new Client("127.0.0.1", Server.DEFAULT_PORT, "player_willemsiers");
-        
-        client.login();
-//        client.requestNewGame(2);
-    }
+    private ClientListener clientListener;
     
     public Client(String ip, int port, String name) throws UnknownHostException, IOException {
         this.name = name;
@@ -31,11 +26,11 @@ public class Client implements NetworkListener {
         peer = new Connection(socket, this);
         
         authenticator = new Authenticator();
-        authenticator.login(name, "Ouleid9E");
         peer.start();
+        
     }
     
-    public void sendCommand(String cmd, String...parameters) {
+    public void sendCommand(String cmd, String... parameters) {
         printMessage("sendCommand()\t" + cmd + " " + Util.concat(parameters));
         peer.write(cmd, parameters);
     }
@@ -43,8 +38,13 @@ public class Client implements NetworkListener {
     /**
      * Login to game server
      */
-    private void login() {
-        sendCommand("LOGIN", this.name);
+    public void login(String password) {
+        try {
+            authenticator.login("player_" + name, password);
+            sendCommand("LOGIN", this.name);
+        } catch (Exception e) {
+            clientListener.loginError();
+        }
     }
     
     private void requestNewGame(String...flags) {
@@ -57,14 +57,14 @@ public class Client implements NetworkListener {
     
     @Override
     public boolean executeCommand(String cmd, String[] parameters, Connection peer) {
-       // printMessage("ExecuteCommand()\t" + cmd + " " + Util.concat(parameters));
+        // printMessage("ExecuteCommand()\t" + cmd + " " + Util.concat(parameters));
         switch (cmd) {
             case ("VSIGN"): //   VSIGN TEXT
                 String signature = authenticator.signMessage(parameters[0]);
                 sendCommand("VSIGN", signature);
                 break;
-            case("HELLO"):
-                System.out.println("Logged in!");
+            case ("HELLO"):
+                clientListener.onHello(parameters[0]);
                 sendCommand("HELLO", "D");
                 break;
             case ("START"): //  START [Bob, Alice, Lol]
@@ -73,10 +73,13 @@ public class Client implements NetworkListener {
                     Player player = new Player(Tile.values()[i + 1], parameters[i]);
                     players[i] = player;
                     
-                    if(player.getName().equals(name)) this.player = player;
+                    if (player.getName().equals(name)) {
+                        this.player = player;
+                    }
+                    ;
                 }
                 
-                if(player == null) System.out.println("Controlled player not found?!");
+                if (player == null) System.out.println("Controlled player not found?!");
                 
                 game = new Game(players);
                 break;
@@ -90,7 +93,10 @@ public class Client implements NetworkListener {
                 System.out.println(Util.concat(parameters));
                 break;
             case ("ERROR"):
-                System.out.println("ERROR: "+Util.concat(parameters));
+                if (clientListener != null) {
+                    clientListener.loginError();
+                }
+                System.out.println("ERROR: " + Util.concat(parameters));
                 break;
         }
         
@@ -108,5 +114,22 @@ public class Client implements NetworkListener {
     @Override
     public String getName() {
         return name;
+    }
+    
+    public void shutdown() {
+        peer.setRunning(false);
+    }
+    
+    public void setClientListener(ClientListener cl) {
+        clientListener = cl;
+    }
+    
+    public static interface ClientListener {
+        public void onHello(String flag);
+        
+        public void gameReady();
+        
+        //public void error(String message);
+        public void loginError();
     }
 }

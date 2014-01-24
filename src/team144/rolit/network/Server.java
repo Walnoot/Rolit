@@ -96,7 +96,7 @@ public class Server implements NetworkListener {
                 sendCommand(peer, "VSIGN", randomText);
                 break;
             case("VSIGN"):
-                boolean legit = authenticator.verifySignature(logginInPeer.getName(), randomText , parameters[0]);
+                boolean legit = authenticator.verifySignature("player_"+logginInPeer.getName(), randomText , parameters[0]);
                 if(legit){
                     authorizedConnections.add(peer);
                     sendCommand(peer, "HELLO", "D"); //default

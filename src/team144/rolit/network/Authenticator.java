@@ -18,15 +18,9 @@ import org.apache.commons.codec.binary.Base64;
 
 import team144.util.Util;
 
-
 public class Authenticator implements NetworkListener {
     
-    /*
-     * 
-     * player_michiel
-     * paars
-     */
-    
+    //pws
     private static final String name1 = "player_willemsiers";
     private static final String pw1 = "Ouleid9E";
     private static final String name2 = "player_michiel";
@@ -40,13 +34,6 @@ public class Authenticator implements NetworkListener {
     private String pubkey;
     
     private Object lock = new Object();
-    
-    public static void main(String[] args) {
-        Authenticator auth = new Authenticator();
-        auth.login(name2, pw2);
-//        auth.signMessage(new String(Base64.encodeBase64String("halllohallo".getBytes())));
-//        System.out.println(new String(auth.signMessage("Hallo Ik Ben Willem!!!")));
-    }
     
     public Authenticator() {
         try {
@@ -63,13 +50,17 @@ public class Authenticator implements NetworkListener {
     
     /**
      * login to the authentication server
-     * @param username registered username on pki-server
-     * @param password matching password
+     * 
+     * @param username
+     *            registered username on pki-server
+     * @param password
+     *            matching password
      * @return PrivateKey object
      * 
-     * all params are in default encoding
+     *         all params are in default encoding
+     * @throws Exception
      */
-    public PrivateKey login(String username, String password) {
+    public PrivateKey login(String username, String password) throws Exception {
         synchronized (lock) {
             try {
                 this.name = username;
@@ -79,6 +70,7 @@ public class Authenticator implements NetworkListener {
                 e.printStackTrace();
             }
         }
+        if (pk == null) throw new Exception("Authentication Error");
         return pk;
     }
     
@@ -92,10 +84,13 @@ public class Authenticator implements NetworkListener {
     
     @Override
     public boolean executeCommand(String cmd, String[] parameters, Connection peer) {
-       // System.out.println(cmd + " " + Util.concat(parameters));
+        // System.out.println(cmd + " " + Util.concat(parameters));
         switch (cmd) {
             case ("ERROR"):
                 printMessage(Util.concat(parameters)); //wrong user/pw, try again
+            synchronized (lock) {
+                lock.notifyAll();
+            }
                 break;
             case ("PRIVKEY"):
                 setPrivateKey(parameters[0]);
@@ -117,7 +112,8 @@ public class Authenticator implements NetworkListener {
     }
     
     /**
-     * @param  String message (DEFAULT ENCODEING!!)
+     * @param String
+     *            message (DEFAULT ENCODEING!!)
      * @return base64 encoded String signature
      */
     public String signMessage(String msg) {
@@ -142,7 +138,9 @@ public class Authenticator implements NetworkListener {
     
     /**
      * sets PrivateKey pk to represent the private key string
-     * @param b64key in base64 encoded privatekey
+     * 
+     * @param b64key
+     *            in base64 encoded privatekey
      */
     private void setPrivateKey(String b64key) {
         try {
@@ -193,18 +191,20 @@ public class Authenticator implements NetworkListener {
     
     /**
      * Generate random default encoded string
-     * @param n length of the generated string in bytes
+     * 
+     * @param n
+     *            length of the generated string in bytes
      * @returns default encoded string
      */
-     public synchronized static final String generateRandomString(int n){
-         char[] chars = "qwertyuiopasdfghjklzxcvbnm".toCharArray();
-         SecureRandom lol = new SecureRandom();
-         StringBuilder sb = new StringBuilder();
-         
-         for(int i = 0; i<n; i++){
-             sb.append(chars[lol.nextInt(chars.length)]);
-         }
-         return sb.toString();
-     }
+    public synchronized static final String generateRandomString(int n) {
+        char[] chars = "qwertyuiopasdfghjklzxcvbnm".toCharArray();
+        SecureRandom lol = new SecureRandom();
+        StringBuilder sb = new StringBuilder();
+        
+        for (int i = 0; i < n; i++) {
+            sb.append(chars[lol.nextInt(chars.length)]);
+        }
+        return sb.toString();
+    }
     
 }
