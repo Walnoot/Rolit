@@ -15,12 +15,15 @@ public class Client implements NetworkListener {
     
     private Socket socket;
     private Peer peer;
+    private Authenticator authenticator;
     private String name;
     private RolitController controller;
+    private RolitView view;
     
     public static void main(String[] args) {
-        Client client = new Client("127.0.0.1", 1337, "Michiel");
-        client.requestNewGame(2);
+        Client client = new Client("127.0.0.1", 1337, "player_willemsiers");
+        client.login();
+//        client.requestNewGame(2);
     }
     
     public void sendCommand(String cmd, String[] parameters) {
@@ -29,7 +32,8 @@ public class Client implements NetworkListener {
     }
     
     public void sendCommand(String cmd, String parameter) {
-        sendCommand(cmd, new String[]{parameter});
+        System.out.println("ExecuteCommand()\t"+cmd+" "+parameter);
+        sendCommand(cmd, new String[] { parameter });
     }
     
     public Client(String ip, int port, String name) {
@@ -37,10 +41,18 @@ public class Client implements NetworkListener {
             this.name = name;
             socket = new Socket(ip, port);
             peer = new Peer(socket, this);
+            
+            authenticator = new Authenticator();
+            authenticator.login("player_willemsiers","Ouleid9E");
             peer.start();
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    private void login(){
+        sendCommand("LOGIN", name);
     }
     
     private void requestNewGame(int numPlayers) {
@@ -52,38 +64,39 @@ public class Client implements NetworkListener {
     }
     
     @Override
-    public boolean executeCommand(String cmd, String[] parameters) {
+    public boolean executeCommand(String cmd, String[] parameters, Peer peer) {
         printMessage("ExecuteCommand()\t" + cmd + " " + Util.concat(parameters));
         switch (cmd) {
-            case ("START"): // START [Bob, Alice, Lol]
+            case ("VSIGN"): //   VSIGN TEXT
+                String signature = authenticator.signMessage(parameters[0]);
+                sendCommand("VSIGN", signature);
+                break;
+            case ("START"): //  START [Bob, Alice, Lol]
                 Player[] players = new Player[parameters.length];
                 for (int i = 0; i < parameters.length; i++) {
                     players[i] = new Player(Tile.values()[i + 1], parameters[i]);
                 }
                 Game game = new Game(players);
                 JFrame frame = new JFrame("CLIENT");
-                RolitView view = new RolitView(game, this);
-                setController(view.getController());
+                view = new RolitView(game, this);
+                controller = view.getController();
                 frame.add(view);
-                frame.setSize(500  ,500);
+                frame.setSize(500, 500);
                 frame.setVisible(true);
                 break;
             case ("GMOVE"): //GMOVE x y
                 int x = Integer.parseInt(parameters[0]);
                 int y = Integer.parseInt(parameters[1]);
-                controller.makeMove(x,y);
+                controller.makeMove(x, y);
                 break;
             case ("BCAST"): //BCAST text text to client text
-                controller.showMessage(Util.concat(parameters));
-            break;
+                view.showMessage(Util.concat(parameters));
+                break;
         }
         
         return false;
     }
     
-    private void setController(RolitController controller) {
-        this.controller = controller;
-    }
     @Override
     public String getName() {
         return name;

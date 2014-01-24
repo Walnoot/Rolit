@@ -2,29 +2,34 @@ package team144.rolit.network;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.ArrayList;
+
+import org.apache.commons.codec.binary.Base64;
 
 import team144.rolit.Game;
 import team144.rolit.Player;
 import team144.rolit.Tile;
+import team144.util.Util;
 
 public class Server implements NetworkListener {
     
-    private Peer[] clients;
+    private ArrayList<Peer> clients;
     private Player[] players;
-    private int clientsConnected;
     private ServerSocket serverSocket;
-    private String name;
     private ServerMonitor monitor;
     
+    private Authenticator authenticator;
+    private Peer logginInPeer;//peer currently in login session
+    
     public static void main(String[] args) {
-        Server server = new Server(1337, "Willem");
+        Server server = new Server(1337);
         server.createRoom(3);
     }
     
-    public Server(int port, String name) {
+    public Server(int port) {
         monitor = new ServerMonitor(this);
+        authenticator = new Authenticator();
         try {
-            this.name = name;
             serverSocket = new ServerSocket(port);
         } catch (Exception e) {
             e.printStackTrace();
@@ -32,16 +37,15 @@ public class Server implements NetworkListener {
     }
     
     private void createRoom(int roomSize) {
-        clients = new Peer[roomSize];
+        clients = new ArrayList<Peer>();
         players = new Player[roomSize];
         
         try {
-            while (clientsConnected < clients.length) { //kan fout gaan
+            while (clients.size() < roomSize) { //kan fout gaan
                 Peer client = new Peer(serverSocket.accept(), this);
-                clients[clientsConnected++] = client;
+                clients.add(client);
+                //sendCommand(client, "je bent verbonden" , "testtstes" );
                 client.start();
-                executeCommand("CONNECTED", new String[] { client.getName() });
-                //printMessage("Client connected: "+client.getName());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -50,8 +54,8 @@ public class Server implements NetworkListener {
     }
     
     private void startGame() {
-        for (int i = 0; i < clientsConnected; i++) {
-            players[i] = new Player(Tile.values()[i + 1], clients[i].getName());
+        for (int i = 0; i < clients.size(); i++) {
+            players[i] = new Player(Tile.values()[i + 1], clients.get(i).getName());
         }
         Game game = new Game(players);
         monitor.setGame(game);
@@ -77,18 +81,22 @@ public class Server implements NetworkListener {
         client.write(cmd, parameters);
     }
     
-    public void sendCommand(String cmd, String[] parameters) {
-        for (Peer client : clients) {
-            //printMessage("sendCommand()\t" + cmd + " " + Util.concat(parameters));
-            client.write(cmd, parameters);
-        }
-    }
-    
     @Override
-    public boolean executeCommand(String cmd, String[] parameters) {
+    public boolean executeCommand(String cmd, String[] parameters, Peer peer) {
         monitor.executeCommand(cmd, parameters);
-//		printMessage("ExecuteCommand()\t"+cmd+" "+Util.concat(parameters));
+		System.out.println("ExecuteCommand()\t"+cmd+" "+Util.concat(parameters));
         switch (cmd) {
+            case("LOGIN"):
+                logginInPeer = peer;
+                peer.setName(parameters[0]);
+                sendCommand(peer, "VSIGN", new String[]{Base64.encodeBase64String("VerySecureRandomText".getBytes())});
+                break;
+            case("VSIGN"):
+                System.out.println("VSIGN");
+                boolean legit = authenticator.verifySignature(logginInPeer.getName(), Base64.encodeBase64String("VerySecureRandomText".getBytes()) , parameters[0]);
+                System.out.println("Player " + logginInPeer.getName() +" is legit:"+legit);
+                //if !legit sendMessage fuckoff no legit
+                break;
             case ("SHOW"):  //message to server, otherwise needs clientname argument
                 monitor.executeCommand(cmd, parameters);
                 break;
@@ -100,13 +108,15 @@ public class Server implements NetworkListener {
             case ("GMOVE"): //GMOVE x y
                 sendCommand(cmd, parameters);
                 monitor.executeCommand(cmd, parameters);
+                break;
         }
         
         return false;
     }
-    
+
     @Override
     public String getName() {
-        return name;
+        return "server";
     }
+    
 }

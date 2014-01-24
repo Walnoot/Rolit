@@ -17,6 +17,10 @@ import javax.swing.JFrame;
 import team144.rolit.network.Client;
 
 public class RolitView extends Panel implements Observer {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4664458764053786493L;
     private static final int WIDTH = 400;
     private static final int HEIGHT = 600;
     private static final String FRAME_TITLE = "Rolit";
@@ -37,7 +41,7 @@ public class RolitView extends Panel implements Observer {
         playPanel.setLayout(new GridLayout(Board.DIMENSION, Board.DIMENSION));
         add(playPanel, BorderLayout.CENTER);
         
-        controller = new RolitController(game, client, this);
+        controller = new RolitController(game, client);
         
         for (int i = 0; i < Board.DIMENSION * Board.DIMENSION; i++) {
             Button button = new Button();
@@ -65,12 +69,17 @@ public class RolitView extends Panel implements Observer {
         textField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                controller.showMessage(textField.getText());
+               showMessage(textField.getText());
+               textField.setText(null);
             }
         });
         
         //update initial state
         update(game, null);
+    }
+    
+    public void showMessage(String msg) {
+        textArea.append(msg + "\n");
     }
     
     @Override
@@ -103,12 +112,10 @@ public class RolitView extends Panel implements Observer {
     public class RolitController implements ActionListener {
         private Game game;
         private Client client;
-        private RolitView view;
         
-        public RolitController(Game game, Client client, RolitView rolitView) {
+        public RolitController(Game game, Client client) {
             this.game = game;
-            this.client = client;
-            this.view = rolitView;
+            this.client = client;       
         }
         
         @Override
@@ -128,11 +135,6 @@ public class RolitView extends Panel implements Observer {
         public void makeMove(int x, int y) {
             Board board = game.getBoard();
             game.makeMove(game.getCurrentPlayer(), board.getIndex(x, y));
-        }
-        
-        public void showMessage(String msg) {
-            view.textArea.append(msg + "\n");
-            view.textField.setText(null);
         }
     }
     
