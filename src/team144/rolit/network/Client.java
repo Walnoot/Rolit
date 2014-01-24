@@ -12,27 +12,27 @@ import team144.util.Util;
 public class Client implements NetworkListener {
     
     private Socket socket;
-    private Peer peer;
+    private Connection peer;
     private Authenticator authenticator;
     private String name;
     private Game game;
     private Player player;
     
     public static void main(String[] args) throws UnknownHostException, IOException {
-        Client client = new Client("127.0.0.1", Server.DEFAULT_PORT, "Michiel");
+        Client client = new Client("127.0.0.1", Server.DEFAULT_PORT, "player_willemsiers");
+        
+        client.login();
 //        client.requestNewGame(2);
     }
     
     public Client(String ip, int port, String name) throws UnknownHostException, IOException {
         this.name = name;
         socket = new Socket(ip, port);
-        peer = new Peer(socket, this);
+        peer = new Connection(socket, this);
         
         authenticator = new Authenticator();
-        authenticator.login("player_willemsiers", "Ouleid9E");
+        authenticator.login(name, "Ouleid9E");
         peer.start();
-        
-        login();
     }
     
     public void sendCommand(String cmd, String...parameters) {
@@ -40,8 +40,11 @@ public class Client implements NetworkListener {
         peer.write(cmd, parameters);
     }
     
+    /**
+     * Login to game server
+     */
     private void login() {
-        sendCommand("LOGIN", name);
+        sendCommand("LOGIN", this.name);
     }
     
     private void requestNewGame(int numPlayers) {
@@ -53,12 +56,16 @@ public class Client implements NetworkListener {
     }
     
     @Override
-    public boolean executeCommand(String cmd, String[] parameters, Peer peer) {
-        printMessage("ExecuteCommand()\t" + cmd + " " + Util.concat(parameters));
+    public boolean executeCommand(String cmd, String[] parameters, Connection peer) {
+       // printMessage("ExecuteCommand()\t" + cmd + " " + Util.concat(parameters));
         switch (cmd) {
             case ("VSIGN"): //   VSIGN TEXT
                 String signature = authenticator.signMessage(parameters[0]);
                 sendCommand("VSIGN", signature);
+                break;
+            case("HELLO"):
+                System.out.println("Logged in!");
+                sendCommand("HELLO", "D");
                 break;
             case ("START"): //  START [Bob, Alice, Lol]
                 Player[] players = new Player[parameters.length];
@@ -72,12 +79,6 @@ public class Client implements NetworkListener {
                 if(player == null) System.out.println("Controlled player not found?!");
                 
                 game = new Game(players);
-//                JFrame frame = new JFrame("CLIENT");
-//                RolitView view = new RolitView(game, this);
-//                setController(view.getController());
-//                frame.add(view);
-//                frame.setSize(500, 500);
-//                frame.setVisible(true);
                 break;
             case ("GMOVE"): //GMOVE x y
                 int x = Integer.parseInt(parameters[0]);
@@ -87,6 +88,9 @@ public class Client implements NetworkListener {
             case ("BCAST"): //BCAST text text to client text
 //                controller.showMessage(Util.concat(parameters));
                 System.out.println(Util.concat(parameters));
+                break;
+            case ("ERROR"):
+                System.out.println("ERROR: "+Util.concat(parameters));
                 break;
         }
         

@@ -5,7 +5,7 @@ public interface NetworkListener {
 	/**
 	 * @returns false if shutting down
 	 */
-	public boolean executeCommand(String cmd, String[] parameters, Peer peer);
+	public boolean executeCommand(String cmd, String[] parameters, Connection peer);
 	
 	/**
 	 * @returns name of the client or server

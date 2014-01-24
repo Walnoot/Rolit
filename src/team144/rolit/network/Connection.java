@@ -8,7 +8,7 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.Arrays;
 
-public class Peer extends Thread {
+public class Connection extends Thread {
     private static final String SEPERATOR = " ";
     
     private Socket socket;
@@ -16,7 +16,7 @@ public class Peer extends Thread {
     private BufferedWriter out;
     private BufferedReader in;
     
-    public Peer(Socket socket, NetworkListener listener) {
+    public Connection(Socket socket, NetworkListener listener) {
         this.listener = listener;
         this.socket = socket;
         setName(listener.getName());
@@ -71,9 +71,8 @@ public class Peer extends Thread {
     public void write(String cmd, String[] parameters) {
         String output = encryptMessage(cmd, parameters);
         try {
-//			System.out.println("write: " + output);
             out.write(output + System.lineSeparator());
-            out.flush(); // /!!!!!!
+            out.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
