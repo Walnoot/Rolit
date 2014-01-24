@@ -18,7 +18,7 @@ public class Client implements NetworkListener {
     private Game game;
     
     public static void main(String[] args) throws UnknownHostException, IOException {
-        Client client = new Client("130.89.183.86", 1337, "Michiel");
+        Client client = new Client("127.0.0.1", Server.DEFAULT_PORT, "Michiel");
 //        client.requestNewGame(2);
     }
     
