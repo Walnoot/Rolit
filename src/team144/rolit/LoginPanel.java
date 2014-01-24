@@ -44,17 +44,17 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
         add(table);
         
         table.addCell(new Label("Username:"));
-        usernameField = new JTextField();
+        usernameField = new JTextField("test1");
         table.addCell(usernameField).width(TEXTFIELD_WIDTH);
         table.row();
         
         table.addCell(new Label("Password:"));
-        passwordField = new JPasswordField();
+        passwordField = new JPasswordField("test1");
         table.addCell(passwordField).width(TEXTFIELD_WIDTH);
         table.row();
         
         table.addCell(new Label("Server IP:"));
-        ipField = new JTextField();
+        ipField = new JTextField("127.0.0.1");
         table.addCell(ipField).width(TEXTFIELD_WIDTH);
         table.row();
         
