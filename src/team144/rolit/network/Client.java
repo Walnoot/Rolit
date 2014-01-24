@@ -12,7 +12,7 @@ import team144.util.Util;
 public class Client implements NetworkListener {
     
     private Socket socket;
-    private Peer peer;
+    private Connection peer;
     private Authenticator authenticator;
     private String name;
     private Game game;
@@ -25,14 +25,14 @@ public class Client implements NetworkListener {
     }
     
     public void sendCommand(String cmd, String...parameters) {
-        printMessage("sendCommand()\t" + cmd + " " + Util.concat(parameters));
+      //  printMessage("sendCommand()\t" + cmd + " " + Util.concat(parameters));
         peer.write(cmd, parameters);
     }
     
     public Client(String ip, int port, String name) throws UnknownHostException, IOException {
         this.name = name;
         socket = new Socket(ip, port);
-        peer = new Peer(socket, this);
+        peer = new Connection(socket, this);
         
         authenticator = new Authenticator();
         authenticator.login(name, "Ouleid9E");
@@ -55,27 +55,23 @@ public class Client implements NetworkListener {
     }
     
     @Override
-    public boolean executeCommand(String cmd, String[] parameters, Peer peer) {
-        printMessage("ExecuteCommand()\t" + cmd + " " + Util.concat(parameters));
+    public boolean executeCommand(String cmd, String[] parameters, Connection peer) {
+       // printMessage("ExecuteCommand()\t" + cmd + " " + Util.concat(parameters));
         switch (cmd) {
             case ("VSIGN"): //   VSIGN TEXT
-                System.out.println("text "+ parameters[0]);
                 String signature = authenticator.signMessage(parameters[0]);
                 sendCommand("VSIGN", signature);
+                break;
+            case("HELLO"):
+                System.out.println("Logged in!");
+                sendCommand("HELLO", "D");
                 break;
             case ("START"): //  START [Bob, Alice, Lol]
                 Player[] players = new Player[parameters.length];
                 for (int i = 0; i < parameters.length; i++) {
                     players[i] = new Player(Tile.values()[i + 1], parameters[i]);
                 }
-                
                 game = new Game(players);
-//                JFrame frame = new JFrame("CLIENT");
-//                RolitView view = new RolitView(game, this);
-//                setController(view.getController());
-//                frame.add(view);
-//                frame.setSize(500, 500);
-//                frame.setVisible(true);
                 break;
             case ("GMOVE"): //GMOVE x y
                 int x = Integer.parseInt(parameters[0]);
@@ -85,6 +81,9 @@ public class Client implements NetworkListener {
             case ("BCAST"): //BCAST text text to client text
 //                controller.showMessage(Util.concat(parameters));
                 System.out.println(Util.concat(parameters));
+                break;
+            case ("ERROR"):
+                System.out.println("ERROR: "+Util.concat(parameters));
                 break;
         }
         

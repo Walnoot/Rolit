@@ -7,6 +7,7 @@ import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
@@ -32,7 +33,7 @@ public class Authenticator implements NetworkListener {
     private static final String pw2 = "paars";
     
     private Socket socket;
-    private Peer peer;
+    private Connection peer;
     private String name;
     
     private PrivateKey pk;
@@ -51,9 +52,8 @@ public class Authenticator implements NetworkListener {
         try {
             InetAddress address = InetAddress.getByName("ss-security.student.utwente.nl");
             socket = new Socket(address, 2013);
-            System.out.println(socket.isConnected());
             name = "authenticattooor";
-            peer = new Peer(socket, this);
+            peer = new Connection(socket, this);
             peer.start();
             
         } catch (Exception e) {
@@ -91,8 +91,8 @@ public class Authenticator implements NetworkListener {
     }
     
     @Override
-    public boolean executeCommand(String cmd, String[] parameters, Peer peer) {
-        System.out.println(cmd + " " + Util.concat(parameters));
+    public boolean executeCommand(String cmd, String[] parameters, Connection peer) {
+       // System.out.println(cmd + " " + Util.concat(parameters));
         switch (cmd) {
             case ("ERROR"):
                 printMessage(Util.concat(parameters)); //wrong user/pw, try again
@@ -188,8 +188,23 @@ public class Authenticator implements NetworkListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
         return check;
     }
+    
+    /**
+     * Generate random default encoded string
+     * @param n length of the generated string in bytes
+     * @returns default encoded string
+     */
+     public synchronized static final String generateRandomString(int n){
+         char[] chars = "qwertyuiopasdfghjklzxcvbnm".toCharArray();
+         SecureRandom lol = new SecureRandom();
+         StringBuilder sb = new StringBuilder();
+         
+         for(int i = 0; i<n; i++){
+             sb.append(chars[lol.nextInt(chars.length)]);
+         }
+         return sb.toString();
+     }
     
 }

@@ -7,18 +7,26 @@ import java.util.ArrayList;
 import team144.rolit.Game;
 import team144.rolit.Player;
 import team144.rolit.Tile;
-import team144.util.Util;
 
 public class Server implements NetworkListener {
     public static final int DEFAULT_PORT = 2014;
     
-    private ArrayList<Peer> clients;
-    private Player[] players;
+    /**
+     * connections - not logged in yet
+     */
+    private ArrayList<Connection>  connections = new ArrayList<Connection>();
+    /**
+     * authorizedConnections - logged in
+     */
+   private ArrayList<Connection>  authorizedConnections = new ArrayList<Connection>();
+    
     private ServerSocket serverSocket;
     private ServerMonitor monitor;
     
     private Authenticator authenticator;
-    private Peer logginInPeer;//peer currently in login session
+    private Connection logginInPeer;//peer currently in login session
+    
+    private String randomText;
     
     public static void main(String[] args) {
         Server server = new Server(DEFAULT_PORT);
@@ -36,15 +44,11 @@ public class Server implements NetworkListener {
     }
     
     private void createRoom(int roomSize) {
-        clients = new ArrayList<Peer>();
-        players = new Player[roomSize];
-        
         try {
-            while (clients.size() < roomSize) { //kan fout gaan
-                Peer client = new Peer(serverSocket.accept(), this);
-                clients.add(client);
-                //sendCommand(client, "je bent verbonden" , "testtstes" );
-                client.start();
+            while (connections.size() < roomSize) { //kan fout gaan
+                Connection conn = new Connection(serverSocket.accept(), this);
+                connections.add(conn);
+                conn.start();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -53,8 +57,10 @@ public class Server implements NetworkListener {
     }
     
     private void startGame() {
-        for (int i = 0; i < clients.size(); i++) {
-            players[i] = new Player(Tile.values()[i + 1], clients.get(i).getName());
+        int roomSize  = authorizedConnections.size();
+        Player[] players = new Player[roomSize];
+        for (int i = 0; i < roomSize; i++) {
+            players[i] = new Player(Tile.values()[i + 1], authorizedConnections.get(i).getName());
         }
         Game game = new Game(players);
         monitor.setGame(game);
@@ -68,35 +74,37 @@ public class Server implements NetworkListener {
         sendCommandToAll("START", playerNames);
     }
     
-//	private void printMessage(String m) {
-//		monitor.print(name + ":\t" + m);
-//	}
-    
-    public void sendCommand(Peer client, String cmd, String...parameters) {
-        //printMessage("sendCommand()\t" + cmd + " " + Util.concat(parameters));
+    public void sendCommand(Connection client, String cmd, String...parameters) {
         client.write(cmd, parameters);
     }
     
     public void sendCommandToAll(String cmd, String...parameters){
-        for (int i = 0; i < clients.size(); i++) {
-            sendCommand(clients.get(i), cmd, parameters);
+        for (int i = 0; i < connections.size(); i++) {
+            sendCommand(connections.get(i), cmd, parameters);
         }
     }
     
     @Override
-    public boolean executeCommand(String cmd, String[] parameters, Peer peer) {
+    public boolean executeCommand(String cmd, String[] parameters, Connection peer) {
         monitor.executeCommand(cmd, parameters);
-		System.out.println("ExecuteCommand()\t"+cmd+" "+Util.concat(parameters));
+//		System.out.println("ExecuteCommand()\t"+cmd+" "+Util.concat(parameters));
         switch (cmd) {
             case("LOGIN"):
+                randomText = Authenticator.generateRandomString(10);
                 logginInPeer = peer;
                 peer.setName(parameters[0]);
-                sendCommand(peer, "VSIGN", "VerySecureRandomText");
+                sendCommand(peer, "VSIGN", randomText);
                 break;
             case("VSIGN"):
-                System.out.println("VSIGN");
-                boolean legit = authenticator.verifySignature(logginInPeer.getName(), "VerySecureRandomText" , parameters[0]);
-                System.out.println("Player " + logginInPeer.getName() +" is legit:"+legit);
+                boolean legit = authenticator.verifySignature(logginInPeer.getName(), randomText , parameters[0]);
+                if(legit){
+                    authorizedConnections.add(peer);
+                    sendCommand(peer, "HELLO", "D"); //default
+                    System.out.println("Player " + logginInPeer.getName() +" logged in.");
+                }else{
+                    sendCommand(peer, "ERROR", "Text signed incorrectly");
+                    System.out.println("Player " + logginInPeer.getName() +" failed to log in.");
+                }
                 //if !legit sendMessage fuckoff no legit
                 break;
             case ("SHOW"):  //message to server, otherwise needs clientname argument
