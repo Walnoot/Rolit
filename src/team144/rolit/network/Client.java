@@ -47,8 +47,8 @@ public class Client implements NetworkListener {
         sendCommand("LOGIN", this.name);
     }
     
-    private void requestNewGame(int numPlayers) {
-        sendCommand("NGAME", "S" + Integer.toString(numPlayers));
+    private void requestNewGame(String...flags) {
+        sendCommand("NGAME", flags);
     }
     
     private void printMessage(String m) {

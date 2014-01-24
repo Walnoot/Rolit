@@ -30,9 +30,15 @@ public class RolitView extends Panel implements Observer {
     private TextArea textArea;
     private TextField textField;
     private Label infoLabel;
-    private RolitController controller;
+    
+    /**
+     * The Player of this process.
+     */
+    private final Player player;
     
     public RolitView(Game game, Client client) {
+        player = client.getPlayer();
+        
         game.addObserver(this);
         
         setLayout(new BorderLayout());
@@ -41,7 +47,7 @@ public class RolitView extends Panel implements Observer {
         playPanel.setLayout(new GridLayout(Board.DIMENSION, Board.DIMENSION));
         add(playPanel, BorderLayout.CENTER);
         
-        controller = new RolitController(game, client);
+        RolitController controller = new RolitController(game, client);
         
         for (int i = 0; i < Board.DIMENSION * Board.DIMENSION; i++) {
             Button button = new Button();
@@ -96,17 +102,16 @@ public class RolitView extends Panel implements Observer {
             if (game.isGameOver()) {
                 infoLabel.setText("Game over");
             } else {
-                infoLabel.setText(String.format("%s's turn (%s)", game.getCurrentPlayer().getName(), game
-                        .getCurrentPlayer().getTile().name()));
+                String currentPlayer =
+                    game.getCurrentPlayer() == player ? "Your" : game.getCurrentPlayer().getName() + "'s";
+                
+                infoLabel.setText(String
+                        .format("%s turn (%s)", currentPlayer, game.getCurrentPlayer().getTile().name()));
             }
             
         } else {
             throw new IllegalStateException("Can only observe a Game object");
         }
-    }
-    
-    public RolitController getController() {
-        return controller;
     }
     
     public class RolitController implements ActionListener {

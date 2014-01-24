@@ -45,15 +45,6 @@ public class Game extends Observable {
             int x = board.getX(index);
             int y = board.getY(index);
             
-//            testDirection(x, y, 0, 1, player.getTile());
-//            testDirection(x, y, 1, 1, player.getTile());
-//            testDirection(x, y, 1, 0, player.getTile());
-//            testDirection(x, y, 1, -1, player.getTile());
-//            testDirection(x, y, 0, -1, player.getTile());
-//            testDirection(x, y, -1, -1, player.getTile());
-//            testDirection(x, y, -1, 0, player.getTile());
-//            testDirection(x, y, -1, 1, player.getTile());
-            
             for (Direction dir : Direction.values()) {
                 testDirection(x, y, dir, player.getTile());
             }

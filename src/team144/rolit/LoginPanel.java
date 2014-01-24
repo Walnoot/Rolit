@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 
 import javax.swing.BoxLayout;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -20,11 +21,13 @@ import team144.util.Util;
 import com.esotericsoftware.tablelayout.swing.Table;
 
 public class LoginPanel extends Panel implements ActionListener {
+    private static final String[] GAME_TYPES = {"Two Players", "Three Players", "Four Players"};
     private static final float TEXTFIELD_WIDTH = 200f;
     
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JTextField ipField;
+    private JComboBox<GameType> gameTypeBox;
     
     private Label infoLabel;
     
@@ -53,6 +56,11 @@ public class LoginPanel extends Panel implements ActionListener {
         table.addCell(new Label("Server IP:"));
         ipField = new JTextField();
         table.addCell(ipField).width(TEXTFIELD_WIDTH);
+        table.row();
+        
+        table.addCell(new Label("Game Type:"));
+        gameTypeBox = new JComboBox<GameType>(GameType.values());
+        table.addCell(gameTypeBox).width(TEXTFIELD_WIDTH);
         table.row();
         
         Button startButton = new Button("Start Game");
@@ -113,6 +121,22 @@ public class LoginPanel extends Panel implements ActionListener {
             setInfoText("Something went wrong");
         } catch (Exception e) {
             setInfoText("Something went wrong");
+        }
+    }
+    
+    private static enum GameType{
+        TWO_PLAYERS("Two Players", "H"), THREE_PLAYERS("Three Players", "I"), FOUR_PLAYERS("Four Players", "J");
+        
+        private String uiName, protocolName;
+
+        private GameType(String uiName, String protocolName) {
+            this.uiName = uiName;
+            this.protocolName = protocolName;
+        }
+        
+        @Override
+        public String toString() {
+            return uiName;
         }
     }
 }
