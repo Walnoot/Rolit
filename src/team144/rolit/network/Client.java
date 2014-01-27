@@ -76,12 +76,14 @@ public class Client implements NetworkListener {
                     if (player.getName().equals(name)) {
                         this.player = player;
                     }
-                    ;
+                    
                 }
                 
                 if (player == null) System.out.println("Controlled player not found?!");
                 
                 game = new Game(players);
+                
+                clientListener.gameReady();
                 break;
             case ("GMOVE"): //GMOVE x y
                 int x = Integer.parseInt(parameters[0]);

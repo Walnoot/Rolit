@@ -1,6 +1,7 @@
 package team144.rolit.network;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import team144.util.Util;
 
@@ -15,9 +16,10 @@ public class Room {
      */
     public String type;
     public int roomSize;
-    public ArrayList<Connection> players;
+    public ArrayList<Connection> players = new ArrayList<Connection>();
     
-    public static ArrayList<Room> rooms;
+    private static ArrayList<Room> rooms = new ArrayList<Room>();
+    private static HashMap<Connection, Room> roomMap = new HashMap<Connection, Room>();
     
     private Room(Connection player, String[] params) {
         type = parseType(params);
@@ -48,18 +50,30 @@ public class Room {
      * @param params - flags (gametype/player)
      */
     public static void assignRoom(Connection player, String[] params) {
-        if (rooms == null) rooms = new ArrayList<Room>();
-        
         String wantedType = parseType(params);
         
         for (Room r : rooms) {
             if (r.type.equals(wantedType)) {
                 r.addPlayer(player);
+                roomMap.put(player, r);
+                
+                return;
             }
         }
         
         //no rooms exists yet so make one
-        rooms.add(new Room(player,params));
+        Room room = new Room(player,params);
+        rooms.add(room);
+        roomMap.put(player, room);
+    }
+    
+    /**
+     * Gets the room of the specified connection, or null if it doesnt exist.
+     * @param c
+     * @return
+     */
+    public static Room getRoom(Connection c){
+        return roomMap.get(c);
     }
     
     private void addPlayer(Connection player) {
@@ -71,8 +85,15 @@ public class Room {
             }
             System.out.println("Room starting: "+Util.concat(names));
             
-            player.write("START", names);
+            for (Connection c : players) {
+                c.write("START", names);
+            }
         }
     }
     
+    public void sendCommand(String cmd, String...parameters){
+        for(Connection c : players){
+            c.write(cmd, parameters);
+        }
+    }
 }

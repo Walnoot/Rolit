@@ -63,7 +63,6 @@ public class Server implements NetworkListener {
             players[i] = new Player(Tile.values()[i + 1], authorizedConnections.get(i).getName());
         }
         Game game = new Game(players);
-        monitor.setGame(game);
         
         String[] playerNames = new String[players.length];
         
@@ -84,9 +83,13 @@ public class Server implements NetworkListener {
         }
     }
     
+    public void sendCommandToRoom(Connection c, String cmd, String...parameters){
+        Room.getRoom(c).sendCommand(cmd, parameters);
+    }
+    
     @Override
     public boolean executeCommand(String cmd, String[] parameters, Connection peer) {
-        monitor.executeCommand(cmd, parameters);
+        monitor.showCommand(cmd, parameters);
 //		System.out.println("ExecuteCommand()\t"+cmd+" "+Util.concat(parameters));
         switch (cmd) {
             case("LOGIN"):
@@ -110,17 +113,13 @@ public class Server implements NetworkListener {
             case("NGAME"):
                 Room.assignRoom(peer, parameters);
                 break;
-            case ("SHOW"):  //message to server, otherwise needs clientname argument
-                monitor.executeCommand(cmd, parameters);
-                break;
 //            case ("NGAME"):
 //                if(parameters[0].startsWith("C")){
 //                    createRoom(parameters[0].charAt(1));
 //                }
 //                break;
             case ("GMOVE"): //GMOVE x y
-                sendCommandToAll(cmd, parameters);
-                monitor.executeCommand(cmd, parameters);
+                sendCommandToRoom(peer, cmd, parameters);
                 break;
         }
         
