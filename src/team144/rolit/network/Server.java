@@ -83,7 +83,7 @@ public class Server implements NetworkListener {
             sendCommand(connections.get(i), cmd, parameters);
         }
     }
-    
+
     @Override
     public boolean executeCommand(String cmd, String[] parameters, Connection peer) {
         monitor.executeCommand(cmd, parameters);

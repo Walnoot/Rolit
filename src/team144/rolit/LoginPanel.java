@@ -132,6 +132,9 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
         }
     }
 
+    /**
+     * Called if the server has logged in the user successfully
+     */
     @Override
     public void onHello(String flag) {
         setInfoText("Login successful! Server supports the "+flag);
