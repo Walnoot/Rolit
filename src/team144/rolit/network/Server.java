@@ -14,11 +14,11 @@ public class Server implements NetworkListener {
     /**
      * connections - not logged in yet
      */
-    private ArrayList<Connection>  connections = new ArrayList<Connection>();
+    private ArrayList<Connection> connections = new ArrayList<Connection>();
     /**
      * authorizedConnections - logged in
      */
-   private ArrayList<Connection>  authorizedConnections = new ArrayList<Connection>();
+    private ArrayList<Connection> authorizedConnections = new ArrayList<Connection>();
     
     private ServerSocket serverSocket;
     private ServerMonitor monitor;
@@ -57,13 +57,12 @@ public class Server implements NetworkListener {
     }
     
     private void startGame() {
-        int roomSize  = authorizedConnections.size();
+        int roomSize = authorizedConnections.size();
         Player[] players = new Player[roomSize];
         for (int i = 0; i < roomSize; i++) {
             players[i] = new Player(Tile.values()[i + 1], authorizedConnections.get(i).getName());
         }
         Game game = new Game(players);
-        monitor.setGame(game);
         
         String[] playerNames = new String[players.length];
         
@@ -74,59 +73,59 @@ public class Server implements NetworkListener {
         sendCommandToAll("START", playerNames);
     }
     
-    public void sendCommand(Connection client, String cmd, String...parameters) {
+    public void sendCommand(Connection client, String cmd, String... parameters) {
         client.write(cmd, parameters);
     }
     
-    public void sendCommandToAll(String cmd, String...parameters){
+    public void sendCommandToAll(String cmd, String... parameters) {
         for (int i = 0; i < connections.size(); i++) {
             sendCommand(connections.get(i), cmd, parameters);
         }
     }
-
+    
+    public void sendCommandToRoom(Connection c, String cmd, String... parameters) {
+        Room.getRoom(c).sendCommand(cmd, parameters);
+    }
+    
     @Override
     public boolean executeCommand(String cmd, String[] parameters, Connection peer) {
-        monitor.executeCommand(cmd, parameters);
+        monitor.showCommand(cmd, parameters);
 //		System.out.println("ExecuteCommand()\t"+cmd+" "+Util.concat(parameters));
         switch (cmd) {
-            case("LOGIN"):
+            case ("LOGIN"):
                 randomText = Authenticator.generateRandomString(10);
                 logginInPeer = peer;
                 peer.setName(parameters[0]);
                 sendCommand(peer, "VSIGN", randomText);
                 break;
-            case("VSIGN"):
-                boolean legit = authenticator.verifySignature("player_"+logginInPeer.getName(), randomText , parameters[0]);
-                if(legit){
+            case ("VSIGN"):
+                boolean legit =
+                    authenticator.verifySignature("player_" + logginInPeer.getName(), randomText, parameters[0]);
+                if (legit) {
                     authorizedConnections.add(peer);
                     sendCommand(peer, "HELLO", "D"); //default
-                    System.out.println("Player " + logginInPeer.getName() +" logged in.");
-                }else{
+                    System.out.println("Player " + logginInPeer.getName() + " logged in.");
+                } else {
                     sendCommand(peer, "ERROR", "Text signed incorrectly");
-                    System.out.println("Player " + logginInPeer.getName() +" failed to log in.");
+                    System.out.println("Player " + logginInPeer.getName() + " failed to log in.");
                 }
                 //if !legit sendMessage fuckoff no legit
                 break;
-            case("NGAME"):
-                Room.assignRoom(peer, parameters);
+            case ("NGAME"):
+                Room.assignRoom(peer, cmd, parameters);
                 break;
-            case ("SHOW"):  //message to server, otherwise needs clientname argument
-                monitor.executeCommand(cmd, parameters);
+            case("INVIT"):
+                Room.assignRoom(peer, cmd, parameters);
                 break;
-//            case ("NGAME"):
-//                if(parameters[0].startsWith("C")){
-//                    createRoom(parameters[0].charAt(1));
-//                }
-//                break;
+            
             case ("GMOVE"): //GMOVE x y
-                sendCommandToAll(cmd, parameters);
-                monitor.executeCommand(cmd, parameters);
+                sendCommandToRoom(peer, cmd, parameters);
                 break;
         }
         
         return false;
     }
-
+    
     @Override
     public String getName() {
         return "server";
