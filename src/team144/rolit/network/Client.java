@@ -104,6 +104,15 @@ public class Client implements NetworkListener {
                 }
                 System.out.println("ERROR: " + Util.concat(parameters));
                 break;
+            case ("LJOIN"):
+                clientListener.lobbyJoin(parameters[0]);
+                break;
+            case ("LEAVE"):
+                clientListener.leave(parameters[0]);
+                break;
+            case ("PLIST"):
+                clientListener.playerList(parameters);
+                break;
         }
         
         return false;
@@ -133,6 +142,12 @@ public class Client implements NetworkListener {
     public static interface ClientListener {
         public void onHello(String flag);
         
+        public void playerList(String[] players);
+
+        public void leave(String player);
+
+        public void lobbyJoin(String player);
+
         public void gameReady();
 
         //public void error(String message);

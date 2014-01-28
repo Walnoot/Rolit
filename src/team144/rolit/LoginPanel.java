@@ -121,9 +121,22 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
     @Override
     public void onHello(String flag) {
         setInfoText("Login successful! Server supports the "+flag);
+        
         frame.setContentPane(new LobbyPanel(frame, client));
         frame.validate();
 //        client.requestNewGame("H");
+    }
+    
+    @Override
+    public void lobbyJoin(String player) {
+    }
+    
+    @Override
+    public void leave(String player) {
+    }
+    
+    @Override
+    public void playerList(String[] players) {
     }
 
     public void gameReady() {

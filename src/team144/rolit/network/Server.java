@@ -111,6 +111,8 @@ public class Server implements NetworkListener {
                     if (!hasConnectionWithName(peer.getName())) {
                         authorizedConnections.add(peer);
                         sendCommand(peer, "HELLO", "D"); //default
+                        sendCommandToAll("LJOIN", peer.getName());
+                        
                         System.out.println("Player " + peer.getName() + " logged in.");
                     } else {
                         sendCommand(peer, "ERROR", "An player with that name is already logged in");
@@ -131,7 +133,20 @@ public class Server implements NetworkListener {
                 break;
             case("CHATM"):
                 sendCommandToRoom(peer,cmd, peer.getName()+parameters );
-            
+                break;
+            case("PLIST"):
+                ArrayList<String> playerList = new ArrayList<String>();
+                
+                for(Connection c : authorizedConnections){
+                    if(!Room.isInRoom(c)) playerList.add(c.getName());
+                }
+                
+                sendCommand(peer, "PLIST", playerList.toArray(new String[0]));
+                
+                break;
+            default:
+                System.out.println("Command not implemented: " + cmd);
+                break;
         }
         
         return false;
