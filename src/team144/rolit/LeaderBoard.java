@@ -90,7 +90,7 @@ public class LeaderBoard{
 	
 	public static void main(String[] args){
 		LeaderBoard leaderBoard = new LeaderBoard();
-		Player player = new Player(null, null);
+		HumanPlayer player = new HumanPlayer(null, null);
 		
 		Calendar cal = Calendar.getInstance();
 		
