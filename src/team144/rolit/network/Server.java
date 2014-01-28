@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import team144.rolit.Player;
 import team144.rolit.Tile;
 
@@ -28,23 +30,33 @@ public class Server implements NetworkListener {
     private String randomText;
     
     public static void main(String[] args) {
-        Server server = new Server(DEFAULT_PORT);
-        server.createRoom(3);
-    }
-    
-    public Server(int port) {
-        monitor = new ServerMonitor(this);
-        authenticator = new Authenticator();
+        //TODO: uncomment
+//        int port = -1;
+        int port = DEFAULT_PORT;//for debug purposes
+        
+        while (port == -1) {
+            String input = JOptionPane.showInputDialog("Type port");
+            
+            try {
+                port = Integer.parseInt(input);
+            } catch (Exception e) {
+            }
+        }
+        
         try {
-            serverSocket = new ServerSocket(port);
-        } catch (Exception e) {
+            new Server(port);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
     
-    private void createRoom(int roomSize) {
+    public Server(int port) throws IOException {
+        monitor = new ServerMonitor(this);
+        authenticator = new Authenticator();
+        serverSocket = new ServerSocket(port);
+        
         try {
-            while (connections.size() < roomSize) {
+            while (true) {
                 Connection conn = new Connection(serverSocket.accept(), this);
                 connections.add(conn);
                 conn.start();
@@ -97,27 +109,38 @@ public class Server implements NetworkListener {
                 sendCommand(peer, "VSIGN", randomText);
                 break;
             case ("VSIGN"):
-                boolean legit =
-                    authenticator.verifySignature("player_" + logginInPeer.getName(), randomText, parameters[0]);
+                boolean legit = authenticator.verifySignature("player_" + peer.getName(), randomText, parameters[0]);
                 if (legit) {
-                    authorizedConnections.add(peer);
-                    sendCommand(peer, "HELLO", "D"); //default
-                    System.out.println("Player " + logginInPeer.getName() + " logged in.");
+                    if (!hasConnectionWithName(peer.getName())) {
+                        authorizedConnections.add(peer);
+                        sendCommand(peer, "HELLO", "D"); //default
+                        System.out.println("Player " + peer.getName() + " logged in.");
+                    } else {
+                        sendCommand(peer, "ERROR", "An player with that name is already logged in");
+                    }
                 } else {
                     sendCommand(peer, "ERROR", "Text signed incorrectly");
-                    System.out.println("Player " + logginInPeer.getName() + " failed to log in.");
+                    System.out.println("Player " + peer.getName() + " failed to log in.");
                 }
                 //if !legit sendMessage fuckoff no legit
                 break;
             case ("NGAME"):
                 Room.assignRoom(peer, cmd, parameters);
                 break;
-            case("INVIT"):
+            case ("INVIT"):
                 Room.assignRoom(peer, cmd, parameters);
                 break;
             case ("GMOVE"): //GMOVE x y
                 sendCommandToRoom(peer, cmd, parameters);
                 break;
+        }
+        
+        return false;
+    }
+    
+    private boolean hasConnectionWithName(String name) {
+        for (Connection c : authorizedConnections) {
+            if (c.getName().equals(name)) return true;
         }
         
         return false;

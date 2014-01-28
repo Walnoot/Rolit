@@ -11,6 +11,10 @@ public class Game extends Observable {
     private final Player[] players;
     private int currentPlayerIndex = 0;
     private boolean gameOver = false;
+    /**
+     * 1D array representing the legal moves on the board currently.
+     */
+    private boolean[] legalMoves = new boolean[Board.DIMENSION * Board.DIMENSION];
     
     /**
      * @param players
@@ -23,13 +27,15 @@ public class Game extends Observable {
     public Game(Player... players) {
         if (players.length < MIN_PLAYERS || players.length > MAX_PLAYERS)
             throw new IllegalArgumentException("Too few or much players: " + players.length);
-
+        
         board.setTile(Board.DIMENSION / 2 - 1, Board.DIMENSION / 2 - 1, Tile.RED);
         board.setTile(Board.DIMENSION / 2, Board.DIMENSION / 2 - 1, Tile.YELLOW);
         board.setTile(Board.DIMENSION / 2 - 1, Board.DIMENSION / 2, Tile.BLUE);
         board.setTile(Board.DIMENSION / 2, Board.DIMENSION / 2, Tile.GREEN);
         
         this.players = players;
+        
+        calculateLegalMoves();
     }
     
     public Board getBoard() {
@@ -54,14 +60,66 @@ public class Game extends Observable {
             currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
             
             boolean boardFull = true;
-            for(int i = 0; i < Board.DIMENSION; i++){
-                if(board.getTile(i) == Tile.EMPTY) boardFull = false;
+            for (int i = 0; i < Board.DIMENSION * Board.DIMENSION; i++) {
+                if (board.getTile(i) == Tile.EMPTY) boardFull = false;
             }
             
-            if(boardFull) gameOver  = true;
+            if (boardFull) gameOver = true;
+            
+            calculateLegalMoves();
             
             setChanged();
             notifyObservers();
+        }
+    }
+    
+    private void calculateLegalMoves() {
+        for (int i = 0; i < legalMoves.length; i++) {
+            int x = board.getX(i);
+            int y = board.getY(i);
+            
+            if (board.getTile(x, y) != Tile.EMPTY) {
+                legalMoves[i] = false;
+            } else {
+                boolean hasOtherColorNeighbour = false;//not that there's anything wrong with that of course
+                boolean canMove = false;//whether this moves takes over any tiles
+                for (Direction dir : Direction.values()) {
+                    Tile tile = board.getTile(x + dir.xOffset, y + dir.yOffset);
+                    if (tile != null && tile != Tile.EMPTY && tile != getCurrentPlayer().getTile()) {
+                        hasOtherColorNeighbour = true;
+                        
+                        if (getSteps(x, y, dir, getCurrentPlayer().getTile()) > 1) canMove = true;
+                    }
+                }
+                
+                legalMoves[i] = hasOtherColorNeighbour && canMove;
+            }
+        }
+        
+        //check if the player can move at all
+        boolean hasMove = false;
+        for (int i = 0; i < legalMoves.length; i++) {
+            if (legalMoves[i]) {
+                hasMove = true;
+                break;
+            }
+        }
+        
+        if (!hasMove) {//no move possible, so any neighbouring tile is valid
+            for (int i = 0; i < legalMoves.length; i++) {
+                int x = board.getX(i);
+                int y = board.getY(i);
+                
+                boolean hasNeighbour = false;//not that there's anything wrong with that of course
+                for (Direction dir : Direction.values()) {
+                    Tile tile = board.getTile(x + dir.xOffset, y + dir.yOffset);
+                    if (tile != null && tile != Tile.EMPTY) {
+                        hasNeighbour = true;
+                    }
+                }
+                
+                legalMoves[i] = hasNeighbour;
+            }
         }
     }
     
@@ -94,7 +152,7 @@ public class Game extends Observable {
                 break;
             } else {
                 Tile testTile = board.getTile(testX, testY);
-                if(testTile == Tile.EMPTY) return -1;
+                if (testTile == Tile.EMPTY) return -1;
                 if (testTile == tile) {
                     steps = i;
                     break;
@@ -112,32 +170,34 @@ public class Game extends Observable {
      * @return - True iff the move is valid.
      */
     public boolean isValidMove(int index) {
-        if (board.getTile(index) != Tile.EMPTY) return false;
-        
-        int x = board.getX(index);
-        int y = board.getY(index);
-        
-        boolean hasOtherColorNeighbour = false;
-        boolean canMove = false;//whether this moves takes over any tiles
-        for(Direction dir: Direction.values()){
-            Tile tile = board.getTile(x + dir.xOffset, y + dir.yOffset);
-            if(tile != null && tile != Tile.EMPTY && tile != getCurrentPlayer().getTile()){
-                hasOtherColorNeighbour = true;
-                
-                if(getSteps(x, y, dir, getCurrentPlayer().getTile()) > 1) canMove = true;
-            }
-        }
-        
-        if(!hasOtherColorNeighbour) return false;
-        
-        boolean hasTile = false;//if the current player owns any tiles
-        for(int i = 0; i < Board.DIMENSION * Board.DIMENSION && !hasTile; i++){
-            if(board.getTile(i) == getCurrentPlayer().getTile()) hasTile = true;
-        }
-        
-        if(!hasTile) return true;
-        
-        return canMove;
+//        if (board.getTile(index) != Tile.EMPTY) return false;
+//        
+//        int x = board.getX(index);
+//        int y = board.getY(index);
+//        
+//        boolean hasOtherColorNeighbour = false;
+//        boolean canMove = false;//whether this moves takes over any tiles
+//        for (Direction dir : Direction.values()) {
+//            Tile tile = board.getTile(x + dir.xOffset, y + dir.yOffset);
+//            if (tile != null && tile != Tile.EMPTY && tile != getCurrentPlayer().getTile()) {
+//                hasOtherColorNeighbour = true;
+//                
+//                if (getSteps(x, y, dir, getCurrentPlayer().getTile()) > 1) canMove = true;
+//            }
+//        }
+//        
+//        if (!hasOtherColorNeighbour) return false;
+//        
+//        boolean hasTile = false;//if the current player owns any tiles
+//        for (int i = 0; i < Board.DIMENSION * Board.DIMENSION && !hasTile; i++) {
+//            if (board.getTile(i) == getCurrentPlayer().getTile()) hasTile = true;
+//        }
+//        
+//        if (!hasTile) return true;
+//        
+//        return canMove;
+        if (index < 0 || index >= Board.DIMENSION * Board.DIMENSION) return false;
+        else return legalMoves[index];
     }
     
     public boolean isGameOver() {

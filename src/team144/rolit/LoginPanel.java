@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 
 import javax.swing.BoxLayout;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -27,7 +26,7 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JTextField ipField;
-    private JComboBox<GameType> gameTypeBox;
+//    private JComboBox<GameType> gameTypeBox;
     
     private Label infoLabel;
     
@@ -58,10 +57,10 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
         table.addCell(ipField).width(TEXTFIELD_WIDTH);
         table.row();
         
-        table.addCell(new Label("Game Type:"));
-        gameTypeBox = new JComboBox<GameType>(GameType.values());
-        table.addCell(gameTypeBox).width(TEXTFIELD_WIDTH);
-        table.row();
+//        table.addCell(new Label("Game Type:"));
+//        gameTypeBox = new JComboBox<GameType>(GameType.values());
+//        table.addCell(gameTypeBox).width(TEXTFIELD_WIDTH);
+//        table.row();
         
         Button startButton = new Button("Start Game");
         startButton.addActionListener(this);
@@ -115,22 +114,6 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
             setInfoText("Something went wrong");
         }
     }
-    
-    private static enum GameType{
-        TWO_PLAYERS("Two Players", "H"), THREE_PLAYERS("Three Players", "I"), FOUR_PLAYERS("Four Players", "J"), CHALLENGE_PLAYER("Challenge Player", "C");
-        
-        private String uiName, protocolName;
-
-        private GameType(String uiName, String protocolName) {
-            this.uiName = uiName;
-            this.protocolName = protocolName;
-        }
-        
-        @Override
-        public String toString() {
-            return uiName;
-        }
-    }
 
     /**
      * Called if the server has logged in the user successfully
@@ -138,12 +121,14 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
     @Override
     public void onHello(String flag) {
         setInfoText("Login successful! Server supports the "+flag);
-        client.requestNewGame(((GameType)gameTypeBox.getSelectedItem()).protocolName);
+        frame.setContentPane(new LobbyPanel(frame, client));
+        frame.validate();
+//        client.requestNewGame("H");
     }
 
     public void gameReady() {
-         frame.setContentPane(new RolitView(client.getGame(), client));
-         frame.validate();
+//         frame.setContentPane(new RolitView(client.getGame(), client));
+//         frame.validate();
     }
     
     @Override
