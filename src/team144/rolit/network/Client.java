@@ -98,6 +98,9 @@ public class Client implements NetworkListener {
 //                controller.showMessage(Util.concat(parameters));
                 System.out.println(Util.concat(parameters));
                 break;
+            case("CHATM"):
+                clientListener.chatMessage(parameters);
+                break;
             case ("ERROR"):
                 if (clientListener != null) {
                     clientListener.loginError();
@@ -149,6 +152,9 @@ public class Client implements NetworkListener {
         public void lobbyJoin(String player);
 
         public void gameReady();
+        
+        //from player - message
+        public void chatMessage(String[] message);
 
         //public void error(String message);
         public void loginError();

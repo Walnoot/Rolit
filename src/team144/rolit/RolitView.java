@@ -17,15 +17,17 @@ import java.util.Observer;
 import javax.swing.JFrame;
 
 import team144.rolit.network.Client;
+import team144.rolit.network.Client.ClientListener;
+import team144.util.Util;
 
-public class RolitView extends Panel implements Observer {
+public class RolitView extends Panel implements Observer, ClientListener{
     /**
      * 
      */
     private static final long serialVersionUID = 4223398494630548955L;
     
-    private static final int WIDTH = 600;
-    private static final int HEIGHT = 800;
+    private static final int WIDTH = 500;
+    private static final int HEIGHT = 500;
     private static final String FRAME_TITLE = "Rolit";
     
     private Button[] buttonArray = new Button[Board.DIMENSION * Board.DIMENSION];
@@ -91,6 +93,7 @@ public class RolitView extends Panel implements Observer {
         
         //update initial state
         update(game, null);
+        client.setClientListener(this);
     }
     
     public void showMessage(String msg) {
@@ -167,6 +170,35 @@ public class RolitView extends Panel implements Observer {
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+    }
+
+    @Override
+    public void onHello(String flag) {
+    }
+
+    @Override
+    public void playerList(String[] players) {
+    }
+
+    @Override
+    public void leave(String player) {
+    }
+
+    @Override
+    public void lobbyJoin(String player) {
+    }
+
+    @Override
+    public void gameReady() {
+    }
+
+    @Override
+    public void chatMessage(String[] message) {
+       textArea.append(message[0]+" says:\t"+Util.concat(Arrays.copyOfRange(message, 1, message.length))+"\n");
+    }
+
+    @Override
+    public void loginError() {
     }
     
 }

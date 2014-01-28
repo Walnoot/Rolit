@@ -21,6 +21,7 @@ import javax.swing.JSplitPane;
 
 import team144.rolit.network.Client;
 import team144.rolit.network.Client.ClientListener;
+import team144.util.Util;
 
 import com.esotericsoftware.tablelayout.swing.Table;
 
@@ -36,6 +37,7 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
     private JComboBox<GameType> gameTypeBox;
     private JList<String> playerList;
     private Vector<String> players = new Vector<String>();
+    private final TextArea chatArea;
     
     public LobbyPanel(JFrame frame,final Client client) {
         this.frame = frame;
@@ -49,7 +51,7 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
         chat.setLayout(new BorderLayout());
         
         final TextField textField = new TextField();
-        final TextArea chatArea = new TextArea();
+        chatArea = new TextArea();
         chatArea.setEditable(false);
         chatArea.setFocusable(false);
         chat.add(chatArea, BorderLayout.CENTER);
@@ -65,7 +67,7 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
                 }else{
                 client.sendCommand("CHATM", text);
                 }
-                chatArea.append(text);
+                chatArea.append(text+"\n");
                 textField.setText(null);
             }
         });        
@@ -112,8 +114,10 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
 //        topSplitPane.setDividerLocation(150);
         add(topSplitPane);
         
+        client.setClientListener(this);
         //query player list
         client.sendCommand("PLIST");
+        
     }
     
     private static enum GameType {
@@ -174,5 +178,10 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
     
     @Override
     public void loginError() {
+    }
+
+    @Override
+    public void chatMessage(String[] message) {
+       chatArea.append(message[0]+" says:\t"+Util.concat(Arrays.copyOfRange(message, 1, message.length))+"\n");
     }
 }

@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 
 import team144.rolit.Player;
 import team144.rolit.Tile;
+import team144.util.Util;
 
 public class Server implements NetworkListener {
     public static final int DEFAULT_PORT = 2014;
@@ -131,8 +132,12 @@ public class Server implements NetworkListener {
             case ("GMOVE"): //GMOVE x y
                 sendCommandToRoom(peer, cmd, parameters);
                 break;
-            case("CHATM"):
-                sendCommandToRoom(peer,cmd, peer.getName()+parameters );
+            case("CHATM"): //CHATM from message
+                String[] params = (peer.getName()+" "+Util.concat(parameters)).split(" ");
+                if(Room.isInRoom(peer)){
+                    sendCommandToRoom(peer,cmd,params ); //to game
+                }
+                    sendCommandToAll(cmd, params); //to lobby
                 break;
             case("PLIST"):
                 ArrayList<String> playerList = new ArrayList<String>();
