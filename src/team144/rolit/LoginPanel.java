@@ -141,12 +141,6 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
         client.requestNewGame(((GameType)gameTypeBox.getSelectedItem()).protocolName);
     }
 
-    @Override
-    public void startGame() {
-      frame.setContentPane(new RolitView(client.getGame(), client));
-      frame.validate();
-    }
-    
     public void gameReady() {
          frame.setContentPane(new RolitView(client.getGame(), client));
          frame.validate();
