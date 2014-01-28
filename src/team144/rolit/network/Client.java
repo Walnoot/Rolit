@@ -81,13 +81,13 @@ public class Client implements NetworkListener {
                     if (player.getName().equals(name)) {
                         this.player = player;
                     }
-                    ;
+                    
                 }
                 
                 if (player == null) System.out.println("Controlled player not found?!");
                 
                 game = new Game(players);
-                clientListener.startGame();
+                clientListener.gameReady();
                 break;
             case ("GMOVE"): //GMOVE x y
                 System.out.println("Ssoidfjosiefjoisjefois ejfoise jfoisej f");
@@ -138,7 +138,7 @@ public class Client implements NetworkListener {
     public static interface ClientListener {
         public void onHello(String flag);
         
-        public void startGame();
+        public void gameReady();
 
         //public void error(String message);
         public void loginError();

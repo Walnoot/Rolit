@@ -10,13 +10,9 @@ import java.util.Arrays;
 
 import javax.swing.JFrame;
 
-import team144.rolit.Game;
 import team144.util.Util;
 
 public class ServerMonitor {
-    
-    Game game;
-    
     public static void main(String[] args) {
         new ServerMonitor(null);
     }
@@ -61,18 +57,7 @@ public class ServerMonitor {
         frame.setVisible(true);
     }
     
-    public void setGame(Game game) {
-        this.game = game;
-    }
-    
-    public void executeCommand(String cmd, String[] parameters) {
+    public void showCommand(String cmd, String[] parameters) {
         textArea.append(cmd + " " + Util.concat(parameters) + "\n");
-        switch (cmd) {
-            case ("GMOVE"): //GMOVE x y
-                int x = Integer.parseInt(parameters[0]);
-                int y = Integer.parseInt(parameters[1]);
-                game.makeMove(game.getCurrentPlayer(), game.getBoard().getIndex(x, y));
-                break;
-        }
     }
 }

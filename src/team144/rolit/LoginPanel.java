@@ -44,17 +44,17 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
         add(table);
         
         table.addCell(new Label("Username:"));
-        usernameField = new JTextField();
+        usernameField = new JTextField("test1");
         table.addCell(usernameField).width(TEXTFIELD_WIDTH);
         table.row();
         
         table.addCell(new Label("Password:"));
-        passwordField = new JPasswordField();
+        passwordField = new JPasswordField("test1");
         table.addCell(passwordField).width(TEXTFIELD_WIDTH);
         table.row();
         
         table.addCell(new Label("Server IP:"));
-        ipField = new JTextField();
+        ipField = new JTextField("127.0.0.1");
         table.addCell(ipField).width(TEXTFIELD_WIDTH);
         table.row();
         
@@ -132,6 +132,9 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
         }
     }
 
+    /**
+     * Called if the server has logged in the user successfully
+     */
     @Override
     public void onHello(String flag) {
         setInfoText("Login successful! Server supports the "+flag);
@@ -142,6 +145,11 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
     public void startGame() {
       frame.setContentPane(new RolitView(client.getGame(), client));
       frame.validate();
+    }
+    
+    public void gameReady() {
+         frame.setContentPane(new RolitView(client.getGame(), client));
+         frame.validate();
     }
     
     @Override
