@@ -10,6 +10,7 @@ import java.awt.TextArea;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
@@ -29,9 +30,11 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
     
     private final JFrame frame;
     private final Client client;
-
+    
     private Button findGameButton;
     private JComboBox<GameType> gameTypeBox;
+    private JList<String> playerList;
+    private Vector<String> players = new Vector<String>();
     
     public LobbyPanel(JFrame frame, Client client) {
         this.frame = frame;
@@ -63,8 +66,7 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
         ScrollPane scrollPane = new ScrollPane();
         invitePanel.add(scrollPane, BorderLayout.CENTER);
         
-        String[] names = { "test2", "willem", "willem" };
-        JList<String> playerList = new JList<String>(names);
+        playerList = new JList<String>();
         scrollPane.add(playerList);
         
         Button button = new Button("Invite Players");
@@ -92,6 +94,9 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
         JSplitPane topSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, chat, players);
 //        topSplitPane.setDividerLocation(150);
         add(topSplitPane);
+        
+        //query player list
+        client.sendCommand("PLIST");
     }
     
     private static enum GameType {
@@ -109,24 +114,47 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
             return uiName;
         }
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == findGameButton){
+        if (e.getSource() == findGameButton) {
             client.requestNewGame(((GameType) gameTypeBox.getSelectedItem()).protocolName);
         }
     }
-
+    
     @Override
     public void onHello(String flag) {
     }
-
+    
+    @Override
+    public void lobbyJoin(String player) {
+        if (!players.contains(player)) {
+            players.add(player);
+            playerList.setListData(players);
+        }
+    }
+    
+    @Override
+    public void leave(String player) {
+        players.remove(player);
+        playerList.setListData(players);
+    }
+    
+    @Override
+    public void playerList(String[] playerList) {
+        System.out.println("recieved palyer list");
+        
+        for (String player : playerList) {
+            if (!players.contains(player)) players.add(player);
+        }
+    }
+    
     @Override
     public void gameReady() {
-      frame.setContentPane(new RolitView(client.getGame(), client));
-      frame.validate();
+        frame.setContentPane(new RolitView(client.getGame(), client));
+        frame.validate();
     }
-
+    
     @Override
     public void loginError() {
     }

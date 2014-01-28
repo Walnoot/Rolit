@@ -60,7 +60,9 @@ public class Connection extends Thread {
         return contents;
     }
     
-    private String encryptMessage(String cmd, String[] message) {
+    private String concatMessage(String cmd, String[] message) {
+        if(message.length == 0) return cmd;
+        
         String result = cmd + " " + message[0];
         for (int i = 1; i < message.length; i++) {
             result += " " + message[i];
@@ -70,7 +72,7 @@ public class Connection extends Thread {
     }
     
     public void write(String cmd, String[] parameters) {
-        String output = encryptMessage(cmd, parameters);
+        String output = concatMessage(cmd, parameters);
         try {
             out.write(output + System.lineSeparator());
             out.flush();

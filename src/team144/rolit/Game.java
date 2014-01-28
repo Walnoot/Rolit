@@ -107,18 +107,22 @@ public class Game extends Observable {
         
         if (!hasMove) {//no move possible, so any neighbouring tile is valid
             for (int i = 0; i < legalMoves.length; i++) {
-                int x = board.getX(i);
-                int y = board.getY(i);
-                
-                boolean hasNeighbour = false;//not that there's anything wrong with that of course
-                for (Direction dir : Direction.values()) {
-                    Tile tile = board.getTile(x + dir.xOffset, y + dir.yOffset);
-                    if (tile != null && tile != Tile.EMPTY) {
-                        hasNeighbour = true;
+                if(board.getTile(i) == Tile.EMPTY){
+                    int x = board.getX(i);
+                    int y = board.getY(i);
+                    
+                    boolean hasNeighbour = false;//not that there's anything wrong with that of course
+                    for (Direction dir : Direction.values()) {
+                        Tile tile = board.getTile(x + dir.xOffset, y + dir.yOffset);
+                        if (tile != null && tile != Tile.EMPTY) {
+                            hasNeighbour = true;
+                        }
                     }
+                    
+                    legalMoves[i] = hasNeighbour;
+                }else{
+                    legalMoves[i] = false;
                 }
-                
-                legalMoves[i] = hasNeighbour;
             }
         }
     }

@@ -122,6 +122,10 @@ public class Room {
         return roomMap.get(c);
     }
     
+    public static boolean isInRoom(Connection c) {
+        return roomMap.get(c) != null;
+    }
+    
     //@requires player != null
     private void addPlayer(Connection player) {
         players.add(player);
