@@ -10,6 +10,8 @@ import java.awt.TextArea;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.BoxLayout;
@@ -35,6 +37,7 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
     private JComboBox<GameType> gameTypeBox;
     private JList<String> playerList;
     private Vector<String> players = new Vector<String>();
+    private Button inviteButton;
     
     public LobbyPanel(JFrame frame, Client client) {
         this.frame = frame;
@@ -69,8 +72,9 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
         playerList = new JList<String>();
         scrollPane.add(playerList);
         
-        Button button = new Button("Invite Players");
-        invitePanel.add(button, BorderLayout.SOUTH);
+        inviteButton = new Button("Invite Players");
+        inviteButton.addActionListener(this);
+        invitePanel.add(inviteButton, BorderLayout.SOUTH);
         
         Panel gameStartPanel = new Panel();
         gameStartPanel.setLayout(new BoxLayout(gameStartPanel, BoxLayout.Y_AXIS));
@@ -119,6 +123,18 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == findGameButton) {
             client.requestNewGame(((GameType) gameTypeBox.getSelectedItem()).protocolName);
+        }else if(e.getSource() == inviteButton){
+            List<String> players = playerList.getSelectedValuesList();
+            
+            if(players.size() > 0){
+                ArrayList<String> parameters = new ArrayList<String>();
+                
+                parameters.add("R");
+                
+                parameters.addAll(players);
+                
+                client.sendCommand("INVIT", parameters.toArray(new String[0]));
+            }
         }
     }
     
@@ -128,7 +144,7 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
     
     @Override
     public void lobbyJoin(String player) {
-        if (!players.contains(player)) {
+        if (!players.contains(player) && !client.getName().equals(player)) {
             players.add(player);
             playerList.setListData(players);
         }
@@ -142,10 +158,8 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
     
     @Override
     public void playerList(String[] playerList) {
-        System.out.println("recieved palyer list");
-        
         for (String player : playerList) {
-            if (!players.contains(player)) players.add(player);
+            lobbyJoin(player);
         }
     }
     
