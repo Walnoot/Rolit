@@ -55,7 +55,7 @@ public class Server implements NetworkListener {
         authenticator = new Authenticator();
         serverSocket = new ServerSocket(port);
         
-        monitor.showCommand("Server's ip-address is: ",Inet4Address.getLocalHost().getHostAddress());
+        monitor.showCommand("Server's ip-address is: ", Inet4Address.getLocalHost().getHostAddress());
         try {
             while (true) {
                 Connection conn = new Connection(serverSocket.accept(), this);
@@ -134,22 +134,24 @@ public class Server implements NetworkListener {
             case ("GMOVE"): //GMOVE x y
                 sendCommandToRoom(peer, cmd, parameters);
                 break;
-            case("CHATM"): //CHATM from message
-                String[] params = (peer.getName()+" "+Util.concat(parameters)).split(" ");
-                if(Room.isInRoom(peer)){
-                    sendCommandToRoom(peer,cmd,params ); //to game
+            case ("CHATM"): //CHATM from message
+                String[] params = (peer.getName() + " " + Util.concat(parameters)).split(" ");
+                if (Room.isInRoom(peer)) {
+                    sendCommandToRoom(peer, cmd, params); //to game
                 }
-                    sendCommandToAll(cmd, params); //to lobby
+                sendCommandToAll(cmd, params); //to lobby
                 break;
-            case("PLIST"):
+            case ("PLIST"):
                 ArrayList<String> playerList = new ArrayList<String>();
                 
-                for(Connection c : authorizedConnections){
-                    if(!Room.isInRoom(c)) playerList.add(c.getName());
+                for (Connection c : authorizedConnections) {
+                    if (!Room.isInRoom(c)) playerList.add(c.getName());
                 }
                 
                 sendCommand(peer, "PLIST", playerList.toArray(new String[0]));
-                
+                break;
+            case ("PROTO"):
+                sendCommand(peer, "PROTO", Protocol.NAME, Protocol.VERSION);
                 break;
             default:
                 System.out.println("Command not implemented: " + cmd);

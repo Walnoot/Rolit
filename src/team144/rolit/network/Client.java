@@ -116,6 +116,9 @@ public class Client implements NetworkListener {
             case ("PLIST"):
                 clientListener.playerList(parameters);
                 break;
+            case ("PROTO"):
+                sendCommand("PROTO", Protocol.NAME, Protocol.VERSION);
+                break;
         }
         
         return false;
