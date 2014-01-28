@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 
 import team144.rolit.Player;
 import team144.rolit.Tile;
+import team144.util.Util;
 
 public class Server implements NetworkListener {
     public static final int DEFAULT_PORT = 2014;
@@ -25,7 +26,6 @@ public class Server implements NetworkListener {
     private ServerMonitor monitor;
     
     private Authenticator authenticator;
-    private Connection logginInPeer;//peer currently in login session
     
     private String randomText;
     
@@ -36,7 +36,6 @@ public class Server implements NetworkListener {
         
         while (port == -1) {
             String input = JOptionPane.showInputDialog("Type port");
-            
             try {
                 port = Integer.parseInt(input);
             } catch (Exception e) {
@@ -104,7 +103,6 @@ public class Server implements NetworkListener {
         switch (cmd) {
             case ("LOGIN"):
                 randomText = Authenticator.generateRandomString(10);
-                logginInPeer = peer;
                 peer.setName(parameters[0]);
                 sendCommand(peer, "VSIGN", randomText);
                 break;
@@ -124,7 +122,6 @@ public class Server implements NetworkListener {
                     sendCommand(peer, "ERROR", "Text signed incorrectly");
                     System.out.println("Player " + peer.getName() + " failed to log in.");
                 }
-                //if !legit sendMessage fuckoff no legit
                 break;
             case ("NGAME"):
                 Room.assignRoom(peer, cmd, parameters);
@@ -134,6 +131,13 @@ public class Server implements NetworkListener {
                 break;
             case ("GMOVE"): //GMOVE x y
                 sendCommandToRoom(peer, cmd, parameters);
+                break;
+            case("CHATM"): //CHATM from message
+                String[] params = (peer.getName()+" "+Util.concat(parameters)).split(" ");
+                if(Room.isInRoom(peer)){
+                    sendCommandToRoom(peer,cmd,params ); //to game
+                }
+                    sendCommandToAll(cmd, params); //to lobby
                 break;
             case("PLIST"):
                 ArrayList<String> playerList = new ArrayList<String>();

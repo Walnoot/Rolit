@@ -11,6 +11,7 @@ import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
@@ -22,6 +23,7 @@ import javax.swing.JSplitPane;
 
 import team144.rolit.network.Client;
 import team144.rolit.network.Client.ClientListener;
+import team144.util.Util;
 
 import com.esotericsoftware.tablelayout.swing.Table;
 
@@ -38,8 +40,9 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
     private JList<String> playerList;
     private Vector<String> players = new Vector<String>();
     private Button inviteButton;
+    private final TextArea chatArea;
     
-    public LobbyPanel(JFrame frame, Client client) {
+    public LobbyPanel(JFrame frame,final Client client) {
         this.frame = frame;
         this.client = client;
         
@@ -50,11 +53,27 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
         Panel chat = new Panel();
         chat.setLayout(new BorderLayout());
         
-        TextArea chatArea = new TextArea();
+        final TextField textField = new TextField();
+        chatArea = new TextArea();
         chatArea.setEditable(false);
         chatArea.setFocusable(false);
         chat.add(chatArea, BorderLayout.CENTER);
-        chat.add(new TextField(), BorderLayout.SOUTH);
+        chat.add(textField, BorderLayout.SOUTH);
+        
+        textField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                String text = textField.getText();
+                if(text.startsWith("/")){
+                    String[] parsed = text.split(" ");
+                    client.sendCommand(parsed[0], Arrays.copyOfRange(parsed, 1, parsed.length));
+                }else{
+                client.sendCommand("CHATM", text);
+                }
+                chatArea.append(text+"\n");
+                textField.setText(null);
+            }
+        });        
         
         chat.setMinimumSize(new Dimension(200, 100));
         
@@ -99,8 +118,10 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
 //        topSplitPane.setDividerLocation(150);
         add(topSplitPane);
         
+        client.setClientListener(this);
         //query player list
         client.sendCommand("PLIST");
+        
     }
     
     private static enum GameType {
@@ -171,5 +192,10 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
     
     @Override
     public void loginError() {
+    }
+
+    @Override
+    public void chatMessage(String[] message) {
+       chatArea.append(message[0]+" says:\t"+Util.concat(Arrays.copyOfRange(message, 1, message.length))+"\n");
     }
 }

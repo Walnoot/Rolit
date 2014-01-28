@@ -149,4 +149,10 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
       setInfoText("Login failed! Please try again...");
       client.shutdown();
     }
+
+    @Override
+    public void chatMessage(String[] message) {
+        // TODO Auto-generated method stub
+        
+    }
 }
