@@ -2,6 +2,7 @@ package team144.rolit;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.Panel;
@@ -22,8 +23,8 @@ public class RolitView extends Panel implements Observer {
      */
     private static final long serialVersionUID = 4223398494630548955L;
     
-    private static final int WIDTH = 400;
-    private static final int HEIGHT = 600;
+    private static final int WIDTH = 600;
+    private static final int HEIGHT = 800;
     private static final String FRAME_TITLE = "Rolit";
     
     private Button[] buttonArray = new Button[Board.DIMENSION * Board.DIMENSION];
@@ -95,8 +96,9 @@ public class RolitView extends Panel implements Observer {
             
             for (int i = 0; i < buttonArray.length; i++) {
                 Tile tile = game.getBoard().getTile(i);
-                buttonArray[i].setLabel(tile.name());
-                buttonArray[i].setBackground(tile.getColor());
+                if (tile == Tile.EMPTY && player == game.getCurrentPlayer()) 
+                    buttonArray[i].setBackground(game.isValidMove(i) ? Color.LIGHT_GRAY : Tile.EMPTY.getColor());
+                else buttonArray[i].setBackground(tile.getColor());
             }
             
             if (game.isGameOver()) {
@@ -151,6 +153,7 @@ public class RolitView extends Panel implements Observer {
         
 //        frame.setContentPane(rolitView);
         frame.setContentPane(new LoginPanel(frame));
+//        frame.setContentPane(new LobbyPanel(frame));
         
         //set frame size, position, and close operation
         frame.setSize(WIDTH, HEIGHT);
