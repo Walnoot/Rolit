@@ -10,6 +10,7 @@ import java.awt.TextArea;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -37,7 +38,7 @@ public class RolitView extends Panel implements Observer {
      */
     private final Player player;
     
-    public RolitView(Game game, Client client) {
+    public RolitView(Game game,final Client client) {
         player = client.getPlayer();
         
         game.addObserver(this);
@@ -76,7 +77,14 @@ public class RolitView extends Panel implements Observer {
         textField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                showMessage(textField.getText());
+                String text = textField.getText();
+                if(text.startsWith("/")){
+                    String[] parsed = text.split(" ");
+                    client.sendCommand(parsed[0], Arrays.copyOfRange(parsed, 1, parsed.length));
+                }else{
+                client.sendCommand("CHATM", text);
+                }
+                showMessage(text);
                 textField.setText(null);
             }
         });

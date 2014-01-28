@@ -10,6 +10,7 @@ import java.awt.TextArea;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
@@ -33,7 +34,7 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
     private Button findGameButton;
     private JComboBox<GameType> gameTypeBox;
     
-    public LobbyPanel(JFrame frame, Client client) {
+    public LobbyPanel(JFrame frame,final Client client) {
         this.frame = frame;
         this.client = client;
         
@@ -44,11 +45,27 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
         Panel chat = new Panel();
         chat.setLayout(new BorderLayout());
         
-        TextArea chatArea = new TextArea();
+        final TextField textField = new TextField();
+        final TextArea chatArea = new TextArea();
         chatArea.setEditable(false);
         chatArea.setFocusable(false);
         chat.add(chatArea, BorderLayout.CENTER);
-        chat.add(new TextField(), BorderLayout.SOUTH);
+        chat.add(textField, BorderLayout.SOUTH);
+        
+        textField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                String text = textField.getText();
+                if(text.startsWith("/")){
+                    String[] parsed = text.split(" ");
+                    client.sendCommand(parsed[0], Arrays.copyOfRange(parsed, 1, parsed.length));
+                }else{
+                client.sendCommand("CHATM", text);
+                }
+                chatArea.append(text);
+                textField.setText(null);
+            }
+        });        
         
         chat.setMinimumSize(new Dimension(200, 100));
         

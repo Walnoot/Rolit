@@ -71,12 +71,17 @@ public class Connection extends Thread {
     
     public void write(String cmd, String[] parameters) {
         String output = encryptMessage(cmd, parameters);
+        write(output);
+    }
+    
+    public void write(String combined) {
         try {
-            out.write(output + System.lineSeparator());
+            out.write(combined + System.lineSeparator());
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        
     }
     
     public void terminate() {
