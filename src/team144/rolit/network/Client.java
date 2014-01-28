@@ -117,7 +117,14 @@ public class Client implements NetworkListener {
                 clientListener.playerList(parameters);
                 break;
             case ("PROTO"):
-                sendCommand("PROTO", Protocol.NAME, Protocol.VERSION);
+                sendCommand("PROTO", Info.NAME, Info.VERSION);
+                break;
+            case ("SINFO"):
+                sendCommand("SINFO", Info.PROGRAM_NAME, Info.PROGRAM_VERSION);
+            break;
+            case ("ALIVE"):
+                break;
+            case("SCORE"):
                 break;
         }
         

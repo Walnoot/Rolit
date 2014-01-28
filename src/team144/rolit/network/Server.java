@@ -151,7 +151,12 @@ public class Server implements NetworkListener {
                 sendCommand(peer, "PLIST", playerList.toArray(new String[0]));
                 break;
             case ("PROTO"):
-                sendCommand(peer, "PROTO", Protocol.NAME, Protocol.VERSION);
+                sendCommand(peer, "PROTO", Info.NAME, Info.VERSION);
+                break;
+            case ("SINFO"):
+                sendCommand(peer, "SINFO", Info.PROGRAM_NAME, Info.PROGRAM_VERSION);
+            break;
+            case ("ALIVE"):
                 break;
             default:
                 System.out.println("Command not implemented: " + cmd);
