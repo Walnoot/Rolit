@@ -1,13 +1,13 @@
 package team144.rolit.network;
 
 import java.io.IOException;
+import java.net.BindException;
+import java.net.Inet4Address;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
-import team144.rolit.Player;
-import team144.rolit.Tile;
 import team144.util.Util;
 
 public class Server implements NetworkListener {
@@ -30,56 +30,39 @@ public class Server implements NetworkListener {
     private String randomText;
     
     public static void main(String[] args) {
-        //TODO: uncomment
-//        int port = -1;
-        int port = DEFAULT_PORT;//for debug purposes
         
-        while (port == -1) {
-            String input = JOptionPane.showInputDialog("Type port");
-            try {
-                port = Integer.parseInt(input);
-            } catch (Exception e) {
-            }
-        }
+        int port = 0;
+        String input = JOptionPane.showInputDialog("Type port");
         
         try {
+            
+            if (input.trim().equals("")) {
+                port = DEFAULT_PORT;
+            } else {
+                port = Integer.parseInt(input);
+            }
+            
             new Server(port);
+        } catch (BindException |NumberFormatException f) {
+            main(null);
+            System.exit(0);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
     
-    public Server(int port) throws IOException {
+    public Server(int port) throws IOException, BindException {
         monitor = new ServerMonitor(this);
         authenticator = new Authenticator();
         serverSocket = new ServerSocket(port);
         
-        try {
-            while (true) {
-                Connection conn = new Connection(serverSocket.accept(), this);
-                connections.add(conn);
-                conn.start();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        startGame();
-    }
-    
-    private void startGame() {
-        int roomSize = authorizedConnections.size();
-        Player[] players = new Player[roomSize];
-        for (int i = 0; i < roomSize; i++) {
-            players[i] = new Player(Tile.values()[i + 1], authorizedConnections.get(i).getName());
-        }
+        monitor.showCommand("Server's ip-address is: ", Inet4Address.getLocalHost().getHostAddress());
         
-        String[] playerNames = new String[players.length];
-        
-        for (int i = 0; i < players.length; i++) {
-            playerNames[i] = players[i].getName();
+        while (true) {
+            Connection conn = new Connection(serverSocket.accept(), this);
+            connections.add(conn);
+            conn.start();
         }
-        
-        sendCommandToAll("START", playerNames);
     }
     
     public void sendCommand(Connection client, String cmd, String... parameters) {
@@ -132,22 +115,29 @@ public class Server implements NetworkListener {
             case ("GMOVE"): //GMOVE x y
                 sendCommandToRoom(peer, cmd, parameters);
                 break;
-            case("CHATM"): //CHATM from message
-                String[] params = (peer.getName()+" "+Util.concat(parameters)).split(" ");
-                if(Room.isInRoom(peer)){
-                    sendCommandToRoom(peer,cmd,params ); //to game
+            case ("CHATM"): //CHATM from message
+                String[] params = (peer.getName() + " " + Util.concat(parameters)).split(" ");
+                if (Room.isInRoom(peer)) {
+                    sendCommandToRoom(peer, cmd, params); //to game
                 }
-                    sendCommandToAll(cmd, params); //to lobby
+                sendCommandToAll(cmd, params); //to lobby
                 break;
-            case("PLIST"):
+            case ("PLIST"):
                 ArrayList<String> playerList = new ArrayList<String>();
                 
-                for(Connection c : authorizedConnections){
-                    if(!Room.isInRoom(c)) playerList.add(c.getName());
+                for (Connection c : authorizedConnections) {
+                    if (!Room.isInRoom(c)) playerList.add(c.getName());
                 }
                 
                 sendCommand(peer, "PLIST", playerList.toArray(new String[0]));
-                
+                break;
+            case ("PROTO"):
+                sendCommand(peer, "PROTO", Info.NAME, Info.VERSION);
+                break;
+            case ("SINFO"):
+                sendCommand(peer, "SINFO", Info.PROGRAM_NAME, Info.PROGRAM_VERSION);
+                break;
+            case ("ALIVE"):
                 break;
             default:
                 System.out.println("Command not implemented: " + cmd);

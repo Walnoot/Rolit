@@ -130,6 +130,15 @@ public class Client implements NetworkListener {
                     else if(parameters[0].equals("D")) JOptionPane.showMessageDialog(null, "Invitation denied");
                     System.out.println("?");
                 }
+            case ("PROTO"):
+                sendCommand("PROTO", Info.NAME, Info.VERSION);
+                break;
+            case ("SINFO"):
+                sendCommand("SINFO", Info.PROGRAM_NAME, Info.PROGRAM_VERSION);
+            break;
+            case ("ALIVE"):
+                break;
+            case("SCORE"):
                 break;
         }
         

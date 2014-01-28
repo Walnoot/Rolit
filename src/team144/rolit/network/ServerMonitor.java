@@ -57,7 +57,7 @@ public class ServerMonitor {
         frame.setVisible(true);
     }
     
-    public void showCommand(String cmd, String[] parameters) {
+    public void showCommand(String cmd, String... parameters) {
         textArea.append(cmd + " " + Util.concat(parameters) + "\n");
     }
 }
