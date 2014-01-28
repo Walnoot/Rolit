@@ -35,6 +35,11 @@ public class Client implements NetworkListener {
         peer.write(cmd, parameters);
     }
     
+    public void sendCommand(String combined){
+        printMessage("sendCommand()\t" + combined);
+        peer.write(combined);
+    }
+
     /**
      * Login to game server
      */
@@ -85,7 +90,6 @@ public class Client implements NetworkListener {
                 clientListener.gameReady();
                 break;
             case ("GMOVE"): //GMOVE x y
-                System.out.println("Ssoidfjosiefjoisjefois ejfoise jfoisej f");
                 int x = Integer.parseInt(parameters[0]);
                 int y = Integer.parseInt(parameters[1]);
                 game.makeMove(game.getCurrentPlayer(), x, y);

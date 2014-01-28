@@ -25,7 +25,6 @@ public class Server implements NetworkListener {
     private ServerMonitor monitor;
     
     private Authenticator authenticator;
-    private Connection logginInPeer;//peer currently in login session
     
     private String randomText;
     
@@ -36,7 +35,6 @@ public class Server implements NetworkListener {
         
         while (port == -1) {
             String input = JOptionPane.showInputDialog("Type port");
-            
             try {
                 port = Integer.parseInt(input);
             } catch (Exception e) {
@@ -104,7 +102,6 @@ public class Server implements NetworkListener {
         switch (cmd) {
             case ("LOGIN"):
                 randomText = Authenticator.generateRandomString(10);
-                logginInPeer = peer;
                 peer.setName(parameters[0]);
                 sendCommand(peer, "VSIGN", randomText);
                 break;
@@ -122,7 +119,6 @@ public class Server implements NetworkListener {
                     sendCommand(peer, "ERROR", "Text signed incorrectly");
                     System.out.println("Player " + peer.getName() + " failed to log in.");
                 }
-                //if !legit sendMessage fuckoff no legit
                 break;
             case ("NGAME"):
                 Room.assignRoom(peer, cmd, parameters);
@@ -133,6 +129,9 @@ public class Server implements NetworkListener {
             case ("GMOVE"): //GMOVE x y
                 sendCommandToRoom(peer, cmd, parameters);
                 break;
+            case("CHATM"):
+                sendCommandToRoom(peer,cmd, peer.getName()+parameters );
+            
         }
         
         return false;
