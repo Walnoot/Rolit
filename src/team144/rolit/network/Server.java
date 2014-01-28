@@ -1,6 +1,7 @@
 package team144.rolit.network;
 
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 
@@ -54,6 +55,7 @@ public class Server implements NetworkListener {
         authenticator = new Authenticator();
         serverSocket = new ServerSocket(port);
         
+        monitor.showCommand("Server's ip-address is: ",Inet4Address.getLocalHost().getHostAddress());
         try {
             while (true) {
                 Connection conn = new Connection(serverSocket.accept(), this);
