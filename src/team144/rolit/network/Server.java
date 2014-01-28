@@ -113,11 +113,6 @@ public class Server implements NetworkListener {
             case ("SHOW"):  //message to server, otherwise needs clientname argument
                 monitor.executeCommand(cmd, parameters);
                 break;
-//            case ("NGAME"):
-//                if(parameters[0].startsWith("C")){
-//                    createRoom(parameters[0].charAt(1));
-//                }
-//                break;
             case ("GMOVE"): //GMOVE x y
                 sendCommandToAll(cmd, parameters);
                 monitor.executeCommand(cmd, parameters);

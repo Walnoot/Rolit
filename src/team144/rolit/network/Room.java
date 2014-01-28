@@ -21,13 +21,14 @@ public class Room {
     
     private Room(Connection player, String[] params) {
         type = parseType(params);
-        if(type.equals("C") || type.equals("D")|| type.equals("H")){
+        if (type.equals("C") || type.equals("D") || type.equals("H")) {
             roomSize = 2;
-        }else if(type.equals("I")){
+        } else if (type.equals("I")) {
             roomSize = 3;
-        }else{
+        } else {
             roomSize = 4;
         }
+        players = new ArrayList<Connection>(roomSize);
         addPlayer(player);
     }
     
@@ -44,8 +45,11 @@ public class Room {
     /**
      * Looks if player fits in any existing room
      * If not, creates a new rooms and puts him in it
-     * @param player - Connection of the player that requested a new game
-     * @param params - flags (gametype/player)
+     * 
+     * @param player
+     *            - Connection of the player that requested a new game
+     * @param params
+     *            - flags (gametype/player)
      */
     public static void assignRoom(Connection player, String[] params) {
         if (rooms == null) rooms = new ArrayList<Room>();
@@ -59,19 +63,33 @@ public class Room {
         }
         
         //no rooms exists yet so make one
-        rooms.add(new Room(player,params));
+        rooms.add(new Room(player, params));
     }
     
     private void addPlayer(Connection player) {
         players.add(player);
-        if(players.size()==roomSize){
+        if (players.size() == roomSize) {
             String[] names = new String[players.size()];
-            for (int i = 0; i<roomSize; i++) {
-                names[i]=players.get(i).getName();
+            for (int i = 0; i < roomSize; i++) {
+                names[i] = players.get(i).getName();
             }
-            System.out.println("Room starting: "+Util.concat(names));
+            System.out.println("Room starting: " + Util.concat(names));
             
-            player.write("START", names);
+            for (Connection c : players) {
+                c.write("START", names);
+            }
+        }
+    }
+    
+    public void executeCommand(String cmd, String... parameters){
+        for (Connection c : players) {
+            c.executeCommand(cmd,parameters);
+        }
+    }
+
+    public void sendCommand(String cmd, String... parameters) {
+        for (Connection c : players) {
+            c.write(cmd, parameters);
         }
     }
     

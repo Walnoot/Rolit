@@ -39,8 +39,7 @@ public class Connection extends Thread {
                     String message;
                     while ((message = in.readLine()) != null) {
                         String[] contents = decryptMessage(message);
-                        running =
-                            listener.executeCommand(contents[0], Arrays.copyOfRange(contents, 1, contents.length), this);
+                        running = listener.executeCommand(contents[0], Arrays.copyOfRange(contents, 1, contents.length), this);
                     }
                 }
             }
@@ -92,5 +91,12 @@ public class Connection extends Thread {
 
     public void setRunning(boolean b) {
         running = b;
+    }
+
+    /*
+     * Niet gebruiken 
+     */
+    public void executeCommand(String cmd, String[] parameters) {
+        listener.executeCommand(cmd, parameters, this);
     }
 }
