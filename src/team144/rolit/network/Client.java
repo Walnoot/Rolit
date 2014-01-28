@@ -19,7 +19,6 @@ public class Client implements NetworkListener {
     private Player player;
     
     private ClientListener clientListener;
-    private Room room;
     
     public Client(String ip, int port, String name) throws UnknownHostException, IOException {
         this.name = name;
@@ -34,10 +33,6 @@ public class Client implements NetworkListener {
     public void sendCommand(String cmd, String... parameters) {
         printMessage("sendCommand()\t" + cmd + " " + Util.concat(parameters));
         peer.write(cmd, parameters);
-    }
-    
-    public void sendCommandToRoom( String cmd, String...parameters){
-        room.sendCommand(cmd,parameters);
     }
     
     /**
@@ -108,10 +103,6 @@ public class Client implements NetworkListener {
         }
         
         return false;
-    }
-    
-    public void setRoom(Room r){
-        room =  r;
     }
     
     public Game getGame() {
