@@ -42,9 +42,14 @@ public class Room {
             roomSize = 2;
         } else if (type.equals("I")) {
             roomSize = 3;
-        } else {
+        } else if(type.equals("J")){
             roomSize = 4;
+        } else if(type.startsWith("INVIT")){
+            String[] params = type.split(" ");
+            
+            roomSize = params.length;
         }
+        
         addPlayer(player);
     }
     
@@ -58,6 +63,7 @@ public class Room {
         
         if (cmd.equals("NGAME")) {
             type = params[0];
+            if(type.equals("D")) type = "H";
         } else if (cmd.equals("INVIT")) {
             type = cmd + " " + Util.concat(Arrays.copyOfRange(params, 1, params.length));
         }
@@ -76,7 +82,7 @@ public class Room {
      * @param params
      *            - flags (gametype/player)
      */
-    public static void assignRoom(Connection player, String cmd, String[] params) {
+    public static void assignRoom(Connection player, Server server, String cmd, String[] params) {
         String wantedType = parseType(cmd, params);
         
         if (cmd.equals("NGAME")) {
@@ -90,7 +96,15 @@ public class Room {
         } else if (cmd.equals("INVIT")) {
             if (params[0].equals("R")) {
                 for (int i = 1; i < params.length; i++) {
-                    //send invite
+                    String invitee = params[i];
+                    
+                    Connection invitedConnection = server.getPlayer(invitee);
+                    
+                    if(invitedConnection == null || isInRoom(invitedConnection)){
+                        player.write("INVIT", "F");
+                    }else{
+                        invitedConnection.write("INVIT", "R", player.getName());
+                    }
                 }
             } else {
                 for (Room r : rooms) {
@@ -100,6 +114,9 @@ public class Room {
                         } else {
                             //Player Denied request (invite failed not implemented yet)
                             r.sendCommand(cmd, params[0]);
+                            
+                            rooms.remove(r);
+                            roomMap.remove(r);
                         }
                         return;
                     }

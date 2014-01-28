@@ -71,7 +71,7 @@ public class Connection extends Thread {
         
     }
     
-    public void write(String cmd, String[] parameters) {
+    public void write(String cmd, String...parameters) {
         String output = concatMessage(cmd, parameters);
         write(output);
     }

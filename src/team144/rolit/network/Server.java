@@ -124,10 +124,10 @@ public class Server implements NetworkListener {
                 }
                 break;
             case ("NGAME"):
-                Room.assignRoom(peer, cmd, parameters);
+                Room.assignRoom(peer, this, cmd, parameters);
                 break;
             case ("INVIT"):
-                Room.assignRoom(peer, cmd, parameters);
+                Room.assignRoom(peer, this, cmd, parameters);
                 break;
             case ("GMOVE"): //GMOVE x y
                 sendCommandToRoom(peer, cmd, parameters);
@@ -155,6 +155,18 @@ public class Server implements NetworkListener {
         }
         
         return false;
+    }
+    
+    /**
+     * @param invitee - player name, not null.
+     * @return - The connection of the player with that name, or null if he's not online.
+     */
+    public Connection getPlayer(String invitee) {
+        for(Connection c : authorizedConnections){
+            if(c.getName().equals(invitee)) return c;
+        }
+        
+        return null;
     }
     
     private boolean hasConnectionWithName(String name) {

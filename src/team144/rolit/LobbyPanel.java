@@ -41,8 +41,9 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
     private Vector<String> players = new Vector<String>();
     private Button inviteButton;
     private final TextArea chatArea;
+    private TextField chatField;
     
-    public LobbyPanel(JFrame frame,final Client client) {
+    public LobbyPanel(JFrame frame, final Client client) {
         this.frame = frame;
         this.client = client;
         
@@ -53,27 +54,14 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
         Panel chat = new Panel();
         chat.setLayout(new BorderLayout());
         
-        final TextField textField = new TextField();
+        chatField = new TextField();
         chatArea = new TextArea();
         chatArea.setEditable(false);
         chatArea.setFocusable(false);
         chat.add(chatArea, BorderLayout.CENTER);
-        chat.add(textField, BorderLayout.SOUTH);
+        chat.add(chatField, BorderLayout.SOUTH);
         
-        textField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                String text = textField.getText();
-                if(text.startsWith("/")){
-                    String[] parsed = text.split(" ");
-                    client.sendCommand(parsed[0], Arrays.copyOfRange(parsed, 1, parsed.length));
-                }else{
-                client.sendCommand("CHATM", text);
-                }
-                chatArea.append(text+"\n");
-                textField.setText(null);
-            }
-        });        
+        chatField.addActionListener(this);
         
         chat.setMinimumSize(new Dimension(200, 100));
         
@@ -144,10 +132,10 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == findGameButton) {
             client.requestNewGame(((GameType) gameTypeBox.getSelectedItem()).protocolName);
-        }else if(e.getSource() == inviteButton){
+        } else if (e.getSource() == inviteButton) {
             List<String> players = playerList.getSelectedValuesList();
             
-            if(players.size() > 0){
+            if (players.size() > 0) {
                 ArrayList<String> parameters = new ArrayList<String>();
                 
                 parameters.add("R");
@@ -156,6 +144,16 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
                 
                 client.sendCommand("INVIT", parameters.toArray(new String[0]));
             }
+        } else if (e.getSource() == chatField) {
+            String text = chatField.getText();
+            if (text.startsWith("/")) {
+                String[] parsed = text.split(" ");
+                client.sendCommand(parsed[0], Arrays.copyOfRange(parsed, 1, parsed.length));
+            } else {
+                client.sendCommand("CHATM", text);
+            }
+            chatArea.append(text + "\n");
+            chatField.setText(null);
         }
     }
     
@@ -193,9 +191,9 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
     @Override
     public void loginError() {
     }
-
+    
     @Override
     public void chatMessage(String[] message) {
-       chatArea.append(message[0]+" says:\t"+Util.concat(Arrays.copyOfRange(message, 1, message.length))+"\n");
+        chatArea.append(message[0] + " says:\t" + Util.concat(Arrays.copyOfRange(message, 1, message.length)) + "\n");
     }
 }

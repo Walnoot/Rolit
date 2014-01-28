@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import javax.swing.JOptionPane;
+
 import team144.rolit.Game;
 import team144.rolit.Player;
 import team144.rolit.Tile;
@@ -115,6 +117,19 @@ public class Client implements NetworkListener {
                 break;
             case ("PLIST"):
                 clientListener.playerList(parameters);
+                break;
+            case ("INVIT"):
+                if(parameters[0].equals("R")){
+                    if(JOptionPane.showConfirmDialog(null, "Accept invitation from " + parameters[1] + "?") == JOptionPane.OK_OPTION){
+                        sendCommand("INVIT", "A");
+                    }else{
+                        sendCommand("INVIT", "D");
+                    }
+                }else{
+                    if(parameters[0].equals("F")) JOptionPane.showMessageDialog(null, "Invitation failed");
+                    else if(parameters[0].equals("D")) JOptionPane.showMessageDialog(null, "Invitation denied");
+                    System.out.println("?");
+                }
                 break;
         }
         
