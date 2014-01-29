@@ -46,35 +46,45 @@ public class Game extends Observable {
         return board;
     }
     
-    public void makeMove(Player player, int x, int y) {
-        makeMove(player, board.getIndex(x, y));
+    public void makeMove(String playerName, int x, int y) {
+        makeMove(playerName, board.getIndex(x, y));
     }
     
-    public void makeMove(Player player, int index) {
-        if (players[currentPlayerIndex] == player) {
-            int x = board.getX(index);
-            int y = board.getY(index);
+    public void makeMove(String playerName, int index) {
+        for (int i = 0; i < players.length; i++) {
+            Player player = players[i];
             
-            for (Direction dir : Direction.values()) {
-                testDirection(x, y, dir, player.getTile());
+            if(player.getName().equals(playerName)){
+                currentPlayerIndex = i;
+                
+                int x = board.getX(index);
+                int y = board.getY(index);
+                
+                for (Direction dir : Direction.values()) {
+                    testDirection(x, y, dir, player.getTile());
+                }
+                
+                board.setTile(index, player.getTile());
+                
+                currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+                
+                boolean boardFull = true;
+                for (int j = 0; j < Board.DIMENSION * Board.DIMENSION; j++) {
+                    if (board.getTile(j) == Tile.EMPTY) boardFull = false;
+                }
+                
+                if (boardFull) gameOver = true;
+                
+                calculateLegalMoves();
+                
+                setChanged();
+                notifyObservers();
+                
+                return;
             }
-            
-            board.setTile(index, player.getTile());
-            
-            currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
-            
-            boolean boardFull = true;
-            for (int i = 0; i < Board.DIMENSION * Board.DIMENSION; i++) {
-                if (board.getTile(i) == Tile.EMPTY) boardFull = false;
-            }
-            
-            if (boardFull) gameOver = true;
-            
-            calculateLegalMoves();
-            
-            setChanged();
-            notifyObservers();
         }
+        
+        System.out.println("Player not found, wtf is this?");
     }
     
     private void calculateLegalMoves() {

@@ -45,10 +45,18 @@ public class Connection extends Thread {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            System.exit(0); //ez
+        } finally {
+            running = false;
+            
+            try {
+                in.close();
+                out.close();
+                socket.close();
+            } catch (IOException e) {
+                //could happen, but is not important because the stream would close anyway
+                e.printStackTrace();
+            }
         }
-        terminate();
-        super.run();
     }
     
     private String[] decryptMessage(String message) {
@@ -86,24 +94,11 @@ public class Connection extends Thread {
         
     }
     
-    public void terminate() {
-        try {
-            in.close();
-            out.close();
-            socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void setRunning(boolean b) {
         running = b;
     }
-
-    /*
-     * Niet gebruiken 
-     */
-    public void executeCommand(String cmd, String[] parameters) {
-        listener.executeCommand(cmd, parameters, this);
+    
+    public boolean isRunning() {
+        return running;
     }
 }
