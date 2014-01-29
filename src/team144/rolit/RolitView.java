@@ -38,7 +38,7 @@ public class RolitView extends Panel implements Observer, ClientListener{
     /**
      * The Player of this process.
      */
-    private final HumanPlayer player;
+    private final Player player;
     
     public RolitView(Game game, Client client){
         this(game, client, false);
@@ -46,6 +46,9 @@ public class RolitView extends Panel implements Observer, ClientListener{
     
     public RolitView(Game game,final Client client, boolean isBot) {
         player = client.getPlayer();
+        if(isBot){
+            player.setStrategy(new LinearStrategy());
+        }
         
         game.addObserver(this);
         
@@ -179,6 +182,17 @@ public class RolitView extends Panel implements Observer, ClientListener{
 
     @Override
     public void onHello(String flag) {
+    }
+    
+    /**
+     * comes from GTURN
+     * neccesary to get bots to move
+     */
+    @Override
+    public void onTurn(String player){
+        if(player.equals(this.player.getName())){
+            this.player.requestMove();
+        }
     }
 
     @Override

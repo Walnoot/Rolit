@@ -7,7 +7,7 @@ import java.net.UnknownHostException;
 import javax.swing.JOptionPane;
 
 import team144.rolit.Game;
-import team144.rolit.HumanPlayer;
+import team144.rolit.Player;
 import team144.rolit.Tile;
 import team144.util.Util;
 
@@ -18,7 +18,7 @@ public class Client implements NetworkListener {
     private Authenticator authenticator;
     private String name;
     private Game game;
-    private HumanPlayer player;
+    private Player player;
     
     private ClientListener clientListener;
     
@@ -75,9 +75,9 @@ public class Client implements NetworkListener {
                 sendCommand("HELLO", "D");
                 break;
             case ("START"): //  START [Bob, Alice, Lol]
-                HumanPlayer[] players = new HumanPlayer[parameters.length];
+                Player[] players = new Player[parameters.length];
                 for (int i = 0; i < parameters.length; i++) {
-                    HumanPlayer player = new HumanPlayer(Tile.values()[i + 1], parameters[i]);
+                    Player player = new Player(Tile.values()[i + 1], parameters[i]);
                     players[i] = player;
                     
                     if (player.getName().equals(name)) {
@@ -90,6 +90,9 @@ public class Client implements NetworkListener {
                 
                 game = new Game(players);
                 clientListener.gameReady();
+                break;
+            case("GTURN"): //GTURN player
+                clientListener.onTurn(parameters[0]);
                 break;
             case ("GMOVE"): //GMOVE x y
                 int x = Integer.parseInt(parameters[0]);
@@ -150,7 +153,7 @@ public class Client implements NetworkListener {
         return game;
     }
     
-    public HumanPlayer getPlayer() {
+    public Player getPlayer() {
         return player;
     }
     
@@ -183,5 +186,7 @@ public class Client implements NetworkListener {
 
         //public void error(String message);
         public void loginError();
+
+        void onTurn(String player);
     }
 }

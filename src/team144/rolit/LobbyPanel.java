@@ -181,6 +181,10 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
         playerList.setListData(players);
     }
     
+    /**
+     * Server responded to getPlayerList
+     * For each player, put player in lobby
+     */
     @Override
     public void playerList(String[] playerList) {
         for (String player : playerList) {
@@ -188,9 +192,13 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
         }
     }
     
+    /**
+     * from ClientListener
+     * enough players have joined, so start game
+     */
     @Override
     public void gameReady() {
-        frame.setContentPane(new RolitView(client.getGame(), client));
+        frame.setContentPane(new RolitView(client.getGame(), client, playAsBot.getState()));
         frame.validate();
     }
     
@@ -201,5 +209,11 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
     @Override
     public void chatMessage(String[] message) {
         chatArea.append(message[0] + " says:\t" + Util.concat(Arrays.copyOfRange(message, 1, message.length)) + "\n");
+    }
+
+    @Override
+    public void onTurn(String player) {
+        // TODO Auto-generated method stub
+        
     }
 }

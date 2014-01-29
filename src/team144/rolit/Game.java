@@ -8,7 +8,7 @@ public class Game extends Observable {
     
     private final Board board = new Board();
     
-    private final HumanPlayer[] players;
+    private final Player[] players;
     private int currentPlayerIndex = 0;
     private boolean gameOver = false;
     /**
@@ -24,9 +24,13 @@ public class Game extends Observable {
     /*@
      * requires players.length >= MIN_PLAYERS & players.length <= MAX_PLAYERS;
      */
-    public Game(HumanPlayer... players) {
+    public Game(Player... players) {
         if (players.length < MIN_PLAYERS || players.length > MAX_PLAYERS)
             throw new IllegalArgumentException("Too few or much players: " + players.length);
+        
+        for (int i = 0; i < players.length; i++) {
+            players[i].setGame(this);
+        }
         
         board.setTile(Board.DIMENSION / 2 - 1, Board.DIMENSION / 2 - 1, Tile.RED);
         board.setTile(Board.DIMENSION / 2, Board.DIMENSION / 2 - 1, Tile.YELLOW);
@@ -42,11 +46,11 @@ public class Game extends Observable {
         return board;
     }
     
-    public void makeMove(HumanPlayer player, int x, int y) {
+    public void makeMove(Player player, int x, int y) {
         makeMove(player, board.getIndex(x, y));
     }
     
-    public void makeMove(HumanPlayer player, int index) {
+    public void makeMove(Player player, int index) {
         if (players[currentPlayerIndex] == player) {
             int x = board.getX(index);
             int y = board.getY(index);
@@ -208,7 +212,7 @@ public class Game extends Observable {
         return gameOver;
     }
     
-    public HumanPlayer getCurrentPlayer() {
+    public Player getCurrentPlayer() {
         return players[currentPlayerIndex];
     }
     

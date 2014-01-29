@@ -152,4 +152,10 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
     @Override
     public void chatMessage(String[] message) {
     }
+
+    @Override
+    public void onTurn(String player) {
+        // TODO Auto-generated method stub
+        
+    }
 }
