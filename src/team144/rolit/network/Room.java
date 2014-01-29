@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import team144.rolit.Game;
+import team144.rolit.Player;
+import team144.rolit.Tile;
 import team144.util.Util;
 
 public class Room {
@@ -27,14 +30,35 @@ public class Room {
      * D - deny (requested player explicitly refused to play)
      */
     
+    /**
+     * Which players the room accepts, see above
+     */
     private String type;
+    /**
+     * Amount of players to fit in room
+     */
     private int roomSize;
-    private ArrayList<Connection> players = new ArrayList<Connection>();
+    /**
+     * Connections of all players within a room
+     */
+    private ArrayList<Connection> connections = new ArrayList<Connection>();
+    /**
+     * Whether or not the game has started
+     */
     private boolean isPlaying = false;
+    /**
+     * keeps track of the game the room players are playing
+     */
+    private Game game;
     
+    /**
+     * contains all rooms on the server
+     */
     private static ArrayList<Room> rooms = new ArrayList<Room>();
+    /**
+     * maps all connections to a room, for easy lookup
+     */
     private static HashMap<Connection, Room> roomMap = new HashMap<Connection, Room>();
-    
     
     private Room(Connection player, String type) {
         this.type = type;
@@ -145,9 +169,9 @@ public class Room {
     
     //@requires player != null
     private void addPlayer(Connection player) {
-        players.add(player);
+        connections.add(player);
         roomMap.put(player, this);
-        if (players.size() == roomSize) {
+        if (connections.size() == roomSize) {
             isPlaying = true;
             startGame();
         }
@@ -158,15 +182,21 @@ public class Room {
      * starts new game by sending the START command to all players in the room
      */
     private void startGame() {
-        String[] names = new String[players.size()];
+        String[] names = new String[roomSize];
+        Player[] players = new Player[roomSize];
+        Tile[] colors = Tile.values();
+        
         for (int i = 0; i < roomSize; i++) {
-            names[i] = players.get(i).getName();
+            names[i] = connections.get(i).getName();
+            players[i] = new Player(colors[i+1], names[i]);
+        }
+        
+        for (Connection c : connections) {
+            c.write("START", names);
         }
         
         isPlaying = true;
-        for (Connection c : players) {
-            c.write("START", names);
-        }
+        game = new Game(players);
     }
     
     /**
@@ -175,7 +205,16 @@ public class Room {
      * @param parameters - parameters
      */
     public void sendCommand(String cmd, String... parameters) {
-        for (Connection c : players) {
+        if(cmd.equals("GMOVE")){
+            boolean valid = game.isValidMove(game.getBoard().getIndex(Integer.parseInt(parameters[1]),Integer.parseInt(parameters[2])));
+            if(valid){
+                game.makeMove(parameters[0] , parameters[1], parameters[2]);
+            }else{
+                sendCommand("ERROR", "Invalid Move!");
+                return;
+            }
+        }
+        for (Connection c : connections) {
             c.write(cmd, parameters);
         }
     }
