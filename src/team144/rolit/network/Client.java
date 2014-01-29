@@ -92,7 +92,8 @@ public class Client implements NetworkListener {
                 clientListener.gameReady();
                 break;
             case("GTURN"): //GTURN player
-                clientListener.onTurn(parameters[0]);
+                System.out.println("GTURN"+parameters[0]);
+                clientListener.onTurn(peer, parameters[0]);
                 break;
             case ("GMOVE"): //GMOVE x y
                 int x = Integer.parseInt(parameters[1]);
@@ -191,6 +192,6 @@ public class Client implements NetworkListener {
         //public void error(String message);
         public void loginError();
 
-        void onTurn(String player);
+        void onTurn(Connection conn, String player);
     }
 }

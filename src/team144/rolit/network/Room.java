@@ -12,9 +12,11 @@ import team144.util.Util;
 public class Room {
     
     /**
-     * This class keeps track of all the players that are either waiting to be added to a room, or are actually in a room.
+     * This class keeps track of all the players that are either waiting to be
+     * added to a room, or are actually in a room.
      * the room.type field is used to match just connected users to a room.
-     * It also handles all players wanting to join a room, and can send commands to all players in some room
+     * It also handles all players wanting to join a room, and can send commands
+     * to all players in some room
      * roomMap can be used to get a Room matching a connection
      * 
      * NGAME flags:
@@ -66,9 +68,9 @@ public class Room {
             roomSize = 2;
         } else if (type.equals("I")) {
             roomSize = 3;
-        } else if(type.equals("J")){
+        } else if (type.equals("J")) {
             roomSize = 4;
-        } else if(type.startsWith("INVIT")){
+        } else if (type.startsWith("INVIT")) {
             String[] params = type.split(" ");
             
             roomSize = params.length;
@@ -87,7 +89,7 @@ public class Room {
         
         if (cmd.equals("NGAME")) {
             type = params[0];
-            if(type.equals("D")) type = "H";
+            if (type.equals("D")) type = "H";
         } else if (cmd.equals("INVIT")) {
             type = cmd + " " + Util.concat(Arrays.copyOfRange(params, 1, params.length));
         }
@@ -124,9 +126,9 @@ public class Room {
                     
                     Connection invitedConnection = server.getPlayer(invitee);
                     
-                    if(invitedConnection == null || isInRoom(invitedConnection)){
+                    if (invitedConnection == null || isInRoom(invitedConnection)) {
                         player.write("INVIT", "F");
-                    }else{
+                    } else {
                         invitedConnection.write("INVIT", "R", player.getName());
                     }
                 }
@@ -188,7 +190,7 @@ public class Room {
         
         for (int i = 0; i < roomSize; i++) {
             names[i] = connections.get(i).getName();
-            players[i] = new Player(colors[i+1], names[i]);
+            players[i] = new Player(colors[i + 1], names[i]);
         }
         
         for (Connection c : connections) {
@@ -201,17 +203,25 @@ public class Room {
     
     /**
      * sends command to all connections matching the players in the room
-     * @param cmd - command
-     * @param parameters - parameters
+     * 
+     * @param cmd
+     *            - command
+     * @param parameters
+     *            - parameters
      */
     public void sendCommand(String cmd, String... parameters) {
-        if(cmd.equals("GMOVE")){
+        if (cmd.equals("GMOVE")) {
             int x = Integer.parseInt(parameters[1]);
             int y = Integer.parseInt(parameters[2]);
             boolean valid = game.isValidMove(game.getBoard().getIndex(x, y));
-            if(valid){
-                game.makeMove(parameters[0] , x, y);
-            }else{
+            if (valid) {
+                game.makeMove(parameters[0], x, y);
+                for (Connection c : connections) {
+                    c.write(cmd, parameters);
+                }
+                sendCommand("GTURN", game.getCurrentPlayer().getName());
+                return;
+            } else {
                 sendCommand("ERROR", "Invalid Move!");
                 return;
             }

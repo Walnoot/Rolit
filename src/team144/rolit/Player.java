@@ -1,5 +1,7 @@
 package team144.rolit;
 
+import team144.rolit.network.Connection;
+
 
 public class Player {
     private Tile tile;
@@ -20,9 +22,10 @@ public class Player {
         return name;
     }
 
-    public void requestMove() {
+    public void requestMove(Connection conn) {
         if(strategy!=null){
-            game.makeMove(this.getName(), strategy.findMove(game, name)); 
+            int move = strategy.findMove(game, getName());
+            conn.write("GMOVE", Integer.toString(game.getBoard().getX(move)),Integer.toString(game.getBoard().getY(move)));
         }else{
             //wait till user pressed a button
         }
