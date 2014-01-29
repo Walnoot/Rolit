@@ -24,7 +24,7 @@ public class Player {
 
     public void requestMove(Connection conn) {
         if(strategy!=null){
-            int move = strategy.findMove(game, getName());
+            int move = strategy.findMove(game,getName());
             conn.write("GMOVE", Integer.toString(game.getBoard().getX(move)),Integer.toString(game.getBoard().getY(move)));
         }else{
             //wait till user pressed a button
