@@ -94,7 +94,7 @@ public class Server implements NetworkListener {
                 if (legit) {
                     if (!hasConnectionWithName(peer.getName())) {
                         authorizedConnections.add(peer);
-                        sendCommand(peer, "HELLO", "D"); //default
+                        sendCommand(peer, "HELLO", "CL"); //default
                         sendCommandToAll("LJOIN", peer.getName());
                         
                         System.out.println("Player " + peer.getName() + " logged in.");

@@ -4,7 +4,8 @@ package team144.rolit;
  * With bitmasks and everything.
  */
 public class RecursiveStrategy implements Strategy {
-    
+    private static final int NUM_ITERATIONS = 3;
+
     @Override
     public String getName() {
         return "recursive";
@@ -25,7 +26,7 @@ public class RecursiveStrategy implements Strategy {
 //        
 //        return bestMoveIndex;
         
-        return getMove(getBestMoveQuality(game, game.findPlayer(playerName), 5));
+        return getMove(getBestMoveQuality(game, game.findPlayer(playerName), NUM_ITERATIONS));
     }
     
     public static void main(String[] args) {
@@ -57,7 +58,7 @@ public class RecursiveStrategy implements Strategy {
     private static void setMove(Game game) {
         Player player = game.getCurrentPlayer();
         
-        int move = getMove(getBestMoveQuality(game, player, 6));
+        int move = getMove(getBestMoveQuality(game, player, NUM_ITERATIONS));
         if (!game.isValidMove(move)) System.out.println("oeps");
         System.out.println(move);
         game.makeMove(player.getName(), move);
@@ -66,13 +67,17 @@ public class RecursiveStrategy implements Strategy {
     private static int getBestMoveQuality(Game game, Player player, int iterations) {
         if (iterations == 0) return -1;
         
-        int bestMove = 0;
+        int bestMove = -1;
         int bestQuality = 0;
+        
+        int legalMove = 0;//any move that is valid
         
         int startQuality = getQuality(game, player);
         
         for (int i = 0; i < Board.DIMENSION * Board.DIMENSION; i++) {
             if (game.isValidMove(i)) {
+                legalMove = i;
+                
                 Game newGame = new Game(game);
                 
                 newGame.makeMove(player.getName(), i);
@@ -92,6 +97,7 @@ public class RecursiveStrategy implements Strategy {
             }
         }
         
+        if(bestMove == -1) bestMove = legalMove;
         return combine(bestMove, bestQuality);
     }
     

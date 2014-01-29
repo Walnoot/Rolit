@@ -72,7 +72,7 @@ public class Client implements NetworkListener {
                 break;
             case ("HELLO"):
                 clientListener.onHello(parameters[0]);
-                sendCommand("HELLO", "D");
+                sendCommand("HELLO", "CL");
                 break;
             case ("START"): //  START [Bob, Alice, Lol]
                 Player[] players = new Player[parameters.length];
