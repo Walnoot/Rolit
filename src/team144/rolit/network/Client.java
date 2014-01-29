@@ -7,7 +7,7 @@ import java.net.UnknownHostException;
 import javax.swing.JOptionPane;
 
 import team144.rolit.Game;
-import team144.rolit.Player;
+import team144.rolit.HumanPlayer;
 import team144.rolit.Tile;
 import team144.util.Util;
 
@@ -18,7 +18,7 @@ public class Client implements NetworkListener {
     private Authenticator authenticator;
     private String name;
     private Game game;
-    private Player player;
+    private HumanPlayer player;
     
     private ClientListener clientListener;
     
@@ -75,9 +75,9 @@ public class Client implements NetworkListener {
                 sendCommand("HELLO", "D");
                 break;
             case ("START"): //  START [Bob, Alice, Lol]
-                Player[] players = new Player[parameters.length];
+                HumanPlayer[] players = new HumanPlayer[parameters.length];
                 for (int i = 0; i < parameters.length; i++) {
-                    Player player = new Player(Tile.values()[i + 1], parameters[i]);
+                    HumanPlayer player = new HumanPlayer(Tile.values()[i + 1], parameters[i]);
                     players[i] = player;
                     
                     if (player.getName().equals(name)) {
@@ -130,6 +130,7 @@ public class Client implements NetworkListener {
                     else if(parameters[0].equals("D")) JOptionPane.showMessageDialog(null, "Invitation denied");
                     System.out.println("?");
                 }
+            break;
             case ("PROTO"):
                 sendCommand("PROTO", Info.NAME, Info.VERSION);
                 break;
@@ -149,7 +150,7 @@ public class Client implements NetworkListener {
         return game;
     }
     
-    public Player getPlayer() {
+    public HumanPlayer getPlayer() {
         return player;
     }
     

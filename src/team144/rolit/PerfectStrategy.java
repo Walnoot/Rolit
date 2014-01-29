@@ -8,7 +8,7 @@ public class PerfectStrategy implements Strategy {
 	}
 
 	@Override
-	public Player getPlayer() {
+	public HumanPlayer getPlayer() {
 		return null;
 	}
 

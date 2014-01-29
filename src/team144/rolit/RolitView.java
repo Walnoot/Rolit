@@ -38,9 +38,13 @@ public class RolitView extends Panel implements Observer, ClientListener{
     /**
      * The Player of this process.
      */
-    private final Player player;
+    private final HumanPlayer player;
     
-    public RolitView(Game game,final Client client) {
+    public RolitView(Game game, Client client){
+        this(game, client, false);
+    }
+    
+    public RolitView(Game game,final Client client, boolean isBot) {
         player = client.getPlayer();
         
         game.addObserver(this);
@@ -81,6 +85,7 @@ public class RolitView extends Panel implements Observer, ClientListener{
             public void actionPerformed(ActionEvent event) {
                 String text = textField.getText();
                 if(text.startsWith("/")){
+                    text = text.subSequence(1, text.length()).toString();
                     String[] parsed = text.split(" ");
                     client.sendCommand(parsed[0], Arrays.copyOfRange(parsed, 1, parsed.length));
                 }else{

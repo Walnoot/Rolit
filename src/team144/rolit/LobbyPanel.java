@@ -2,6 +2,7 @@ package team144.rolit;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
+import java.awt.Checkbox;
 import java.awt.Dimension;
 import java.awt.Label;
 import java.awt.Panel;
@@ -42,6 +43,7 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
     private Button inviteButton;
     private final TextArea chatArea;
     private TextField chatField;
+    private Checkbox playAsBot;
     
     public LobbyPanel(JFrame frame, final Client client) {
         this.frame = frame;
@@ -97,7 +99,10 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
         
         findGameButton = new Button("Find Game");
         findGameButton.addActionListener(this);
-        table.addCell(findGameButton).pad(PAD_VALUE).fillX();
+        table.addCell(findGameButton).row().pad(PAD_VALUE).fillX();
+        
+        playAsBot = new Checkbox("Play as bot");
+        table.addCell(playAsBot).pad(PAD_VALUE).fillX();
         
         JSplitPane rightSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, invitePanel, gameStartPanel);
         players.add(rightSplitPane);
@@ -147,6 +152,7 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
         } else if (e.getSource() == chatField) {
             String text = chatField.getText();
             if (text.startsWith("/")) {
+                text = text.subSequence(1, text.length()).toString();
                 String[] parsed = text.split(" ");
                 client.sendCommand(parsed[0], Arrays.copyOfRange(parsed, 1, parsed.length));
             } else {
