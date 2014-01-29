@@ -1,5 +1,6 @@
 package team144.rolit;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Observable;
 
@@ -237,6 +238,14 @@ public class Game extends Observable {
             this.xOffset = xOffset;
             this.yOffset = yOffset;
         }
+    }
+
+    public ArrayList<Integer> getLegalMoves() {
+       ArrayList<Integer> result = new ArrayList<Integer>();
+       for(int i = 0; i < legalMoves.length; i++){
+           result.add(i);
+       }
+       return result;
     }
     
 }
