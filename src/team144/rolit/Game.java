@@ -1,5 +1,6 @@
 package team144.rolit;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Observable;
 
@@ -16,6 +17,7 @@ public class Game extends Observable {
      * 1D array representing the legal moves on the board currently.
      */
     private boolean[] legalMoves = new boolean[Board.DIMENSION * Board.DIMENSION];
+    private String state;
     
     /**
      * @param players
@@ -60,11 +62,16 @@ public class Game extends Observable {
         return board;
     }
     
-    public void makeMove(String playerName, int x, int y) {
-        makeMove(playerName, board.getIndex(x, y));
+    public boolean makeMove(String playerName, int x, int y) {
+       return makeMove(playerName, board.getIndex(x, y));
     }
     
-    public void makeMove(String playerName, int index) {
+    /**
+     * @param playerName
+     * @param index
+     * @return true if game is over
+     */
+    public boolean makeMove(String playerName, int index) {
         for (int i = 0; i < players.length; i++) {
             Player player = players[i];
             
@@ -94,11 +101,14 @@ public class Game extends Observable {
                 setChanged();
                 notifyObservers();
                 
-                return;
-            }
-        }
+                if(getLegalMoves().size()==0){
+                    setState("STOPPED");
+                    return true;
+                }
+            }}
         
         System.out.println("Player " + playerName + "not found, wtf is this?" + Arrays.toString(players));
+        return false;
     }
     
     public Player findPlayer(String playerName){
@@ -174,6 +184,11 @@ public class Game extends Observable {
         }
     }
     
+    private void setState(String state) {
+        this.state = state;
+    }
+
+    
     /**
      * @param x
      * @param y
@@ -237,6 +252,21 @@ public class Game extends Observable {
             this.xOffset = xOffset;
             this.yOffset = yOffset;
         }
+    }
+    
+    public ArrayList<Integer> getLegalMoves(){
+        int size = Board.DIMENSION*Board.DIMENSION;
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        for(int i = 0; i<size; i++){
+            if(legalMoves[i]){
+                result.add(i);
+            }
+        }
+        return result;
+    }
+    
+    public String getState(){
+        return state;
     }
     
 }

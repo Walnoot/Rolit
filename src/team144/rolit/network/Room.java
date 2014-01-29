@@ -221,11 +221,15 @@ public class Room {
             int y = Integer.parseInt(parameters[2]);
             boolean valid = game.isValidMove(game.getBoard().getIndex(x, y));
             if (valid) {
-                game.makeMove(parameters[0], x, y);
+                boolean gameOver = game.makeMove(parameters[0], x, y);
                 for (Connection c : connections) {
                     c.write(cmd, parameters);
                 }
                 sendCommand("GTURN", game.getCurrentPlayer().getName());
+                if(gameOver){
+                    sendCommand("STATE", "STOPPED");
+                    System.out.println("GAME OVER!");
+                }
                 return;
             } else {
                 sendCommand("ERROR", "Invalid Move!");
