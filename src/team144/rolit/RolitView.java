@@ -151,8 +151,7 @@ public class RolitView extends Panel implements Observer, ClientListener{
                 if (buttonArray[i] == event.getSource()) {
                     if (client.getPlayer() == game.getCurrentPlayer() && game.isValidMove(i)) {
                         Board board = game.getBoard();
-                        String[] par = new String[] { Integer.toString(board.getX(i)), Integer.toString(board.getY(i)) };
-                        client.sendCommand("GMOVE", par);
+                        client.sendCommand("GMOVE", Integer.toString(board.getX(i)), Integer.toString(board.getY(i)));
                     }
                 }
             }

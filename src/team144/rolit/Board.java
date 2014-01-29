@@ -74,4 +74,16 @@ public class Board {
     public int getY(int index){
         return index / DIMENSION;
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder(2 * DIMENSION * DIMENSION);
+        
+        for(Tile tile : field){
+            builder.append(tile.getIndex());
+            builder.append(' ');
+        }
+        
+        return builder.toString();
+    }
 }

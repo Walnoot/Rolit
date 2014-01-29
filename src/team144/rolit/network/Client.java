@@ -37,11 +37,11 @@ public class Client implements NetworkListener {
         peer.write(cmd, parameters);
     }
     
-    public void sendCommand(String combined){
+    public void sendCommand(String combined) {
         printMessage("sendCommand()\t" + combined);
         peer.write(combined);
     }
-
+    
     /**
      * Login to game server
      */
@@ -54,7 +54,7 @@ public class Client implements NetworkListener {
         }
     }
     
-    public void requestNewGame(String...flags) {
+    public void requestNewGame(String... flags) {
         sendCommand("NGAME", flags);
     }
     
@@ -64,7 +64,7 @@ public class Client implements NetworkListener {
     
     @Override
     public boolean executeCommand(String cmd, String[] parameters, Connection peer) {
-        // printMessage("ExecuteCommand()\t" + cmd + " " + Util.concat(parameters));
+        printMessage("ExecuteCommand()\t" + cmd + " " + Util.concat(parameters));
         switch (cmd) {
             case ("VSIGN"): //   VSIGN TEXT
                 String signature = authenticator.signMessage(parameters[0]);
@@ -89,23 +89,24 @@ public class Client implements NetworkListener {
                 
                 game = new Game(players);
                 clientListener.gameReady();
+                break;
+            case ("GTURN"): //GTURN player
+                System.out.println("GTURN" + parameters[0]);
+                int playerIndex = Integer.parseInt(parameters[0]);
                 
-                sendCommand("LOL");
+                clientListener.onTurn(peer, playerIndex);
+                game.setCurrentPlayer(playerIndex);
                 break;
-            case("GTURN"): //GTURN player
-                System.out.println("GTURN"+parameters[0]);
-                clientListener.onTurn(peer, Integer.parseInt(parameters[0]));
-                break;
-            case ("GMOVE"): //GMOVE x y
+            case ("GMOVE"): //GMOVE i x y
                 int x = Integer.parseInt(parameters[1]);
                 int y = Integer.parseInt(parameters[2]);
-                game.makeMove(parameters[0], x, y);
+                game.makeMove(Integer.parseInt(parameters[0]), x, y);
                 break;
             case ("BCAST"): //BCAST text text to client text
 //                controller.showMessage(Util.concat(parameters));
                 System.out.println(Util.concat(parameters));
                 break;
-            case("CHATM"):
+            case ("CHATM"):
                 clientListener.chatMessage(parameters);
                 break;
             case ("ERROR"):
@@ -124,27 +125,27 @@ public class Client implements NetworkListener {
                 clientListener.playerList(parameters);
                 break;
             case ("INVIT"):
-                if(parameters[0].equals("R")){
-                    if(JOptionPane.showConfirmDialog(null, "Accept invitation from " + parameters[1] + "?") == JOptionPane.OK_OPTION){
+                if (parameters[0].equals("R")) {
+                    if (JOptionPane.showConfirmDialog(null, "Accept invitation from " + parameters[1] + "?") == JOptionPane.OK_OPTION) {
                         sendCommand("INVIT", "A");
-                    }else{
+                    } else {
                         sendCommand("INVIT", "D");
                     }
-                }else{
-                    if(parameters[0].equals("F")) JOptionPane.showMessageDialog(null, "Invitation failed");
-                    else if(parameters[0].equals("D")) JOptionPane.showMessageDialog(null, "Invitation denied");
+                } else {
+                    if (parameters[0].equals("F")) JOptionPane.showMessageDialog(null, "Invitation failed");
+                    else if (parameters[0].equals("D")) JOptionPane.showMessageDialog(null, "Invitation denied");
                     System.out.println("?");
                 }
-            break;
+                break;
             case ("PROTO"):
                 sendCommand("PROTO", Info.NAME, Info.VERSION);
                 break;
             case ("SINFO"):
                 sendCommand("SINFO", Info.PROGRAM_NAME, Info.PROGRAM_VERSION);
-            break;
+                break;
             case ("ALIVE"):
                 break;
-            case("SCORE"):
+            case ("SCORE"):
                 break;
         }
         
@@ -180,19 +181,19 @@ public class Client implements NetworkListener {
         public void onHello(String flag);
         
         public void playerList(String[] players);
-
+        
         public void leave(String player);
-
+        
         public void lobbyJoin(String player);
-
+        
         public void gameReady();
         
         //from player - message
         public void chatMessage(String[] message);
-
+        
         //public void error(String message);
         public void loginError();
-
+        
         void onTurn(Connection conn, int playerIndex);
     }
 }

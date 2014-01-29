@@ -13,19 +13,6 @@ public class RecursiveStrategy implements Strategy {
     
     @Override
     public int findMove(Game game, String playerName) {
-//        int maxTakeOvers = 0;
-//        int bestMoveIndex = 0;
-//        
-//        for (int i = 0; i < Board.DIMENSION * Board.DIMENSION; i++) {
-//            if (game.isValidMove(i)) {
-//                Game newGame = new Game(game);
-//                Player player = newGame.findPlayer(playerName);
-//                
-//            }
-//        }
-//        
-//        return bestMoveIndex;
-        
         return getMove(getBestMoveQuality(game, game.findPlayer(playerName), NUM_ITERATIONS));
     }
     
@@ -102,7 +89,7 @@ public class RecursiveStrategy implements Strategy {
     }
     
     private static int getQuality(Game game, Player player) {
-        if(game.isGameOver()) return getNumTiles(game, player) * 2;
+//        if(game.isGameOver()) return getNumTiles(game, player) * 2;
         
         int quality = 0;
         int borderWeight = 5;//how much the algorithm likes border and corners
@@ -115,13 +102,28 @@ public class RecursiveStrategy implements Strategy {
                 int y = game.getBoard().getY(i);
                 
                 //moves near the sides and corners are better in every way.
-                if (x == 0 || x == Board.DIMENSION - 1) quality += borderWeight;
-                if (y == 0 || y == Board.DIMENSION - 1) quality += borderWeight;
+//                if (x == 0 || x == Board.DIMENSION - 1) quality += borderWeight;
+//                if (y == 0 || y == Board.DIMENSION - 1) quality += borderWeight;
+//                if (x == 1 || x == Board.DIMENSION - 2) quality -= borderWeight;
+//                if (y == 1 || y == Board.DIMENSION - 2) quality -= borderWeight;
+                
+                quality += lt[x][y];
             }
         }
         
         return quality;
     }
+    
+    private static final int[][] lt = new int[][]{
+        {10000, -3000,  1000,   800,    800,    1000,   -3000,  10000},
+        {-3000, -5000,  -450,   -500,   -500,   -450,   -5000,  -3000},
+        {1000,  -450,   30,     10,     10,     30,     -450,   1000},
+        {800,   -500,   10,     50,     50,     10,     -500,   800},
+        {800,   -500,   10,     50,     50,     10,     -500,   800},
+        {1000,  -450,   30,     10,     10,     30,     -450,   1000},
+        {-3000, -5000,  -450,   -500,   -500,   -450,   -5000,  -3000},
+        {10000, -3000,  1000,   800,    800,    1000,   -3000,  10000},
+    };
     
     private static int combine(int move, int quality) {
         return move | Math.min(0, quality) << 16;

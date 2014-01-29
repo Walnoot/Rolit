@@ -198,11 +198,11 @@ public class Authenticator implements NetworkListener {
      */
     public synchronized static final String generateRandomString(int n) {
         char[] chars = "qwertyuiopasdfghjklzxcvbnm".toCharArray();
-        SecureRandom lol = new SecureRandom();
+        SecureRandom random = new SecureRandom();
         StringBuilder sb = new StringBuilder();
         
         for (int i = 0; i < n; i++) {
-            sb.append(chars[lol.nextInt(chars.length)]);
+            sb.append(chars[random.nextInt(chars.length)]);
         }
         return sb.toString();
     }
