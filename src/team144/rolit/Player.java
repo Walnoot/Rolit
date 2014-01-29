@@ -22,7 +22,7 @@ public class Player {
 
     public void requestMove() {
         if(strategy!=null){
-            game.makeMove(this, strategy.findMove(game)); 
+            game.makeMove(this.getName(), strategy.findMove(game)); 
         }else{
             //wait till user pressed a button
         }

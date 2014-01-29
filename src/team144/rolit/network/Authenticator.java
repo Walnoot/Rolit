@@ -206,5 +206,10 @@ public class Authenticator implements NetworkListener {
         }
         return sb.toString();
     }
+
+    @Override
+    public void endConnection(Connection c) {
+        
+    }
     
 }

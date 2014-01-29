@@ -113,7 +113,7 @@ public class Server implements NetworkListener {
                 Room.assignRoom(peer, this, cmd, parameters);
                 break;
             case ("GMOVE"): //GMOVE x y
-                sendCommandToRoom(peer, cmd, parameters);
+                sendCommandToRoom(peer, cmd, peer.getName(), parameters[0], parameters[1]);
                 break;
             case ("CHATM"): //CHATM from message
                 String[] params = (peer.getName() + " " + Util.concat(parameters)).split(" ");

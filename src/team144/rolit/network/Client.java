@@ -95,9 +95,9 @@ public class Client implements NetworkListener {
                 clientListener.onTurn(parameters[0]);
                 break;
             case ("GMOVE"): //GMOVE x y
-                int x = Integer.parseInt(parameters[0]);
-                int y = Integer.parseInt(parameters[1]);
-                game.makeMove(game.getCurrentPlayer().getName(), x, y);
+                int x = Integer.parseInt(parameters[1]);
+                int y = Integer.parseInt(parameters[2]);
+                game.makeMove(parameters[0], x, y);
                 break;
             case ("BCAST"): //BCAST text text to client text
 //                controller.showMessage(Util.concat(parameters));

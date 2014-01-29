@@ -206,9 +206,11 @@ public class Room {
      */
     public void sendCommand(String cmd, String... parameters) {
         if(cmd.equals("GMOVE")){
-            boolean valid = game.isValidMove(game.getBoard().getIndex(Integer.parseInt(parameters[1]),Integer.parseInt(parameters[2])));
+            int x = Integer.parseInt(parameters[1]);
+            int y = Integer.parseInt(parameters[2]);
+            boolean valid = game.isValidMove(game.getBoard().getIndex(x, y));
             if(valid){
-                game.makeMove(parameters[0] , parameters[1], parameters[2]);
+                game.makeMove(parameters[0] , x, y);
             }else{
                 sendCommand("ERROR", "Invalid Move!");
                 return;
