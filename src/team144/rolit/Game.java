@@ -17,7 +17,6 @@ public class Game extends Observable {
      * 1D array representing the legal moves on the board currently.
      */
     private boolean[] legalMoves = new boolean[Board.DIMENSION * Board.DIMENSION];
-    private String state;
     
     /**
      * @param players
@@ -62,16 +61,11 @@ public class Game extends Observable {
         return board;
     }
     
-    public boolean makeMove(String playerName, int x, int y) {
-       return makeMove(playerName, board.getIndex(x, y));
+    public void makeMove(String playerName, int x, int y) {
+        makeMove(playerName, board.getIndex(x, y));
     }
     
-    /**
-     * @param playerName
-     * @param index
-     * @return true if game is over
-     */
-    public boolean makeMove(String playerName, int index) {
+    public void makeMove(String playerName, int index) {
         for (int i = 0; i < players.length; i++) {
             Player player = players[i];
             
@@ -101,14 +95,11 @@ public class Game extends Observable {
                 setChanged();
                 notifyObservers();
                 
-                if(getLegalMoves().size()==0){
-                    setState("STOPPED");
-                    return true;
-                }
-            }}
+                return;
+            }
+        }
         
         System.out.println("Player " + playerName + "not found, wtf is this?" + Arrays.toString(players));
-        return false;
     }
     
     public Player findPlayer(String playerName){
@@ -184,11 +175,6 @@ public class Game extends Observable {
         }
     }
     
-    private void setState(String state) {
-        this.state = state;
-    }
-
-    
     /**
      * @param x
      * @param y
@@ -253,20 +239,13 @@ public class Game extends Observable {
             this.yOffset = yOffset;
         }
     }
-    
-    public ArrayList<Integer> getLegalMoves(){
-        int size = Board.DIMENSION*Board.DIMENSION;
-        ArrayList<Integer> result = new ArrayList<Integer>();
-        for(int i = 0; i<size; i++){
-            if(legalMoves[i]){
-                result.add(i);
-            }
-        }
-        return result;
-    }
-    
-    public String getState(){
-        return state;
+
+    public ArrayList<Integer> getLegalMoves() {
+       ArrayList<Integer> result = new ArrayList<Integer>();
+       for(int i = 0; i < legalMoves.length; i++){
+           result.add(i);
+       }
+       return result;
     }
     
 }

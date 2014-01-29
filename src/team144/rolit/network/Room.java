@@ -221,7 +221,8 @@ public class Room {
             int y = Integer.parseInt(parameters[2]);
             boolean valid = game.isValidMove(game.getBoard().getIndex(x, y));
             if (valid) {
-                boolean gameOver = game.makeMove(parameters[0], x, y);
+                boolean gameOver = false;
+                game.makeMove(parameters[0], x, y);
                 for (Connection c : connections) {
                     c.write(cmd, parameters);
                 }
