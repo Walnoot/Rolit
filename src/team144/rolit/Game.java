@@ -1,12 +1,13 @@
 package team144.rolit;
 
+import java.util.Arrays;
 import java.util.Observable;
 
 public class Game extends Observable {
     public static final int MIN_PLAYERS = 2;
     public static final int MAX_PLAYERS = 4;
     
-    private final Board board = new Board();
+    private final Board board;
     
     private final Player[] players;
     private int currentPlayerIndex = 0;
@@ -25,6 +26,8 @@ public class Game extends Observable {
      * requires players.length >= MIN_PLAYERS & players.length <= MAX_PLAYERS;
      */
     public Game(Player... players) {
+        board = new Board();
+        
         if (players.length < MIN_PLAYERS || players.length > MAX_PLAYERS)
             throw new IllegalArgumentException("Too few or much players: " + players.length);
         
@@ -40,6 +43,17 @@ public class Game extends Observable {
         this.players = players;
         
         calculateLegalMoves();
+    }
+    
+    /**
+     * @param game - The game to be copied.
+     */
+    public Game(Game game){
+        board = new Board(game.board);
+        this.players = game.players;
+        this.currentPlayerIndex = game.currentPlayerIndex;
+        this.gameOver = game.gameOver;
+        this.legalMoves = Arrays.copyOf(legalMoves, legalMoves.length);
     }
     
     public Board getBoard() {
@@ -84,7 +98,16 @@ public class Game extends Observable {
             }
         }
         
-        System.out.println("Player not found, wtf is this?");
+        System.out.println("Player " + playerName + "not found, wtf is this?" + Arrays.toString(players));
+    }
+    
+    public Player findPlayer(String playerName){
+        for (int i = 0; i < players.length; i++) {
+            Player player = players[i];
+            if(player.getName().equals(playerName)) return player;
+        }
+        
+        return null;
     }
     
     private void calculateLegalMoves() {
@@ -188,34 +211,12 @@ public class Game extends Observable {
      * @return - True iff the move is valid.
      */
     public boolean isValidMove(int index) {
-//        if (board.getTile(index) != Tile.EMPTY) return false;
-//        
-//        int x = board.getX(index);
-//        int y = board.getY(index);
-//        
-//        boolean hasOtherColorNeighbour = false;
-//        boolean canMove = false;//whether this moves takes over any tiles
-//        for (Direction dir : Direction.values()) {
-//            Tile tile = board.getTile(x + dir.xOffset, y + dir.yOffset);
-//            if (tile != null && tile != Tile.EMPTY && tile != getCurrentPlayer().getTile()) {
-//                hasOtherColorNeighbour = true;
-//                
-//                if (getSteps(x, y, dir, getCurrentPlayer().getTile()) > 1) canMove = true;
-//            }
-//        }
-//        
-//        if (!hasOtherColorNeighbour) return false;
-//        
-//        boolean hasTile = false;//if the current player owns any tiles
-//        for (int i = 0; i < Board.DIMENSION * Board.DIMENSION && !hasTile; i++) {
-//            if (board.getTile(i) == getCurrentPlayer().getTile()) hasTile = true;
-//        }
-//        
-//        if (!hasTile) return true;
-//        
-//        return canMove;
         if (index < 0 || index >= Board.DIMENSION * Board.DIMENSION) return false;
         else return legalMoves[index];
+    }
+    
+    public int getNumPlayers(){
+        return players.length;
     }
     
     public boolean isGameOver() {

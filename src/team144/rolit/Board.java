@@ -23,6 +23,12 @@ public class Board {
         }
     }
     
+    public Board(Board board) {
+        for (int i = 0; i < field.length; i++) {
+            field[i] = board.field[i];
+        }
+    }
+
     public void setTile(int index, Tile tile) {
         field[index] = tile;
     }
