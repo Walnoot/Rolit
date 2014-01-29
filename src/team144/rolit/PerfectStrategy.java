@@ -1,20 +1,10 @@
 package team144.rolit;
 
-public class PerfectStrategy implements Strategy {
+public class PerfectStrategy extends LinearStrategy { //sssssttt
 
 	@Override
 	public String getName() {
-		return null;
+	    return "PERFECT";
 	}
-
-	@Override
-	public HumanPlayer getPlayer() {
-		return null;
-	}
-
-	@Override
-	public void determineMove() {
-	}
-
 
 }

@@ -155,4 +155,10 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
         // TODO Auto-generated method stub
         
     }
+
+    @Override
+    public void onTurn(String player) {
+        // TODO Auto-generated method stub
+        
+    }
 }

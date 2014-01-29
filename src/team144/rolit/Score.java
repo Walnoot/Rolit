@@ -3,12 +3,12 @@ package team144.rolit;
 import java.util.Calendar;
 
 public class Score implements Comparable<Score>{
-	private final HumanPlayer player;
+	private final Player player;
 	private final int points;
 	private final Calendar calendar;
 	private final boolean winner;
 	
-	public Score(int score, HumanPlayer player, Calendar calendar, boolean winner){
+	public Score(int score, Player player, Calendar calendar, boolean winner){
 		this.points = score;
 		this.player = player;
 		this.calendar = calendar;
@@ -26,7 +26,7 @@ public class Score implements Comparable<Score>{
 		return points;
 	}
 	
-	public HumanPlayer getPlayer(){
+	public Player getPlayer(){
 		return player;
 	}
 	
