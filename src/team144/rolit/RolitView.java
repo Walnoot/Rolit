@@ -27,7 +27,7 @@ public class RolitView extends Panel implements Observer, ClientListener{
     private static final long serialVersionUID = 4223398494630548955L;
     
     private static final int WIDTH = 500;
-    private static final int HEIGHT = 500;
+    private static final int HEIGHT = 700;
     private static final String FRAME_TITLE = "Rolit";
     
     private Button[] buttonArray = new Button[Board.DIMENSION * Board.DIMENSION];
@@ -159,7 +159,7 @@ public class RolitView extends Panel implements Observer, ClientListener{
         
         public void makeMove(int x, int y) {
             Board board = game.getBoard();
-            game.makeMove(game.getCurrentPlayer(), board.getIndex(x, y));
+            game.makeMove(game.getCurrentPlayer().getName(), board.getIndex(x, y));
         }
     }
     

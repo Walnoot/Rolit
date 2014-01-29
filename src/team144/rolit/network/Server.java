@@ -147,6 +147,12 @@ public class Server implements NetworkListener {
         return false;
     }
     
+    @Override
+    public void endConnection(Connection c) {
+        connections.remove(c);
+        authorizedConnections.remove(c);
+    }
+    
     /**
      * @param invitee - player name, not null.
      * @return - The connection of the player with that name, or null if he's not online.

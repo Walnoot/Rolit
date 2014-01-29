@@ -5,7 +5,6 @@ import java.awt.Label;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.net.UnknownHostException;
 
 import javax.swing.BoxLayout;
@@ -53,7 +52,7 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
         table.row();
         
         table.addCell(new Label("Server IP:"));
-        ipField = new JTextField("127.0.0.1");
+        ipField = new JTextField("127.0.0.1:" + Server.DEFAULT_PORT);
         table.addCell(ipField).width(TEXTFIELD_WIDTH);
         table.row();
         
@@ -108,10 +107,10 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
             //TODO: goede error messages
         } catch (UnknownHostException e1) {
             setInfoText("Unknown host");
-        } catch (IOException e) {
-            setInfoText("Something went wrong");
+//        } catch (IOException e) {
+//            setInfoText("Something went wrong");
         } catch (Exception e) {
-            setInfoText("Something went wrong");
+            setInfoText(e.getMessage());
         }
     }
 
@@ -152,8 +151,6 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
 
     @Override
     public void chatMessage(String[] message) {
-        // TODO Auto-generated method stub
-        
     }
 
     @Override

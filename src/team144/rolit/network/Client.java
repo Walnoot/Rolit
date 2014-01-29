@@ -97,7 +97,7 @@ public class Client implements NetworkListener {
             case ("GMOVE"): //GMOVE x y
                 int x = Integer.parseInt(parameters[0]);
                 int y = Integer.parseInt(parameters[1]);
-                game.makeMove(game.getCurrentPlayer(), x, y);
+                game.makeMove(game.getCurrentPlayer().getName(), x, y);
                 break;
             case ("BCAST"): //BCAST text text to client text
 //                controller.showMessage(Util.concat(parameters));
@@ -147,6 +147,10 @@ public class Client implements NetworkListener {
         }
         
         return false;
+    }
+    
+    @Override
+    public void endConnection(Connection c) {
     }
     
     public Game getGame() {

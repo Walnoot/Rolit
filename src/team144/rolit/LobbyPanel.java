@@ -140,7 +140,7 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
         } else if (e.getSource() == inviteButton) {
             List<String> players = playerList.getSelectedValuesList();
             
-            if (players.size() > 0) {
+            if (players.size() > 0 && players.size() < Game.MAX_PLAYERS) {
                 ArrayList<String> parameters = new ArrayList<String>();
                 
                 parameters.add("R");
