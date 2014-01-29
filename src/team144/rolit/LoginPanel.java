@@ -155,7 +155,7 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
     }
 
     @Override
-    public void onTurn(Connection conn, String player) {
+    public void onTurn(Connection conn, int player) {
         // TODO Auto-generated method stub
         
     }

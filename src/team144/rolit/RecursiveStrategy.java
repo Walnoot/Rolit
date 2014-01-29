@@ -4,7 +4,7 @@ package team144.rolit;
  * With bitmasks and everything.
  */
 public class RecursiveStrategy implements Strategy {
-    private static final int NUM_ITERATIONS = 3;
+    private static final int NUM_ITERATIONS = 6;
 
     @Override
     public String getName() {

@@ -212,11 +212,13 @@ public class Room {
     public void sendCommand(String cmd, String... parameters) {
         if(cmd.equals("GTURN")){
             for (Connection c : connections) {
-                c.write(cmd, game.getCurrentPlayer().getName());
+                c.write(cmd, ""+game.getCurrentPlayer().index);
             }
             return;
         }
         if (cmd.equals("GMOVE")) {
+            System.out.println(Arrays.toString(parameters));
+            
             int x = Integer.parseInt(parameters[1]);
             int y = Integer.parseInt(parameters[2]);
             boolean valid = game.isValidMove(game.getBoard().getIndex(x, y));
@@ -226,7 +228,7 @@ public class Room {
                 for (Connection c : connections) {
                     c.write(cmd, parameters);
                 }
-                sendCommand("GTURN", game.getCurrentPlayer().getName());
+                sendCommand("GTURN", parameters[0]);
                 if(gameOver){
                     sendCommand("STATE", "STOPPED");
                     System.out.println("GAME OVER!");

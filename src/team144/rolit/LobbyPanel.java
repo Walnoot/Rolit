@@ -212,8 +212,7 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
         chatArea.append(message[0] + " says:\t" + Util.concat(Arrays.copyOfRange(message, 1, message.length)) + "\n");
     }
 
-
     @Override
-    public void onTurn(Connection conn, String player) {
+    public void onTurn(Connection conn, int playerIndex) {
     }
 }

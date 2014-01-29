@@ -94,7 +94,7 @@ public class Client implements NetworkListener {
                 break;
             case("GTURN"): //GTURN player
                 System.out.println("GTURN"+parameters[0]);
-                clientListener.onTurn(peer, parameters[0]);
+                clientListener.onTurn(peer, Integer.parseInt(parameters[0]));
                 break;
             case ("GMOVE"): //GMOVE x y
                 int x = Integer.parseInt(parameters[1]);
@@ -193,6 +193,6 @@ public class Client implements NetworkListener {
         //public void error(String message);
         public void loginError();
 
-        void onTurn(Connection conn, String player);
+        void onTurn(Connection conn, int playerIndex);
     }
 }

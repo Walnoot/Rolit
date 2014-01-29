@@ -34,6 +34,7 @@ public class Game extends Observable {
         
         for (int i = 0; i < players.length; i++) {
             players[i].setGame(this);
+            players[i].index = i;
         }
         
         board.setTile(Board.DIMENSION / 2 - 1, Board.DIMENSION / 2 - 1, Tile.RED);

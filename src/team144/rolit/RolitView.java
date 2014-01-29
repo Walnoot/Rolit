@@ -190,8 +190,8 @@ public class RolitView extends Panel implements Observer, ClientListener{
      * neccesary to get bots to move
      */
     @Override
-    public void onTurn(Connection conn, String player){
-        if(player.equals(this.player.getName())){
+    public void onTurn(Connection conn, int playerIndex){
+        if(player.index == playerIndex){
             this.player.requestMove(conn);
         }
     }

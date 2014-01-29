@@ -8,6 +8,7 @@ public class Player {
     private String name;
     private Game game;
     private Strategy strategy; //if null -> is human
+    public int index;
     
     public Player(Tile tile, String name) {
         this.tile = tile;
@@ -25,7 +26,7 @@ public class Player {
     public void requestMove(Connection conn) {
         if(strategy!=null){
             int move = strategy.findMove(game,getName());
-            conn.write("GMOVE", conn.getName() ,Integer.toString(game.getBoard().getX(move)),Integer.toString(game.getBoard().getY(move)));
+            conn.write("GMOVE", Integer.toString(game.getBoard().getX(move)),Integer.toString(game.getBoard().getY(move)));
         }else{
             //wait till user pressed a button
         }
