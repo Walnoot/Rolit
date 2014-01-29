@@ -115,6 +115,9 @@ public class Server implements NetworkListener {
             case ("GMOVE"): //GMOVE x y
                 sendCommandToRoom(peer, cmd, peer.getName(), parameters[0], parameters[1]);
                 break;
+            case("GTURN"): //GTURN player
+                sendCommandToRoom(peer, cmd, parameters);
+                break;
             case ("CHATM"): //CHATM from message
                 String[] params = (peer.getName() + " " + Util.concat(parameters)).split(" ");
                 if (Room.isInRoom(peer)) {

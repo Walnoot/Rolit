@@ -8,6 +8,8 @@ public class Info {
     
     //SINFO
     public static final String PROGRAM_NAME = "Super Rolit Simulator 2014";
+    public static final String NAME_CANDIDATE = "Brolit";
     public static final String PROGRAM_VERSION = "closed_beta3";
+    
     
 }

@@ -24,6 +24,7 @@ import javax.swing.JSplitPane;
 
 import team144.rolit.network.Client;
 import team144.rolit.network.Client.ClientListener;
+import team144.rolit.network.Connection;
 import team144.util.Util;
 
 import com.esotericsoftware.tablelayout.swing.Table;
@@ -211,9 +212,8 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
         chatArea.append(message[0] + " says:\t" + Util.concat(Arrays.copyOfRange(message, 1, message.length)) + "\n");
     }
 
+
     @Override
-    public void onTurn(String player) {
-        // TODO Auto-generated method stub
-        
+    public void onTurn(Connection conn, String player) {
     }
 }

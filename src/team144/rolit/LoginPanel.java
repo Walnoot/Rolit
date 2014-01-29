@@ -14,6 +14,7 @@ import javax.swing.JTextField;
 
 import team144.rolit.network.Client;
 import team144.rolit.network.Client.ClientListener;
+import team144.rolit.network.Connection;
 import team144.rolit.network.Server;
 import team144.util.Util;
 
@@ -154,7 +155,7 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
     }
 
     @Override
-    public void onTurn(String player) {
+    public void onTurn(Connection conn, String player) {
         // TODO Auto-generated method stub
         
     }

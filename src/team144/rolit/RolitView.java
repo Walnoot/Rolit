@@ -18,6 +18,7 @@ import javax.swing.JFrame;
 
 import team144.rolit.network.Client;
 import team144.rolit.network.Client.ClientListener;
+import team144.rolit.network.Connection;
 import team144.util.Util;
 
 public class RolitView extends Panel implements Observer, ClientListener{
@@ -189,9 +190,9 @@ public class RolitView extends Panel implements Observer, ClientListener{
      * neccesary to get bots to move
      */
     @Override
-    public void onTurn(String player){
+    public void onTurn(Connection conn, String player){
         if(player.equals(this.player.getName())){
-            this.player.requestMove();
+            this.player.requestMove(conn);
         }
     }
 
