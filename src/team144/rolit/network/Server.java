@@ -125,6 +125,9 @@ public class Server implements NetworkListener {
                 }
                 sendCommandToAll(cmd, params); //to lobby
                 break;
+            case("LOL"):
+                sendCommandToRoom(peer, "GTURN", new String[1]);
+                break;
             case ("PLIST"):
                 ArrayList<String> playerList = new ArrayList<String>();
                 

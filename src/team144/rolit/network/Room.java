@@ -210,6 +210,12 @@ public class Room {
      *            - parameters
      */
     public void sendCommand(String cmd, String... parameters) {
+        if(cmd.equals("GTURN")){
+            for (Connection c : connections) {
+                c.write(cmd, game.getCurrentPlayer().getName());
+            }
+            return;
+        }
         if (cmd.equals("GMOVE")) {
             int x = Integer.parseInt(parameters[1]);
             int y = Integer.parseInt(parameters[2]);
