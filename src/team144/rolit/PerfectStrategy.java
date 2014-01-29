@@ -1,6 +1,6 @@
 package team144.rolit;
 
-public class PerfectStrategy extends LinearStrategy { //sssssttt
+public class PerfectStrategy extends RandomStrategy { //sssssttt
 
 	@Override
 	public String getName() {

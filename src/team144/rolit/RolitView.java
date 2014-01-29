@@ -49,6 +49,7 @@ public class RolitView extends Panel implements Observer, ClientListener{
         player = client.getPlayer();
         if(isBot){
             player.setStrategy(new RecursiveStrategy());
+//            player.setStrategy(new RandomStrategy());
         }
         
         game.addObserver(this);

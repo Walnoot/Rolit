@@ -244,7 +244,9 @@ public class Game extends Observable {
     public ArrayList<Integer> getLegalMoves() {
        ArrayList<Integer> result = new ArrayList<Integer>();
        for(int i = 0; i < legalMoves.length; i++){
+           if(legalMoves[i]){
            result.add(i);
+           }
        }
        return result;
     }
