@@ -60,7 +60,8 @@ public class Room {
     /**
      * maps all connections to a room, for easy lookup
      */
-    private static HashMap<Connection, Room> roomMap = new HashMap<Connection, Room>();
+    private static HashMap<Connection, Room> roomMap =
+        new HashMap<Connection, Room>();
     
     private Room(Connection player, String type) {
         this.type = type;
@@ -91,7 +92,9 @@ public class Room {
             type = params[0];
             if (type.equals("D")) type = "H";
         } else if (cmd.equals("INVIT")) {
-            type = cmd + " " + Util.concat(Arrays.copyOfRange(params, 1, params.length));
+            type =
+                cmd + " "
+                    + Util.concat(Arrays.copyOfRange(params, 1, params.length));
         }
         
         return type;
@@ -108,7 +111,8 @@ public class Room {
      * @param params
      *            - flags (gametype/player)
      */
-    public static void assignRoom(Connection player, Server server, String cmd, String[] params) {
+    public static void assignRoom(Connection player, Server server, String cmd,
+            String[] params) {
         roomMap.remove(player);
         
         String wantedType = parseType(cmd, params);
@@ -128,7 +132,8 @@ public class Room {
                     
                     Connection invitedConnection = server.getPlayer(invitee);
                     
-                    if (invitedConnection == null || isInRoom(invitedConnection)) {
+                    if (invitedConnection == null
+                        || isInRoom(invitedConnection)) {
                         player.write("INVIT", "F");
                     } else {
                         invitedConnection.write("INVIT", "R", player.getName());
@@ -205,7 +210,7 @@ public class Room {
     
     public static void remove(Connection c) {
         Room room = roomMap.get(c);
-        if(room != null){
+        if (room != null) {
             room.removeConnection(c);
         }
     }
@@ -214,9 +219,9 @@ public class Room {
         connections.remove(c);
         roomMap.remove(c);
         
-        if(connections.size() == 0 || isPlaying) rooms.remove(this);
+        if (connections.size() == 0 || isPlaying) rooms.remove(this);
     }
-
+    
     /**
      * sends command to all connections matching the players in the room
      * 
@@ -226,7 +231,7 @@ public class Room {
      *            - parameters
      */
     public void sendCommand(String cmd, String... parameters) {
-        if(cmd.equals("GTURN")){
+        if (cmd.equals("GTURN")) {
             for (Connection c : connections) {
                 c.write(cmd, Integer.toString(game.getCurrentPlayer().index));
             }
@@ -245,7 +250,7 @@ public class Room {
                     c.write(cmd, parameters);
                 }
                 sendCommand("GTURN", parameters[0]);
-                if(gameOver){
+                if (gameOver) {
                     sendCommand("STATE", "STOPPED");
                     System.out.println("GAME OVER!");
                 }
@@ -255,7 +260,7 @@ public class Room {
                 return;
             }
         }
-        if(cmd.equals("BOARD")){
+        if (cmd.equals("BOARD")) {
             sendCommand("BOARD", game.getBoard().toString());
             return;
         }

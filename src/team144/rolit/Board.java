@@ -28,7 +28,7 @@ public class Board {
             field[i] = board.field[i];
         }
     }
-
+    
     public void setTile(int index, Tile tile) {
         field[index] = tile;
     }
@@ -42,10 +42,11 @@ public class Board {
      * 
      * @param i
      *            - The index.
-     * @return - The tile state at the specified index, or null if the index is out of bounds.
+     * @return - The tile state at the specified index, or null if the index is
+     *         out of bounds.
      */
     public final Tile getTile(final int i) {
-        if(i < 0 || i >= field.length) return null;
+        if (i < 0 || i >= field.length) return null;
         return field[i];
     }
     
@@ -56,22 +57,23 @@ public class Board {
      *            - The x coordinate.
      * @param y
      *            - The y coordinate.
-     * @return - The tile state at the specified coordinates, or null if the coordinates are out of bounds.
+     * @return - The tile state at the specified coordinates, or null if the
+     *         coordinates are out of bounds.
      */
     public final Tile getTile(final int x, final int y) {
-        if(x < 0 || y < 0 || x >= DIMENSION || y >= DIMENSION) return null;
+        if (x < 0 || y < 0 || x >= DIMENSION || y >= DIMENSION) return null;
         return field[getIndex(x, y)];
     }
     
-    public int getIndex(int x, int y){
+    public int getIndex(int x, int y) {
         return x + y * DIMENSION;
     }
     
-    public int getX(int index){
+    public int getX(int index) {
         return index % DIMENSION;
     }
     
-    public int getY(int index){
+    public int getY(int index) {
         return index / DIMENSION;
     }
     
@@ -79,7 +81,7 @@ public class Board {
     public String toString() {
         StringBuilder builder = new StringBuilder(2 * DIMENSION * DIMENSION);
         
-        for(Tile tile : field){
+        for (Tile tile : field) {
             builder.append(tile.getIndex());
             builder.append(' ');
         }

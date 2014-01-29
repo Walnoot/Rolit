@@ -10,5 +10,4 @@ public class Info {
     public static final String PROGRAM_NAME = "Brolit";
     public static final String PROGRAM_VERSION = "public_beta4";
     
-    
 }

@@ -20,7 +20,7 @@ import team144.util.Util;
 
 import com.esotericsoftware.tablelayout.swing.Table;
 
-public class LoginPanel extends Panel implements ActionListener, ClientListener{
+public class LoginPanel extends Panel implements ActionListener, ClientListener {
     private static final float TEXTFIELD_WIDTH = 200f;
     
     private JTextField usernameField;
@@ -31,7 +31,7 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
     private Label infoLabel;
     
     private Client client;
-
+    
     private final JFrame frame;
     
     public LoginPanel(JFrame frame) {
@@ -71,7 +71,7 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
         table.addCell(infoLabel).colspan(2);
     }
     
-    private void setInfoText(String message){
+    private void setInfoText(String message) {
         infoLabel.setText(message);
         validate();
     }
@@ -94,7 +94,7 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
                 port = Server.DEFAULT_PORT;
             }
             
-            if(!Util.isValidName(usernameField.getText())){
+            if (!Util.isValidName(usernameField.getText())) {
                 setInfoText("Invalid name");
                 return;
             }
@@ -114,13 +114,13 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
             setInfoText(e.getMessage());
         }
     }
-
+    
     /**
      * Called if the server has logged in the user successfully
      */
     @Override
     public void onHello(String flag) {
-        setInfoText("Login successful! Server supports the "+flag);
+        setInfoText("Login successful! Server supports the " + flag);
         
         frame.setContentPane(new LobbyPanel(frame, client));
         frame.validate();
@@ -138,7 +138,7 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
     @Override
     public void playerList(String[] players) {
     }
-
+    
     public void gameReady() {
 //         frame.setContentPane(new RolitView(client.getGame(), client));
 //         frame.validate();
@@ -146,14 +146,14 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener{
     
     @Override
     public void loginError() {
-      setInfoText("Login failed! Please try again...");
-      client.shutdown();
+        setInfoText("Login failed! Please try again...");
+        client.shutdown();
     }
-
+    
     @Override
     public void chatMessage(String[] message) {
     }
-
+    
     @Override
     public void onTurn(Connection conn, int player) {
         // TODO Auto-generated method stub

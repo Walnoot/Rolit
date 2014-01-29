@@ -21,7 +21,7 @@ import team144.rolit.network.Client.ClientListener;
 import team144.rolit.network.Connection;
 import team144.util.Util;
 
-public class RolitView extends Panel implements Observer, ClientListener{
+public class RolitView extends Panel implements Observer, ClientListener {
     /**
      * 
      */
@@ -31,7 +31,8 @@ public class RolitView extends Panel implements Observer, ClientListener{
     private static final int HEIGHT = 700;
     private static final String FRAME_TITLE = "Rolit";
     
-    private Button[] buttonArray = new Button[Board.DIMENSION * Board.DIMENSION];
+    private Button[] buttonArray =
+        new Button[Board.DIMENSION * Board.DIMENSION];
     private TextArea textArea;
     private TextField textField;
     private Label infoLabel;
@@ -41,13 +42,13 @@ public class RolitView extends Panel implements Observer, ClientListener{
      */
     private final Player player;
     
-    public RolitView(Game game, Client client){
+    public RolitView(Game game, Client client) {
         this(game, client, false);
     }
     
-    public RolitView(Game game,final Client client, boolean isBot) {
+    public RolitView(Game game, final Client client, boolean isBot) {
         player = client.getPlayer();
-        if(isBot){
+        if (isBot) {
             player.setStrategy(new RecursiveStrategy());
 //            player.setStrategy(new RandomStrategy());
         }
@@ -89,12 +90,13 @@ public class RolitView extends Panel implements Observer, ClientListener{
             @Override
             public void actionPerformed(ActionEvent event) {
                 String text = textField.getText();
-                if(text.startsWith("/")){
+                if (text.startsWith("/")) {
                     text = text.subSequence(1, text.length()).toString();
                     String[] parsed = text.split(" ");
-                    client.sendCommand(parsed[0], Arrays.copyOfRange(parsed, 1, parsed.length));
-                }else{
-                client.sendCommand("CHATM", text);
+                    client.sendCommand(parsed[0],
+                            Arrays.copyOfRange(parsed, 1, parsed.length));
+                } else {
+                    client.sendCommand("CHATM", text);
                 }
                 showMessage(text);
                 textField.setText(null);
@@ -117,8 +119,9 @@ public class RolitView extends Panel implements Observer, ClientListener{
             
             for (int i = 0; i < buttonArray.length; i++) {
                 Tile tile = game.getBoard().getTile(i);
-                if (tile == Tile.EMPTY && player == game.getCurrentPlayer()) 
-                    buttonArray[i].setBackground(game.isValidMove(i) ? Color.LIGHT_GRAY : Tile.EMPTY.getColor());
+                if (tile == Tile.EMPTY && player == game.getCurrentPlayer()) buttonArray[i]
+                        .setBackground(game.isValidMove(i) ? Color.LIGHT_GRAY
+                            : Tile.EMPTY.getColor());
                 else buttonArray[i].setBackground(tile.getColor());
             }
             
@@ -126,10 +129,11 @@ public class RolitView extends Panel implements Observer, ClientListener{
                 infoLabel.setText("Game over");
             } else {
                 String currentPlayer =
-                    game.getCurrentPlayer() == player ? "Your" : game.getCurrentPlayer().getName() + "'s";
+                    game.getCurrentPlayer() == player ? "Your" : game
+                            .getCurrentPlayer().getName() + "'s";
                 
-                infoLabel.setText(String
-                        .format("%s turn (%s)", currentPlayer, game.getCurrentPlayer().getTile().name()));
+                infoLabel.setText(String.format("%s turn (%s)", currentPlayer,
+                        game.getCurrentPlayer().getTile().name()));
             }
             
         } else {
@@ -150,9 +154,12 @@ public class RolitView extends Panel implements Observer, ClientListener{
         public void actionPerformed(ActionEvent event) {
             for (int i = 0; i < buttonArray.length; i++) {
                 if (buttonArray[i] == event.getSource()) {
-                    if (client.getPlayer() == game.getCurrentPlayer() && game.isValidMove(i)) {
+                    if (client.getPlayer() == game.getCurrentPlayer()
+                        && game.isValidMove(i)) {
                         Board board = game.getBoard();
-                        client.sendCommand("GMOVE", Integer.toString(board.getX(i)), Integer.toString(board.getY(i)));
+                        client.sendCommand("GMOVE",
+                                Integer.toString(board.getX(i)),
+                                Integer.toString(board.getY(i)));
                     }
                 }
             }
@@ -160,7 +167,8 @@ public class RolitView extends Panel implements Observer, ClientListener{
         
         public void makeMove(int x, int y) {
             Board board = game.getBoard();
-            game.makeMove(game.getCurrentPlayer().getName(), board.getIndex(x, y));
+            game.makeMove(game.getCurrentPlayer().getName(),
+                    board.getIndex(x, y));
         }
     }
     
@@ -180,7 +188,7 @@ public class RolitView extends Panel implements Observer, ClientListener{
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
-
+    
     @Override
     public void onHello(String flag) {
     }
@@ -190,33 +198,35 @@ public class RolitView extends Panel implements Observer, ClientListener{
      * neccesary to get bots to move
      */
     @Override
-    public void onTurn(Connection conn, int playerIndex){
-        if(player.index == playerIndex){
+    public void onTurn(Connection conn, int playerIndex) {
+        if (player.index == playerIndex) {
             this.player.requestMove(conn);
         }
     }
-
+    
     @Override
     public void playerList(String[] players) {
     }
-
+    
     @Override
     public void leave(String player) {
     }
-
+    
     @Override
     public void lobbyJoin(String player) {
     }
-
+    
     @Override
     public void gameReady() {
     }
-
+    
     @Override
     public void chatMessage(String[] message) {
-       textArea.append(message[0]+" says:\t"+Util.concat(Arrays.copyOfRange(message, 1, message.length))+"\n");
+        textArea.append(message[0] + " says:\t"
+            + Util.concat(Arrays.copyOfRange(message, 1, message.length))
+            + "\n");
     }
-
+    
     @Override
     public void loginError() {
     }

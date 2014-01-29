@@ -1,10 +1,9 @@
 package team144.util;
 
-
 public class Util {
     private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private static final char[] LEGAL_CHARACTERS = ALPHABET.concat(ALPHABET.toLowerCase()).concat("0123456789_")
-            .toCharArray();
+    private static final char[] LEGAL_CHARACTERS = ALPHABET
+            .concat(ALPHABET.toLowerCase()).concat("0123456789_").toCharArray();
     private static final int MIN_NAME_LENGTH = 2;
     private static final int MAX_NAME_LENGTH = 16;
     
@@ -28,21 +27,21 @@ public class Util {
     }
     
     public static boolean isValidName(String name) {
-        if(name.length() < MIN_NAME_LENGTH) return false;
-        if(name.length() > MAX_NAME_LENGTH) return false;
+        if (name.length() < MIN_NAME_LENGTH) return false;
+        if (name.length() > MAX_NAME_LENGTH) return false;
         
-        for(int i = 0; i < name.length(); i++){
-            if(!contains(name.charAt(i), LEGAL_CHARACTERS)) return false;
+        for (int i = 0; i < name.length(); i++) {
+            if (!contains(name.charAt(i), LEGAL_CHARACTERS)) return false;
         }
         
         return true;
     }
     
-    private static boolean contains(char testChar, char[] testValues){
+    private static boolean contains(char testChar, char[] testValues) {
         boolean contains = false;
         
-        for(int i = 0; i < testValues.length; i++){
-            if(testValues[i] == testChar) contains = true;
+        for (int i = 0; i < testValues.length; i++) {
+            if (testValues[i] == testChar) contains = true;
         }
         
         return contains;

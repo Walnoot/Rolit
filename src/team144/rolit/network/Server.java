@@ -20,7 +20,8 @@ public class Server implements NetworkListener {
     /**
      * authorizedConnections - logged in
      */
-    private ArrayList<Connection> authorizedConnections = new ArrayList<Connection>();
+    private ArrayList<Connection> authorizedConnections =
+        new ArrayList<Connection>();
     
     private ServerSocket serverSocket;
     private ServerMonitor monitor;
@@ -43,7 +44,7 @@ public class Server implements NetworkListener {
             }
             
             new Server(port);
-        } catch (BindException |NumberFormatException f) {
+        } catch (BindException | NumberFormatException f) {
             main(null);
             System.exit(0);
         } catch (IOException e) {
@@ -56,7 +57,8 @@ public class Server implements NetworkListener {
         authenticator = new Authenticator();
         serverSocket = new ServerSocket(port);
         
-        monitor.showCommand("Server's ip-address is: ", Inet4Address.getLocalHost().getHostAddress());
+        monitor.showCommand("Server's ip-address is: ", Inet4Address
+                .getLocalHost().getHostAddress());
         
         while (true) {
             Connection conn = new Connection(serverSocket.accept(), this);
@@ -65,7 +67,8 @@ public class Server implements NetworkListener {
         }
     }
     
-    public void sendCommand(Connection client, String cmd, String... parameters) {
+    public void
+            sendCommand(Connection client, String cmd, String... parameters) {
         client.write(cmd, parameters);
     }
     
@@ -75,12 +78,14 @@ public class Server implements NetworkListener {
         }
     }
     
-    public void sendCommandToRoom(Connection c, String cmd, String... parameters) {
+    public void sendCommandToRoom(Connection c, String cmd,
+            String... parameters) {
         Room.getRoom(c).sendCommand(cmd, parameters);
     }
     
     @Override
-    public boolean executeCommand(String cmd, String[] parameters, Connection peer) {
+    public boolean executeCommand(String cmd, String[] parameters,
+            Connection peer) {
         monitor.showCommand(cmd, parameters);
 //		System.out.println("ExecuteCommand()\t"+cmd+" "+Util.concat(parameters));
         switch (cmd) {
@@ -90,20 +95,25 @@ public class Server implements NetworkListener {
                 sendCommand(peer, "VSIGN", randomText);
                 break;
             case ("VSIGN"):
-                boolean legit = authenticator.verifySignature("player_" + peer.getName(), randomText, parameters[0]);
+                boolean legit =
+                    authenticator.verifySignature("player_" + peer.getName(),
+                            randomText, parameters[0]);
                 if (legit) {
                     if (!hasConnectionWithName(peer.getName())) {
                         authorizedConnections.add(peer);
                         sendCommand(peer, "HELLO", "CL"); //default
                         sendCommandToAll("LJOIN", peer.getName());
                         
-                        System.out.println("Player " + peer.getName() + " logged in.");
+                        System.out.println("Player " + peer.getName()
+                            + " logged in.");
                     } else {
-                        sendCommand(peer, "ERROR", "An player with that name is already logged in");
+                        sendCommand(peer, "ERROR",
+                                "An player with that name is already logged in");
                     }
                 } else {
                     sendCommand(peer, "ERROR", "Text signed incorrectly");
-                    System.out.println("Player " + peer.getName() + " failed to log in.");
+                    System.out.println("Player " + peer.getName()
+                        + " failed to log in.");
                 }
                 break;
             case ("NGAME"):
@@ -113,15 +123,18 @@ public class Server implements NetworkListener {
                 Room.assignRoom(peer, this, cmd, parameters);
                 break;
             case ("GMOVE"): //GMOVE x y
-                int index = Room.getRoom(peer).getGame().findPlayer(peer.getName()).index;
+                int index =
+                    Room.getRoom(peer).getGame().findPlayer(peer.getName()).index;
                 
-                sendCommandToRoom(peer, cmd, Integer.toString(index), parameters[0], parameters[1]);
+                sendCommandToRoom(peer, cmd, Integer.toString(index),
+                        parameters[0], parameters[1]);
                 break;
-            case("GTURN"): //GTURN player
+            case ("GTURN"): //GTURN player
                 sendCommandToRoom(peer, cmd, parameters);
                 break;
             case ("CHATM"): //CHATM from message
-                String[] params = (peer.getName() + " " + Util.concat(parameters)).split(" ");
+                String[] params =
+                    (peer.getName() + " " + Util.concat(parameters)).split(" ");
                 if (Room.isInRoom(peer)) {
                     sendCommandToRoom(peer, cmd, params); //to game
                 }
@@ -140,7 +153,8 @@ public class Server implements NetworkListener {
                 sendCommand(peer, "PROTO", Info.NAME, Info.VERSION);
                 break;
             case ("SINFO"):
-                sendCommand(peer, "SINFO", Info.PROGRAM_NAME, Info.PROGRAM_VERSION);
+                sendCommand(peer, "SINFO", Info.PROGRAM_NAME,
+                        Info.PROGRAM_VERSION);
                 break;
             case ("ALIVE"):
                 break;
@@ -163,12 +177,14 @@ public class Server implements NetworkListener {
     }
     
     /**
-     * @param invitee - player name, not null.
-     * @return - The connection of the player with that name, or null if he's not online.
+     * @param invitee
+     *            - player name, not null.
+     * @return - The connection of the player with that name, or null if he's
+     *         not online.
      */
     public Connection getPlayer(String invitee) {
-        for(Connection c : authorizedConnections){
-            if(c.getName().equals(invitee)) return c;
+        for (Connection c : authorizedConnections) {
+            if (c.getName().equals(invitee)) return c;
         }
         
         return null;

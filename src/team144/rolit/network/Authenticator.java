@@ -37,7 +37,8 @@ public class Authenticator implements NetworkListener {
     
     public Authenticator() {
         try {
-            InetAddress address = InetAddress.getByName("ss-security.student.utwente.nl");
+            InetAddress address =
+                InetAddress.getByName("ss-security.student.utwente.nl");
             socket = new Socket(address, 2013);
             name = "authenticattooor";
             peer = new Connection(socket, this);
@@ -83,14 +84,15 @@ public class Authenticator implements NetworkListener {
     }
     
     @Override
-    public boolean executeCommand(String cmd, String[] parameters, Connection peer) {
+    public boolean executeCommand(String cmd, String[] parameters,
+            Connection peer) {
         // System.out.println(cmd + " " + Util.concat(parameters));
         switch (cmd) {
             case ("ERROR"):
                 printMessage(Util.concat(parameters)); //wrong user/pw, try again
-            synchronized (lock) {
-                lock.notifyAll();
-            }
+                synchronized (lock) {
+                    lock.notifyAll();
+                }
                 break;
             case ("PRIVKEY"):
                 setPrivateKey(parameters[0]);
@@ -105,7 +107,8 @@ public class Authenticator implements NetworkListener {
                 }
                 break;
             default:
-                printMessage("Unknown Command()\t" + cmd + " " + Util.concat(parameters));
+                printMessage("Unknown Command()\t" + cmd + " "
+                    + Util.concat(parameters));
                 break;
         }
         return false;
@@ -130,7 +133,8 @@ public class Authenticator implements NetworkListener {
             sig.initSign(pk);
             sig.update(msg.getBytes());
             signature = sig.sign();
-        } catch (InvalidKeyException | SignatureException | NoSuchAlgorithmException e) {
+        } catch (InvalidKeyException | SignatureException
+                | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
         return Base64.encodeBase64String(signature);
@@ -168,14 +172,17 @@ public class Authenticator implements NetworkListener {
      *            - message that was to be signed (DEFAULT JAAV ENCODEIGN)
      * @return - true if message is signed by user
      */
-    public boolean verifySignature(String name, String message, String signature) {
+    public boolean
+            verifySignature(String name, String message, String signature) {
         boolean check = false;
         try {
             sendCommand("PUBLICKEY", name);
             synchronized (lock) {
                 lock.wait();
                 KeyFactory fact = KeyFactory.getInstance("RSA");
-                X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.decodeBase64(pubkey.getBytes()));
+                X509EncodedKeySpec keySpec =
+                    new X509EncodedKeySpec(Base64.decodeBase64(pubkey
+                            .getBytes()));
                 PublicKey publicKey = fact.generatePublic(keySpec);
                 Signature sig = Signature.getInstance("SHA1withRSA");
                 sig.initVerify(publicKey);
@@ -206,7 +213,7 @@ public class Authenticator implements NetworkListener {
         }
         return sb.toString();
     }
-
+    
     @Override
     public void endConnection(Connection c) {
         

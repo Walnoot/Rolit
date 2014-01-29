@@ -22,7 +22,8 @@ public class Client implements NetworkListener {
     
     private ClientListener clientListener;
     
-    public Client(String ip, int port, String name) throws UnknownHostException, IOException {
+    public Client(String ip, int port, String name)
+            throws UnknownHostException, IOException {
         this.name = name;
         socket = new Socket(ip, port);
         peer = new Connection(socket, this);
@@ -63,7 +64,8 @@ public class Client implements NetworkListener {
     }
     
     @Override
-    public boolean executeCommand(String cmd, String[] parameters, Connection peer) {
+    public boolean executeCommand(String cmd, String[] parameters,
+            Connection peer) {
         printMessage("ExecuteCommand()\t" + cmd + " " + Util.concat(parameters));
         switch (cmd) {
             case ("VSIGN"): //   VSIGN TEXT
@@ -77,7 +79,8 @@ public class Client implements NetworkListener {
             case ("START"): //  START [Bob, Alice, Lol]
                 Player[] players = new Player[parameters.length];
                 for (int i = 0; i < parameters.length; i++) {
-                    Player player = new Player(Tile.values()[i + 1], parameters[i]);
+                    Player player =
+                        new Player(Tile.values()[i + 1], parameters[i]);
                     players[i] = player;
                     
                     if (player.getName().equals(name)) {
@@ -85,7 +88,8 @@ public class Client implements NetworkListener {
                     }
                 }
                 
-                if (player == null) System.out.println("Controlled player not found?!");
+                if (player == null)
+                    System.out.println("Controlled player not found?!");
                 
                 game = new Game(players);
                 clientListener.gameReady();
@@ -120,20 +124,28 @@ public class Client implements NetworkListener {
                 break;
             case ("LEAVE"):
                 clientListener.leave(parameters[0]);
+                
+                if (game.findPlayer(parameters[0]) == null) {
+                    
+                }
                 break;
             case ("PLIST"):
                 clientListener.playerList(parameters);
                 break;
             case ("INVIT"):
                 if (parameters[0].equals("R")) {
-                    if (JOptionPane.showConfirmDialog(null, "Accept invitation from " + parameters[1] + "?") == JOptionPane.OK_OPTION) {
+                    if (JOptionPane.showConfirmDialog(null,
+                            "Accept invitation from " + parameters[1] + "?") == JOptionPane.OK_OPTION) {
                         sendCommand("INVIT", "A");
                     } else {
                         sendCommand("INVIT", "D");
                     }
                 } else {
-                    if (parameters[0].equals("F")) JOptionPane.showMessageDialog(null, "Invitation failed");
-                    else if (parameters[0].equals("D")) JOptionPane.showMessageDialog(null, "Invitation denied");
+                    if (parameters[0].equals("F")) JOptionPane
+                            .showMessageDialog(null, "Invitation failed");
+                    else if (parameters[0].equals("D"))
+                        JOptionPane
+                                .showMessageDialog(null, "Invitation denied");
                     System.out.println("?");
                 }
                 break;

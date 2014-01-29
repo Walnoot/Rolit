@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * random 
+ * random
  */
 
 public class RandomStrategy implements Strategy {
@@ -18,7 +18,7 @@ public class RandomStrategy implements Strategy {
     @Override
     public int findMove(Game game, String playerName) {
         ArrayList<Integer> moves = game.getLegalMoves();
-            return moves.get(rand.nextInt(moves.size()));
+        return moves.get(rand.nextInt(moves.size()));
     }
     
 }

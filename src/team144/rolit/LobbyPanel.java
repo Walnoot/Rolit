@@ -87,7 +87,8 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
         invitePanel.add(inviteButton, BorderLayout.SOUTH);
         
         Panel gameStartPanel = new Panel();
-        gameStartPanel.setLayout(new BoxLayout(gameStartPanel, BoxLayout.Y_AXIS));
+        gameStartPanel
+                .setLayout(new BoxLayout(gameStartPanel, BoxLayout.Y_AXIS));
         
         Table table = new Table();
         table.top().pad(PAD_VALUE);
@@ -105,10 +106,13 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
         playAsBot = new Checkbox("Play as bot");
         table.addCell(playAsBot).pad(PAD_VALUE).fillX();
         
-        JSplitPane rightSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, invitePanel, gameStartPanel);
+        JSplitPane rightSplitPane =
+            new JSplitPane(JSplitPane.VERTICAL_SPLIT, invitePanel,
+                    gameStartPanel);
         players.add(rightSplitPane);
         
-        JSplitPane topSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, chat, players);
+        JSplitPane topSplitPane =
+            new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, chat, players);
 //        topSplitPane.setDividerLocation(150);
         add(topSplitPane);
         
@@ -119,7 +123,8 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
     }
     
     private static enum GameType {
-        TWO_PLAYERS("Two Players", "H"), THREE_PLAYERS("Three Players", "I"), FOUR_PLAYERS("Four Players", "J");
+        TWO_PLAYERS("Two Players", "H"), THREE_PLAYERS("Three Players", "I"),
+        FOUR_PLAYERS("Four Players", "J");
         
         private String uiName, protocolName;
         
@@ -155,7 +160,8 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
             if (text.startsWith("/")) {
                 text = text.subSequence(1, text.length()).toString();
                 String[] parsed = text.split(" ");
-                client.sendCommand(parsed[0], Arrays.copyOfRange(parsed, 1, parsed.length));
+                client.sendCommand(parsed[0],
+                        Arrays.copyOfRange(parsed, 1, parsed.length));
             } else {
                 client.sendCommand("CHATM", text);
             }
@@ -199,7 +205,8 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
      */
     @Override
     public void gameReady() {
-        frame.setContentPane(new RolitView(client.getGame(), client, playAsBot.getState()));
+        frame.setContentPane(new RolitView(client.getGame(), client, playAsBot
+                .getState()));
         frame.validate();
     }
     
@@ -209,9 +216,11 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
     
     @Override
     public void chatMessage(String[] message) {
-        chatArea.append(message[0] + " says:\t" + Util.concat(Arrays.copyOfRange(message, 1, message.length)) + "\n");
+        chatArea.append(message[0] + " says:\t"
+            + Util.concat(Arrays.copyOfRange(message, 1, message.length))
+            + "\n");
     }
-
+    
     @Override
     public void onTurn(Connection conn, int playerIndex) {
     }

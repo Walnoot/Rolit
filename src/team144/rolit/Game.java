@@ -16,7 +16,8 @@ public class Game extends Observable {
     /**
      * 1D array representing the legal moves on the board currently.
      */
-    private boolean[] legalMoves = new boolean[Board.DIMENSION * Board.DIMENSION];
+    private boolean[] legalMoves = new boolean[Board.DIMENSION
+        * Board.DIMENSION];
     
     /**
      * @param players
@@ -30,14 +31,16 @@ public class Game extends Observable {
         board = new Board();
         
         if (players.length < MIN_PLAYERS || players.length > MAX_PLAYERS)
-            throw new IllegalArgumentException("Too few or much players: " + players.length);
+            throw new IllegalArgumentException("Too few or much players: "
+                + players.length);
         
         for (int i = 0; i < players.length; i++) {
             players[i].setGame(this);
             players[i].index = i + 1;
         }
         
-        board.setTile(Board.DIMENSION / 2 - 1, Board.DIMENSION / 2 - 1, Tile.RED);
+        board.setTile(Board.DIMENSION / 2 - 1, Board.DIMENSION / 2 - 1,
+                Tile.RED);
         board.setTile(Board.DIMENSION / 2, Board.DIMENSION / 2 - 1, Tile.YELLOW);
         board.setTile(Board.DIMENSION / 2 - 1, Board.DIMENSION / 2, Tile.BLUE);
         board.setTile(Board.DIMENSION / 2, Board.DIMENSION / 2, Tile.GREEN);
@@ -48,9 +51,10 @@ public class Game extends Observable {
     }
     
     /**
-     * @param game - The game to be copied.
+     * @param game
+     *            - The game to be copied.
      */
-    public Game(Game game){
+    public Game(Game game) {
         board = new Board(game.board);
         this.players = game.players;
         this.currentPlayerIndex = game.currentPlayerIndex;
@@ -74,17 +78,18 @@ public class Game extends Observable {
         for (int i = 0; i < players.length; i++) {
             Player player = players[i];
             
-            if(player.getName().equals(playerName)){
+            if (player.getName().equals(playerName)) {
                 makeMove(player, index, i);
                 
                 return;
             }
         }
         
-        System.out.println("Player " + playerName + "not found, wtf is this?" + Arrays.toString(players));
+        System.out.println("Player " + playerName + "not found, wtf is this?"
+            + Arrays.toString(players));
     }
     
-    public void makeMove(Player player, int boardIndex, int playerIndex){
+    public void makeMove(Player player, int boardIndex, int playerIndex) {
         int x = board.getX(boardIndex);
         int y = board.getY(boardIndex);
         
@@ -109,18 +114,18 @@ public class Game extends Observable {
         notifyObservers();
     }
     
-    public Player findPlayer(String playerName){
+    public Player findPlayer(String playerName) {
         for (int i = 0; i < players.length; i++) {
             Player player = players[i];
-            if(player.getName().equals(playerName)) return player;
+            if (player.getName().equals(playerName)) return player;
         }
         
         return null;
     }
     
-    public Player findPlayer(int index){
+    public Player findPlayer(int index) {
         for (int i = 0; i < players.length; i++) {
-            if(players[i].index == index) return players[i];
+            if (players[i].index == index) return players[i];
         }
         
         return null;
@@ -138,10 +143,12 @@ public class Game extends Observable {
                 boolean canMove = false;//whether this moves takes over any tiles
                 for (Direction dir : Direction.values()) {
                     Tile tile = board.getTile(x + dir.xOffset, y + dir.yOffset);
-                    if (tile != null && tile != Tile.EMPTY && tile != getCurrentPlayer().getTile()) {
+                    if (tile != null && tile != Tile.EMPTY
+                        && tile != getCurrentPlayer().getTile()) {
                         hasOtherColorNeighbour = true;
                         
-                        if (getSteps(x, y, dir, getCurrentPlayer().getTile()) > 1) canMove = true;
+                        if (getSteps(x, y, dir, getCurrentPlayer().getTile()) > 1)
+                            canMove = true;
                     }
                 }
                 
@@ -160,20 +167,21 @@ public class Game extends Observable {
         
         if (!hasMove) {//no move possible, so any neighbouring tile is valid
             for (int i = 0; i < legalMoves.length; i++) {
-                if(board.getTile(i) == Tile.EMPTY){
+                if (board.getTile(i) == Tile.EMPTY) {
                     int x = board.getX(i);
                     int y = board.getY(i);
                     
                     boolean hasNeighbour = false;//not that there's anything wrong with that of course
                     for (Direction dir : Direction.values()) {
-                        Tile tile = board.getTile(x + dir.xOffset, y + dir.yOffset);
+                        Tile tile =
+                            board.getTile(x + dir.xOffset, y + dir.yOffset);
                         if (tile != null && tile != Tile.EMPTY) {
                             hasNeighbour = true;
                         }
                     }
                     
                     legalMoves[i] = hasNeighbour;
-                }else{
+                } else {
                     legalMoves[i] = false;
                 }
             }
@@ -205,7 +213,8 @@ public class Game extends Observable {
             int testX = x + i * dir.xOffset;
             int testY = y + i * dir.yOffset;
             
-            if (testX < 0 || testY < 0 || testX >= Board.DIMENSION || testY >= Board.DIMENSION) {
+            if (testX < 0 || testY < 0 || testX >= Board.DIMENSION
+                || testY >= Board.DIMENSION) {
                 break;
             } else {
                 Tile testTile = board.getTile(testX, testY);
@@ -231,7 +240,7 @@ public class Game extends Observable {
         else return legalMoves[index];
     }
     
-    public int getNumPlayers(){
+    public int getNumPlayers() {
         return players.length;
     }
     
@@ -252,8 +261,8 @@ public class Game extends Observable {
     }
     
     private enum Direction {
-        NORTH(0, 1), NORTH_EAST(1, 1), EAST(1, 0), SOUTH_EAST(1, -1), SOUTH(0, -1), SOUTH_WEST(-1, -1), WEST(-1, 0),
-        NORTH_WEST(-1, 1);
+        NORTH(0, 1), NORTH_EAST(1, 1), EAST(1, 0), SOUTH_EAST(1, -1), SOUTH(0,
+                -1), SOUTH_WEST(-1, -1), WEST(-1, 0), NORTH_WEST(-1, 1);
         
         private int xOffset, yOffset;
         
@@ -262,15 +271,15 @@ public class Game extends Observable {
             this.yOffset = yOffset;
         }
     }
-
+    
     public ArrayList<Integer> getLegalMoves() {
-       ArrayList<Integer> result = new ArrayList<Integer>();
-       for(int i = 0; i < legalMoves.length; i++){
-           if(legalMoves[i]){
-           result.add(i);
-           }
-       }
-       return result;
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        for (int i = 0; i < legalMoves.length; i++) {
+            if (legalMoves[i]) {
+                result.add(i);
+            }
+        }
+        return result;
     }
     
 }

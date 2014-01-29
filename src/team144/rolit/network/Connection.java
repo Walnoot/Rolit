@@ -23,8 +23,12 @@ public class Connection extends Thread {
         this.socket = socket;
         setName(listener.getName());
         try {
-            out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out =
+                new BufferedWriter(new OutputStreamWriter(
+                        socket.getOutputStream()));
+            in =
+                new BufferedReader(new InputStreamReader(
+                        socket.getInputStream()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -39,7 +43,10 @@ public class Connection extends Thread {
                     String message;
                     while ((message = in.readLine()) != null) {
                         String[] contents = decryptMessage(message);
-                        running = listener.executeCommand(contents[0], Arrays.copyOfRange(contents, 1, contents.length), this);
+                        running =
+                            listener.executeCommand(contents[0], Arrays
+                                    .copyOfRange(contents, 1, contents.length),
+                                    this);
                     }
                 }
             }
@@ -69,7 +76,7 @@ public class Connection extends Thread {
     }
     
     private String concatMessage(String cmd, String[] message) {
-        if(message.length == 0) return cmd;
+        if (message.length == 0) return cmd;
         
         String result = cmd + " " + message[0];
         for (int i = 1; i < message.length; i++) {
@@ -79,7 +86,7 @@ public class Connection extends Thread {
         
     }
     
-    public void write(String cmd, String...parameters) {
+    public void write(String cmd, String... parameters) {
         String output = concatMessage(cmd, parameters);
         write(output);
     }

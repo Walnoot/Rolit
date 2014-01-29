@@ -5,7 +5,7 @@ package team144.rolit;
  */
 public class RecursiveStrategy implements Strategy {
     private static final int NUM_ITERATIONS = 5;
-
+    
     @Override
     public String getName() {
         return "recursive";
@@ -13,11 +13,13 @@ public class RecursiveStrategy implements Strategy {
     
     @Override
     public int findMove(Game game, String playerName) {
-        return getMove(getBestMoveQuality(game, game.findPlayer(playerName), NUM_ITERATIONS));
+        return getMove(getBestMoveQuality(game, game.findPlayer(playerName),
+                NUM_ITERATIONS));
     }
     
     public static void main(String[] args) {
-        Game game = new Game(new Player(Tile.RED, "1"), new Player(Tile.GREEN, "2"));
+        Game game =
+            new Game(new Player(Tile.RED, "1"), new Player(Tile.GREEN, "2"));
         
         setMove(game);
         setMove(game);
@@ -51,7 +53,8 @@ public class RecursiveStrategy implements Strategy {
         game.makeMove(player.getName(), move);
     }
     
-    private static int getBestMoveQuality(Game game, Player player, int iterations) {
+    private static int getBestMoveQuality(Game game, Player player,
+            int iterations) {
         if (iterations == 0) return -1;
         
         int bestMove = -1;
@@ -69,10 +72,14 @@ public class RecursiveStrategy implements Strategy {
                 
                 newGame.makeMove(player.getName(), i);
                 
-                int quality = (getQuality(newGame, player) - startQuality) * newGame.getNumPlayers();
+                int quality =
+                    (getQuality(newGame, player) - startQuality)
+                        * newGame.getNumPlayers();
                 
                 for (int j = 0; j < newGame.getNumPlayers() - 1; j++) {
-                    int enemyMove = getBestMoveQuality(newGame, newGame.getCurrentPlayer(), iterations - 1);
+                    int enemyMove =
+                        getBestMoveQuality(newGame, newGame.getCurrentPlayer(),
+                                iterations - 1);
                     
                     if (enemyMove != -1) quality -= getQuality(enemyMove);
                 }
@@ -84,7 +91,7 @@ public class RecursiveStrategy implements Strategy {
             }
         }
         
-        if(bestMove == -1) bestMove = legalMove;
+        if (bestMove == -1) bestMove = legalMove;
         return combine(bestMove, bestQuality);
     }
     
@@ -114,16 +121,15 @@ public class RecursiveStrategy implements Strategy {
         return quality;
     }
     
-    private static final int[][] lt = new int[][]{
-        {10000, -3000,  1000,   800,    800,    1000,   -3000,  10000},
-        {-3000, -5000,  -450,   -500,   -500,   -450,   -5000,  -3000},
-        {1000,  -450,   30,     10,     10,     30,     -450,   1000},
-        {800,   -500,   10,     50,     50,     10,     -500,   800},
-        {800,   -500,   10,     50,     50,     10,     -500,   800},
-        {1000,  -450,   30,     10,     10,     30,     -450,   1000},
-        {-3000, -5000,  -450,   -500,   -500,   -450,   -5000,  -3000},
-        {10000, -3000,  1000,   800,    800,    1000,   -3000,  10000},
-    };
+    private static final int[][] lt = new int[][] {
+        { 10000, -3000, 1000, 800, 800, 1000, -3000, 10000 },
+        { -3000, -5000, -450, -500, -500, -450, -5000, -3000 },
+        { 1000, -450, 30, 10, 10, 30, -450, 1000 },
+        { 800, -500, 10, 50, 50, 10, -500, 800 },
+        { 800, -500, 10, 50, 50, 10, -500, 800 },
+        { 1000, -450, 30, 10, 10, 30, -450, 1000 },
+        { -3000, -5000, -450, -500, -500, -450, -5000, -3000 },
+        { 10000, -3000, 1000, 800, 800, 1000, -3000, 10000 }, };
     
     private static int combine(int move, int quality) {
         return move | Math.min(0, quality) << 16;
