@@ -109,6 +109,8 @@ public class Room {
      *            - flags (gametype/player)
      */
     public static void assignRoom(Connection player, Server server, String cmd, String[] params) {
+        roomMap.remove(player);
+        
         String wantedType = parseType(cmd, params);
         
         if (cmd.equals("NGAME")) {
@@ -138,11 +140,10 @@ public class Room {
                         if (params[0].equals("A")) {
                             r.addPlayer(player);
                         } else {
+                            r.removeConnection(player);
+                            
                             //Player Denied request (invite failed not implemented yet)
                             r.sendCommand(cmd, params[0]);
-                            
-                            rooms.remove(r);
-                            roomMap.remove(r);
                         }
                         return;
                     }
@@ -195,12 +196,27 @@ public class Room {
         
         for (Connection c : connections) {
             c.write("START", names);
+            c.write("GTURN", "1");
         }
         
         isPlaying = true;
         game = new Game(players);
     }
     
+    public static void remove(Connection c) {
+        Room room = roomMap.get(c);
+        if(room != null){
+            room.removeConnection(c);
+        }
+    }
+    
+    private void removeConnection(Connection c) {
+        connections.remove(c);
+        roomMap.remove(c);
+        
+        if(connections.size() == 0 || isPlaying) rooms.remove(this);
+    }
+
     /**
      * sends command to all connections matching the players in the room
      * 
@@ -212,7 +228,7 @@ public class Room {
     public void sendCommand(String cmd, String... parameters) {
         if(cmd.equals("GTURN")){
             for (Connection c : connections) {
-                c.write(cmd, ""+game.getCurrentPlayer().index);
+                c.write(cmd, Integer.toString(game.getCurrentPlayer().index));
             }
             return;
         }
@@ -224,7 +240,7 @@ public class Room {
             boolean valid = game.isValidMove(game.getBoard().getIndex(x, y));
             if (valid) {
                 boolean gameOver = false;
-                game.makeMove(parameters[0], x, y);
+                game.makeMove(Integer.parseInt(parameters[0]), x, y);
                 for (Connection c : connections) {
                     c.write(cmd, parameters);
                 }
@@ -239,8 +255,17 @@ public class Room {
                 return;
             }
         }
+        if(cmd.equals("BOARD")){
+            sendCommand("BOARD", game.getBoard().toString());
+            return;
+        }
+        
         for (Connection c : connections) {
             c.write(cmd, parameters);
         }
+    }
+    
+    public Game getGame() {
+        return game;
     }
 }

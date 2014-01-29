@@ -34,7 +34,7 @@ public class Game extends Observable {
         
         for (int i = 0; i < players.length; i++) {
             players[i].setGame(this);
-            players[i].index = i;
+            players[i].index = i + 1;
         }
         
         board.setTile(Board.DIMENSION / 2 - 1, Board.DIMENSION / 2 - 1, Tile.RED);
@@ -62,6 +62,10 @@ public class Game extends Observable {
         return board;
     }
     
+    public void makeMove(int playerIndex, int x, int y) {
+        makeMove(findPlayer(playerIndex), board.getIndex(x, y), playerIndex);
+    }
+    
     public void makeMove(String playerName, int x, int y) {
         makeMove(playerName, board.getIndex(x, y));
     }
@@ -71,30 +75,7 @@ public class Game extends Observable {
             Player player = players[i];
             
             if(player.getName().equals(playerName)){
-                currentPlayerIndex = i;
-                
-                int x = board.getX(index);
-                int y = board.getY(index);
-                
-                for (Direction dir : Direction.values()) {
-                    testDirection(x, y, dir, player.getTile());
-                }
-                
-                board.setTile(index, player.getTile());
-                
-                currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
-                
-                boolean boardFull = true;
-                for (int j = 0; j < Board.DIMENSION * Board.DIMENSION; j++) {
-                    if (board.getTile(j) == Tile.EMPTY) boardFull = false;
-                }
-                
-                if (boardFull) gameOver = true;
-                
-                calculateLegalMoves();
-                
-                setChanged();
-                notifyObservers();
+                makeMove(player, index, i);
                 
                 return;
             }
@@ -103,10 +84,43 @@ public class Game extends Observable {
         System.out.println("Player " + playerName + "not found, wtf is this?" + Arrays.toString(players));
     }
     
+    public void makeMove(Player player, int boardIndex, int playerIndex){
+        int x = board.getX(boardIndex);
+        int y = board.getY(boardIndex);
+        
+        for (Direction dir : Direction.values()) {
+            testDirection(x, y, dir, player.getTile());
+        }
+        
+        board.setTile(boardIndex, player.getTile());
+        
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+        
+        boolean boardFull = true;
+        for (int j = 0; j < Board.DIMENSION * Board.DIMENSION; j++) {
+            if (board.getTile(j) == Tile.EMPTY) boardFull = false;
+        }
+        
+        if (boardFull) gameOver = true;
+        
+        calculateLegalMoves();
+        
+        setChanged();
+        notifyObservers();
+    }
+    
     public Player findPlayer(String playerName){
         for (int i = 0; i < players.length; i++) {
             Player player = players[i];
             if(player.getName().equals(playerName)) return player;
+        }
+        
+        return null;
+    }
+    
+    public Player findPlayer(int index){
+        for (int i = 0; i < players.length; i++) {
+            if(players[i].index == index) return players[i];
         }
         
         return null;
@@ -227,6 +241,14 @@ public class Game extends Observable {
     
     public Player getCurrentPlayer() {
         return players[currentPlayerIndex];
+    }
+    
+    public void setCurrentPlayer(int playerIndex) {
+        currentPlayerIndex = playerIndex - 1;
+        calculateLegalMoves();
+        
+        setChanged();
+        notifyObservers();
     }
     
     private enum Direction {

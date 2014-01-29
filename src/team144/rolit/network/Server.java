@@ -113,7 +113,9 @@ public class Server implements NetworkListener {
                 Room.assignRoom(peer, this, cmd, parameters);
                 break;
             case ("GMOVE"): //GMOVE x y
-                sendCommandToRoom(peer, cmd, peer.getName(), parameters[0], parameters[1]);
+                int index = Room.getRoom(peer).getGame().findPlayer(peer.getName()).index;
+                
+                sendCommandToRoom(peer, cmd, Integer.toString(index), parameters[0], parameters[1]);
                 break;
             case("GTURN"): //GTURN player
                 sendCommandToRoom(peer, cmd, parameters);
@@ -124,9 +126,6 @@ public class Server implements NetworkListener {
                     sendCommandToRoom(peer, cmd, params); //to game
                 }
                 sendCommandToAll(cmd, params); //to lobby
-                break;
-            case("LOL"):
-                sendCommandToRoom(peer, "GTURN", new String[1]);
                 break;
             case ("PLIST"):
                 ArrayList<String> playerList = new ArrayList<String>();
@@ -145,6 +144,9 @@ public class Server implements NetworkListener {
                 break;
             case ("ALIVE"):
                 break;
+            case ("BOARD"):
+                sendCommandToRoom(peer, "BOARD", parameters);
+                break;
             default:
                 System.out.println("Command not implemented: " + cmd);
                 break;
@@ -157,6 +159,7 @@ public class Server implements NetworkListener {
     public void endConnection(Connection c) {
         connections.remove(c);
         authorizedConnections.remove(c);
+        Room.remove(c);
     }
     
     /**
