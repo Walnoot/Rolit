@@ -112,6 +112,9 @@ public class ViewApplication extends ApplicationAdapter {
 		}
 	}
 	
+	/**
+	 * Updates the board, called when the board changes.
+	 */
 	public void update() {
 		if (loading) return;
 		

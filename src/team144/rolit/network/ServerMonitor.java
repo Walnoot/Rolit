@@ -20,7 +20,7 @@ public class ServerMonitor {
 	private static final int WIDTH = 400;
 	private static final int HEIGHT = 200;
 	private static final String FRAME_TITLE = "Server Monitor";
-	final TextArea textArea;
+	private final TextArea textArea;
 	
 	public ServerMonitor(final Server server) {
 		JFrame frame = new JFrame(FRAME_TITLE);

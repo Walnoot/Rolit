@@ -106,7 +106,6 @@ public class Client implements NetworkListener {
 				
 				break;
 			case ("BCAST"): //BCAST text text to client text
-//                controller.showMessage(Util.concat(parameters));
 				System.out.println(Util.concat(parameters));
 				break;
 			case ("CHATM"):

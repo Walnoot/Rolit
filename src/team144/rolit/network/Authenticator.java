@@ -19,13 +19,6 @@ import org.apache.commons.codec.binary.Base64;
 import team144.util.Util;
 
 public class Authenticator implements NetworkListener {
-	
-	//pws
-	private static final String name1 = "player_willemsiers";
-	private static final String pw1 = "Ouleid9E";
-	private static final String name2 = "player_michiel";
-	private static final String pw2 = "paars";
-	
 	private Socket socket;
 	private Connection peer;
 	private String name;

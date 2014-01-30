@@ -95,8 +95,8 @@ public class RecursiveStrategy implements Strategy {
 			if (game.getBoard().getTile(i) == player.getTile()) {
 				quality++;
 				
-				int x = game.getBoard().getX(i);
-				int y = game.getBoard().getY(i);
+				int x = Board.getX(i);
+				int y = Board.getY(i);
 				
 				quality += qualityTable[x][y];
 			}
@@ -105,12 +105,23 @@ public class RecursiveStrategy implements Strategy {
 		return quality;
 	}
 	
+	/**
+	 * A table determining the quality of a tile on the board
+	 */
 	private static final int[][] qualityTable = new int[][] { { 10000, -3000, 1000, 800, 800, 1000, -3000, 10000 },
 		{ -3000, -5000, -450, -500, -500, -450, -5000, -3000 }, { 1000, -450, 30, 10, 10, 30, -450, 1000 },
 		{ 800, -500, 10, 50, 50, 10, -500, 800 }, { 800, -500, 10, 50, 50, 10, -500, 800 },
 		{ 1000, -450, 30, 10, 10, 30, -450, 1000 }, { -3000, -5000, -450, -500, -500, -450, -5000, -3000 },
 		{ 10000, -3000, 1000, 800, 800, 1000, -3000, 10000 }, };
 	
+	/**
+	 * The move and quality of said move are packed into one int for performance reasons. (Java can only return 1 thing, and allocating a
+	 * new object would be costly).
+	 * 
+	 * @param move
+	 * @param quality
+	 * @return
+	 */
 	private static int combine(int move, int quality) {
 		return move | Math.min(0, quality) << 16;
 	}
