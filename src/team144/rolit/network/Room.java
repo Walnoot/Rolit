@@ -102,11 +102,11 @@ public class Room {
 	 * If not, creates a new rooms and puts him in it
 	 * 
 	 * @param player
-	 *            - Connection of the player that requested a new game
+	 * - Connection of the player that requested a new game
 	 * @param cmd
-	 *            - NGAME or INVIT
+	 * - NGAME or INVIT
 	 * @param params
-	 *            - flags (gametype/player)
+	 * - flags (gametype/player)
 	 */
 	public static void assignRoom(Connection player, Server server, String cmd, String[] params) {
 		roomMap.remove(player);
@@ -221,9 +221,9 @@ public class Room {
 	 * sends command to all connections matching the players in the room
 	 * 
 	 * @param cmd
-	 *            - command
+	 * - command
 	 * @param parameters
-	 *            - parameters
+	 * - parameters
 	 */
 	public void sendCommand(String cmd, String... parameters) {
 		if (cmd.equals("GTURN")) {

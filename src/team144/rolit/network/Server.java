@@ -11,6 +11,13 @@ import javax.swing.JOptionPane;
 import team144.rolit.network.Client.ClientListener;
 import team144.util.Util;
 
+/**
+ * Server for Rolit.
+ * Handles Server specific commands for the game, keeps track of clients and logs them in via {@link Authenticator}
+ * 
+ * @author Willem Siers en Michiel Bakker
+ */
+
 public class Server implements NetworkListener {
 	
 	/**
@@ -27,6 +34,11 @@ public class Server implements NetworkListener {
 	 * authorizedConnections - logged in.
 	 */
 	private ArrayList<Connection> authorizedConnections = new ArrayList<Connection>();
+	
+	/**
+	 * listens on port
+	 */
+	private ServerSocket serverSocket;
 	
 	/**
 	 * see: {@link ServerMonitor}.
@@ -49,7 +61,7 @@ public class Server implements NetworkListener {
 	 * Then instantiates a {@link Server} on the port.
 	 * 
 	 * @param args
-	 *            - ignored
+	 * - ignored
 	 */
 	public static void main(String[] args) {
 		
@@ -77,16 +89,16 @@ public class Server implements NetworkListener {
 	 * After creation it always listens on specified port for clients to connect
 	 * 
 	 * @param port
-	 *            - port the server listens on
+	 * - port the server listens on
 	 * @throws BindException
-	 *             - if the specified port is not available
+	 * - if the specified port is not available
 	 * @throws IOException
-	 *             - if Server could not be created
+	 * - if Server could not be created
 	 */
 	public Server(int port) throws IOException, BindException {
 		monitor = new ServerMonitor(this);
 		authenticator = new Authenticator();
-		ServerSocket serverSocket = new ServerSocket(port);
+		serverSocket = new ServerSocket(port);
 		
 		monitor.showCommand("Server's ip-address is: ", Inet4Address.getLocalHost().getHostAddress());
 		
@@ -101,11 +113,11 @@ public class Server implements NetworkListener {
 	 * Write a command to a specific {@link Client}'s {@link Connection}
 	 * 
 	 * @param client
-	 *            - to who you want to send the command
+	 * - to who you want to send the command
 	 * @param cmd
-	 *            - command from the protocol you want to send
+	 * - command from the protocol you want to send
 	 * @param parameters
-	 *            - parameters matching the command
+	 * - parameters matching the command
 	 */
 	public void sendCommand(Connection client, String cmd, String... parameters) {
 		client.write(cmd, parameters);
@@ -115,9 +127,9 @@ public class Server implements NetworkListener {
 	 * Write a command to connected {@link Client}'s {@link Connection}s
 	 * 
 	 * @param cmd
-	 *            - command from the protocol you want to send
+	 * - command from the protocol you want to send
 	 * @param parameters
-	 *            - parameters matching the command
+	 * - parameters matching the command
 	 */
 	public void sendCommandToAll(String cmd, String... parameters) {
 		for (int i = 0; i < connections.size(); i++) {
@@ -126,31 +138,29 @@ public class Server implements NetworkListener {
 	}
 	
 	/**
-	 * Write a command to all {@link Client}'s {@link Connection} in the
-	 * {@link Room} that the {@link Client} is in.
+	 * Write a command to all {@link Client}'s {@link Connection} in the {@link Room} that the {@link Client} is in.
 	 * 
 	 * @param cmd
-	 *            - command from the protocol you want to send
+	 * - command from the protocol you want to send
 	 * @param client
-	 *            - {@link Connection} from who the command comes
+	 * - {@link Connection} from who the command comes
 	 * @param parameters
-	 *            - parameters matching the command
+	 * - parameters matching the command
 	 */
 	public void sendCommandToRoom(Connection client, String cmd, String... parameters) {
 		Room.getRoom(client).sendCommand(cmd, parameters);
 	}
 	
 	/**
-	 * {@link ClientListener} Handles the commands that are sent to the
-	 * {@link Server}.
+	 * {@link ClientListener} Handles the commands that are sent to the {@link Server}.
 	 * Preferably delegates it to other methods or classes
 	 * 
 	 * @param cmd
-	 *            - the received command (preferably specified in the protocol)
+	 * - the received command (preferably specified in the protocol)
 	 * @param parameters
-	 *            - parameters sent along with that command
+	 * - parameters sent along with that command
 	 * @param client
-	 *            - which {@link Connection} sent this to the server
+	 * - which {@link Connection} sent this to the server
 	 */
 	@Override
 	public boolean executeCommand(String cmd, String[] parameters, Connection client) {
@@ -232,7 +242,7 @@ public class Server implements NetworkListener {
 	 * room, removes it from the Room too.
 	 * 
 	 * @param c
-	 *            - {@link Connection} to remove
+	 * - {@link Connection} to remove
 	 */
 	@Override
 	public void endConnection(Connection c) {
@@ -245,10 +255,10 @@ public class Server implements NetworkListener {
 	 * Returns the {@link Connection} of a player given the name of this player
 	 * 
 	 * @param name
-	 *            - player name, not null.
+	 * - player name, not null.
 	 * @return - The {@link Connection} of the player with that name, or null if
-	 *         he's
-	 *         not online.
+	 * he's
+	 * not online.
 	 */
 	public Connection getPlayer(String name) {
 		for (Connection c : authorizedConnections) {
@@ -261,9 +271,9 @@ public class Server implements NetworkListener {
 	 * Checks if there already is a {@link Client} connected with a given name.
 	 * 
 	 * @param name
-	 *            - name of the {@link Connection} to check for.
+	 * - name of the {@link Connection} to check for.
 	 * @return <code>true</code> if someone with that name is already connected,
-	 *         else returns <code>false</code>.
+	 * else returns <code>false</code>.
 	 */
 	private boolean hasConnectionWithName(String name) {
 		for (Connection c : authorizedConnections) {
