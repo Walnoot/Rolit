@@ -221,6 +221,10 @@ public class Game extends Observable {
 		return steps;
 	}
 	
+	public boolean isValidMove(int x, int y) {
+		return isValidMove(board.getIndex(x, y));
+	}
+	
 	/**
 	 * Test if the current player can make the move at the specified index.
 	 * 
@@ -273,5 +277,4 @@ public class Game extends Observable {
 		}
 		return result;
 	}
-	
 }

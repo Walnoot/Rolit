@@ -22,16 +22,17 @@ import team144.rolit.network.Connection;
 import team144.util.Util;
 
 public class RolitView extends Panel implements Observer, ClientListener {
-	/**
-     * 
-     */
 	private static final long serialVersionUID = 4223398494630548955L;
 	
 	private static final int WIDTH = 500;
 	private static final int HEIGHT = 700;
 	private static final String FRAME_TITLE = "Rolit";
+
+	private static final boolean COOLMODE = true;
 	
 	private Button[] buttonArray = new Button[Board.DIMENSION * Board.DIMENSION];
+	private ViewApplication application;
+	
 	private TextArea textArea;
 	private TextField textField;
 	private Label infoLabel;
@@ -40,6 +41,7 @@ public class RolitView extends Panel implements Observer, ClientListener {
 	 * The Player of this process.
 	 */
 	private final Player player;
+
 	
 	public RolitView(Game game, Client client) {
 		this(game, client, false);
@@ -56,18 +58,23 @@ public class RolitView extends Panel implements Observer, ClientListener {
 		
 		setLayout(new BorderLayout());
 		
-		Panel playPanel = new Panel();
-		playPanel.setLayout(new GridLayout(Board.DIMENSION, Board.DIMENSION));
-		add(playPanel, BorderLayout.CENTER);
-		
-		RolitController controller = new RolitController(game, client);
-		
-		for (int i = 0; i < Board.DIMENSION * Board.DIMENSION; i++) {
-			Button button = new Button();
-			button.addActionListener(controller);
-			button.setBackground(Tile.EMPTY.getColor());
-			buttonArray[i] = button;
-			playPanel.add(button);
+		if(COOLMODE){
+			application = new ViewApplication(game, client);
+			add(application.getCanvas(), BorderLayout.CENTER);
+		}else{
+			Panel playPanel = new Panel();
+			playPanel.setLayout(new GridLayout(Board.DIMENSION, Board.DIMENSION));
+			add(playPanel, BorderLayout.CENTER);
+			
+			RolitController controller = new RolitController(game, client);
+			
+			for (int i = 0; i < Board.DIMENSION * Board.DIMENSION; i++) {
+				Button button = new Button();
+				button.addActionListener(controller);
+				button.setBackground(Tile.EMPTY.getColor());
+				buttonArray[i] = button;
+				playPanel.add(button);
+			}
 		}
 		
 		infoLabel = new Label();
@@ -115,11 +122,15 @@ public class RolitView extends Panel implements Observer, ClientListener {
 		if (observable instanceof Game) {
 			Game game = (Game) observable;
 			
-			for (int i = 0; i < buttonArray.length; i++) {
-				Tile tile = game.getBoard().getTile(i);
-				if (tile == Tile.EMPTY && player == game.getCurrentPlayer()) buttonArray[i].setBackground(game
-						.isValidMove(i) ? Color.LIGHT_GRAY : Tile.EMPTY.getColor());
-				else buttonArray[i].setBackground(tile.getColor());
+			if(COOLMODE){
+				application.update();
+			}else{
+				for (int i = 0; i < buttonArray.length; i++) {
+					Tile tile = game.getBoard().getTile(i);
+					if (tile == Tile.EMPTY && player == game.getCurrentPlayer()) buttonArray[i].setBackground(game
+							.isValidMove(i) ? Color.LIGHT_GRAY : Tile.EMPTY.getColor());
+					else buttonArray[i].setBackground(tile.getColor());
+				}
 			}
 			
 			if (game.isGameOver()) {
@@ -150,10 +161,12 @@ public class RolitView extends Panel implements Observer, ClientListener {
 		public void actionPerformed(ActionEvent event) {
 			for (int i = 0; i < buttonArray.length; i++) {
 				if (buttonArray[i] == event.getSource()) {
-					if (client.getPlayer() == game.getCurrentPlayer() && game.isValidMove(i)) {
-						Board board = game.getBoard();
-						client.sendCommand("GMOVE", Integer.toString(board.getX(i)), Integer.toString(board.getY(i)));
-					}
+//					if (client.getPlayer() == game.getCurrentPlayer() && game.isValidMove(i)) {
+//						Board board = game.getBoard();
+//						client.sendCommand("GMOVE", Integer.toString(board.getX(i)), Integer.toString(board.getY(i)));
+//					}
+					
+					player.trySendMove(client, i);
 				}
 			}
 		}

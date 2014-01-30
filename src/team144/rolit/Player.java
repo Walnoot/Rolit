@@ -1,5 +1,6 @@
 package team144.rolit;
 
+import team144.rolit.network.Client;
 import team144.rolit.network.Connection;
 
 public class Player {
@@ -30,6 +31,16 @@ public class Player {
 		} else {
 			//wait till user pressed a button
 		}
+	}
+	
+	public void trySendMove(Client client, int x, int y){
+		if (this == game.getCurrentPlayer() && game.isValidMove(x, y)) {
+			client.sendCommand("GMOVE", Integer.toString(x), Integer.toString(y));
+		}
+	}
+	
+	public void trySendMove(Client client, int i) {
+		trySendMove(client, game.getBoard().getX(i), game.getBoard().getY(i));
 	}
 	
 	public void setGame(Game game) {
