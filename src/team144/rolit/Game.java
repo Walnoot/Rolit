@@ -20,8 +20,8 @@ public class Game extends Observable {
 	
 	/**
 	 * @param players
-	 *            - An array of Players with length between MIN_PLAYERS and
-	 *            MAX_PLAYERS. The order is the play order.
+	 * - An array of Players with length between MIN_PLAYERS and
+	 * MAX_PLAYERS. The order is the play order.
 	 */
 	/*@
 	 * requires players.length >= MIN_PLAYERS & players.length <= MAX_PLAYERS;
@@ -49,7 +49,7 @@ public class Game extends Observable {
 	
 	/**
 	 * @param game
-	 *            - The game to be copied.
+	 * - The game to be copied.
 	 */
 	public Game(Game game) {
 		board = new Board(game.board);
@@ -64,11 +64,11 @@ public class Game extends Observable {
 	}
 	
 	public void makeMove(int playerIndex, int x, int y) {
-		makeMove(findPlayer(playerIndex), board.getIndex(x, y), playerIndex);
+		makeMove(findPlayer(playerIndex), Board.getIndex(x, y), playerIndex);
 	}
 	
 	public void makeMove(String playerName, int x, int y) {
-		makeMove(playerName, board.getIndex(x, y));
+		makeMove(playerName, Board.getIndex(x, y));
 	}
 	
 	public void makeMove(String playerName, int index) {
@@ -86,8 +86,8 @@ public class Game extends Observable {
 	}
 	
 	public void makeMove(Player player, int boardIndex, int playerIndex) {
-		int x = board.getX(boardIndex);
-		int y = board.getY(boardIndex);
+		int x = Board.getX(boardIndex);
+		int y = Board.getY(boardIndex);
 		
 		for (Direction dir : Direction.values()) {
 			testDirection(x, y, dir, player.getTile());
@@ -129,8 +129,8 @@ public class Game extends Observable {
 	
 	private void calculateLegalMoves() {
 		for (int i = 0; i < legalMoves.length; i++) {
-			int x = board.getX(i);
-			int y = board.getY(i);
+			int x = Board.getX(i);
+			int y = Board.getY(i);
 			
 			if (board.getTile(x, y) != Tile.EMPTY) {
 				legalMoves[i] = false;
@@ -162,8 +162,8 @@ public class Game extends Observable {
 		if (!hasMove) {//no move possible, so any neighbouring tile is valid
 			for (int i = 0; i < legalMoves.length; i++) {
 				if (board.getTile(i) == Tile.EMPTY) {
-					int x = board.getX(i);
-					int y = board.getY(i);
+					int x = Board.getX(i);
+					int y = Board.getY(i);
 					
 					boolean hasNeighbour = false;//not that there's anything wrong with that of course
 					for (Direction dir : Direction.values()) {
@@ -197,7 +197,7 @@ public class Game extends Observable {
 	 * @param dir
 	 * @param tile
 	 * @return - The number of steps the first equal tile is when walking from
-	 *         the coordinates in the specified direction.
+	 * the coordinates in the specified direction.
 	 */
 	private int getSteps(int x, int y, Direction dir, Tile tile) {
 		int steps = -1;
@@ -222,7 +222,7 @@ public class Game extends Observable {
 	}
 	
 	public boolean isValidMove(int x, int y) {
-		return isValidMove(board.getIndex(x, y));
+		return isValidMove(Board.getIndex(x, y));
 	}
 	
 	/**
@@ -248,14 +248,14 @@ public class Game extends Observable {
 		int[] scores = new int[players.length];
 		
 		for (int i = 0; i < Board.DIMENSION * Board.DIMENSION; i++) {
-			for(int j = 0; j < players.length; j++){
-				if(board.getTile(i) == players[j].getTile()) scores[j]++;
+			for (int j = 0; j < players.length; j++) {
+				if (board.getTile(i) == players[j].getTile()) scores[j]++;
 			}
 		}
 		
 		int bestPlayerIndex = 0;
 		for (int i = 0; i < scores.length; i++) {
-			if(scores[i] > scores[bestPlayerIndex]) bestPlayerIndex = i;
+			if (scores[i] > scores[bestPlayerIndex]) bestPlayerIndex = i;
 		}
 		
 		return players[bestPlayerIndex];

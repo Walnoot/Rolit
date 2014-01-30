@@ -21,6 +21,8 @@ import team144.util.Util;
 import com.esotericsoftware.tablelayout.swing.Table;
 
 public class LoginPanel extends Panel implements ActionListener, ClientListener {
+	private static final long serialVersionUID = 6951020372025683118L;
+	
 	private static final float TEXTFIELD_WIDTH = 200f;
 	
 	private JTextField usernameField;
@@ -103,11 +105,8 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener 
 			client.login(passwordField.getText());
 			//now wait for onHello() or loginError()
 			
-			//TODO: goede error messages
 		} catch (UnknownHostException e1) {
 			setInfoText("Unknown host");
-//        } catch (IOException e) {
-//            setInfoText("Something went wrong");
 		} catch (Exception e) {
 			setInfoText(e.getMessage());
 		}
@@ -122,7 +121,6 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener 
 		
 		frame.setContentPane(new LobbyPanel(frame, client));
 		frame.validate();
-//        client.requestNewGame("H");
 	}
 	
 	@Override
@@ -146,8 +144,6 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener 
 	}
 	
 	public void gameReady() {
-//         frame.setContentPane(new RolitView(client.getGame(), client));
-//         frame.validate();
 	}
 	
 	@Override
@@ -162,7 +158,5 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener 
 	
 	@Override
 	public void onTurn(Connection conn, int player) {
-		// TODO Auto-generated method stub
-		
 	}
 }
