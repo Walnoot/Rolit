@@ -1,3 +1,0 @@
-javadocs
-Tests met emma
-JML voor 3 belangrijkste
