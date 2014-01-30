@@ -17,5 +17,4 @@ public class LinearStrategy implements Strategy {
 		}
 		return -1;
 	}
-	
 }

@@ -26,24 +26,19 @@ public class Player {
 	public void requestMove(Connection conn) {
 		if (strategy != null) {
 			int move = strategy.findMove(game, getName());
-			game.getBoard();
-			game.getBoard();
-			conn.write("GMOVE", Integer.toString(Board.getX(move)),
-					Integer.toString(Board.getY(move)));
+			conn.write("GMOVE", Integer.toString(Board.getX(move)), Integer.toString(Board.getY(move)));
 		} else {
 			//wait till user pressed a button
 		}
 	}
 	
-	public void trySendMove(Client client, int x, int y){
+	public void trySendMove(Client client, int x, int y) {
 		if (this == game.getCurrentPlayer() && game.isValidMove(x, y)) {
 			client.sendCommand("GMOVE", Integer.toString(x), Integer.toString(y));
 		}
 	}
 	
 	public void trySendMove(Client client, int i) {
-		game.getBoard();
-		game.getBoard();
 		trySendMove(client, Board.getX(i), Board.getY(i));
 	}
 	

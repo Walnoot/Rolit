@@ -28,7 +28,6 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener 
 	private JTextField usernameField;
 	private JPasswordField passwordField;
 	private JTextField ipField;
-//    private JComboBox<GameType> gameTypeBox;
 	
 	private Label infoLabel;
 	

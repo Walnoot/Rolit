@@ -28,8 +28,11 @@ public class RolitView extends Panel implements Observer, ClientListener {
 	
 	private static final int WIDTH = 500;
 	private static final int HEIGHT = 700;
-
-	private static final boolean COOLMODE = true;
+	
+	/**
+	 * Whether this view uses a grid of buttons and rolitcontroller, or the 3D ViewApplication.
+	 */
+	private static final boolean VIEW_3D = true;
 	
 	private Button[] buttonArray = new Button[Board.DIMENSION * Board.DIMENSION];
 	private ViewApplication application;
@@ -43,8 +46,6 @@ public class RolitView extends Panel implements Observer, ClientListener {
 	 * The Player of this process.
 	 */
 	private final Player player;
-
-
 	
 	public RolitView(JFrame frame, Game game, Client client) {
 		this(frame, game, client, false);
@@ -62,7 +63,7 @@ public class RolitView extends Panel implements Observer, ClientListener {
 		
 		setLayout(new BorderLayout());
 		
-		if(COOLMODE){
+		if(VIEW_3D){
 			application = new ViewApplication(game, client);
 			add(application.getCanvas(), BorderLayout.CENTER);
 		}else{
@@ -125,7 +126,7 @@ public class RolitView extends Panel implements Observer, ClientListener {
 		if (observable instanceof Game) {
 			Game game = (Game) observable;
 			
-			if(COOLMODE){
+			if(VIEW_3D){
 				application.update();
 			}else{
 				for (int i = 0; i < buttonArray.length; i++) {

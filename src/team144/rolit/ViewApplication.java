@@ -35,8 +35,8 @@ public class ViewApplication extends ApplicationAdapter {
 	private static final float BALL_SCALE = 0.55f;
 	private static final float BOARD_OFFSET = 3.5f;
 	
-	private static final String ROLIT_BOARD_MODEL = "assets/rolit.g3db";
-	private static final String ROLIT_BALL_MODEL = "assets/rolit_ball.g3db";
+	private static final String ROLIT_BOARD_MODEL = "rolit.g3db";
+	private static final String ROLIT_BALL_MODEL = "rolit_ball.g3db";
 	
 	private AssetManager assetManager;
 	

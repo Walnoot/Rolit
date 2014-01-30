@@ -5,10 +5,9 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
-/*
+/**
  * @author Willem Siers (@WILL3M #NOFILTER)
  */
-
 public class LeaderBoard {
 	private ArrayList<Score> scores = new ArrayList<Score>();
 	

@@ -23,7 +23,7 @@ public class ServerMonitor {
 	private final TextArea textArea;
 	
 	public ServerMonitor(final Server server) {
-		JFrame frame = new JFrame(FRAME_TITLE);
+		JFrame frame = new JFrame(FRAME_TITLE);	
 		
 		frame.getContentPane().setLayout(new BorderLayout());
 		

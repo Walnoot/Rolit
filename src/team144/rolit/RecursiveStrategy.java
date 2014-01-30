@@ -16,42 +16,7 @@ public class RecursiveStrategy implements Strategy {
 		return getMove(getBestMoveQuality(game, game.findPlayer(playerName), NUM_ITERATIONS));
 	}
 	
-	public static void main(String[] args) {
-		Game game = new Game(new Player(Tile.RED, "1"), new Player(Tile.GREEN, "2"));
-		
-		setMove(game);
-		setMove(game);
-		setMove(game);
-		setMove(game);
-		setMove(game);
-		setMove(game);
-		setMove(game);
-		setMove(game);
-		setMove(game);
-		setMove(game);
-		setMove(game);
-		setMove(game);
-		setMove(game);
-		setMove(game);
-		setMove(game);
-		setMove(game);
-		setMove(game);
-		setMove(game);
-		setMove(game);
-		setMove(game);
-		setMove(game);
-	}
-	
-	private static void setMove(Game game) {
-		Player player = game.getCurrentPlayer();
-		
-		int move = getMove(getBestMoveQuality(game, player, NUM_ITERATIONS));
-		if (!game.isValidMove(move)) System.out.println("oeps");
-		System.out.println(move);
-		game.makeMove(player.getName(), move);
-	}
-	
-	private static int getBestMoveQuality(Game game, Player player, int iterations) {
+	public static int getBestMoveQuality(Game game, Player player, int iterations) {
 		if (iterations == 0) return -1;
 		
 		int bestMove = -1;
@@ -130,7 +95,7 @@ public class RecursiveStrategy implements Strategy {
 		return (combined & 0xFFFF0000) >> 16;
 	}
 	
-	private static int getMove(int combined) {
+	public static int getMove(int combined) {
 		return combined & 0x0000FFFF;
 	}
 }
