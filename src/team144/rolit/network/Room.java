@@ -109,6 +109,9 @@ public class Room {
 	 *            - flags (gametype/player)
 	 */
 	public static void assignRoom(Connection player, Server server, String cmd, String[] params) {
+		Room previousRoom = roomMap.get(player);
+		if(previousRoom != null) previousRoom.removeConnection(player);
+		
 		roomMap.remove(player);
 		
 		String wantedType = parseType(cmd, params);

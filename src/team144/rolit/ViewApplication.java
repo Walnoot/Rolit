@@ -7,6 +7,7 @@ import team144.rolit.network.Client;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.backends.lwjgl.LwjglAWTCanvas;
 import com.badlogic.gdx.graphics.Color;
@@ -80,6 +81,8 @@ public class ViewApplication extends ApplicationAdapter {
 		modelBatch = new ModelBatch();
 		
 		cam = new PerspectiveCamera(67f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		
+		Gdx.input.setInputProcessor(new InputHandler());
 	}
 	
 	@Override
@@ -87,7 +90,7 @@ public class ViewApplication extends ApplicationAdapter {
 		if (assetManager.update() && loading) finalizeLoading();
 		
 		//rotate and look at the center of the board
-		camPos.rotate(Gdx.graphics.getDeltaTime() * 5f);
+//		camPos.rotate(Gdx.graphics.getDeltaTime() * 5f);
 		cam.position.set(camPos.x, 8f, camPos.y);
 		cam.direction.set(tmp.set(cam.position).scl(-1f).nor());
 		cam.up.set(Vector3.Y);
@@ -128,7 +131,7 @@ public class ViewApplication extends ApplicationAdapter {
 	}
 	
 	private void handleInput() {
-		if(game.getCurrentPlayer() == client.getPlayer()){
+		if (game.getCurrentPlayer() == client.getPlayer()) {
 			Ray ray = cam.getPickRay(Gdx.input.getX(), Gdx.input.getY());
 			
 			//see where the mouse points at the ground
@@ -138,9 +141,9 @@ public class ViewApplication extends ApplicationAdapter {
 			int x = (int) Math.floor(tmp.x) + 4;
 			int y = (int) Math.floor(tmp.z) + 4;
 			
-			if (previewInstance != null){
+			if (previewInstance != null) {
 				setTransform(previewInstance, x, y, client.getPlayer().getTile());
-
+				
 				Color color = game.isValidMove(x, y) ? Color.LIGHT_GRAY : Color.DARK_GRAY;
 				setColor(previewInstance, color);
 			}
@@ -154,7 +157,7 @@ public class ViewApplication extends ApplicationAdapter {
 			} else {
 				hasClicked = false;
 			}
-		}else{
+		} else {
 			showPreview = false;
 		}
 	}
@@ -192,7 +195,7 @@ public class ViewApplication extends ApplicationAdapter {
 		}
 	}
 	
-	private void setColor(ModelInstance instance, Color color){
+	private void setColor(ModelInstance instance, Color color) {
 		for (Material m : instance.materials) {
 			m.set(new ColorAttribute(ColorAttribute.Diffuse, color));
 		}
@@ -206,5 +209,43 @@ public class ViewApplication extends ApplicationAdapter {
 	public void resize(int width, int height) {
 		cam.viewportWidth = width;
 		cam.viewportHeight = height;
+	}
+	
+	private class InputHandler extends InputAdapter {
+		private int lastX, lastY;
+		private int currentPointer = -1;
+		
+		@Override
+		public boolean touchDragged(int screenX, int screenY, int pointer) {
+			if (pointer == currentPointer) {
+				float dx = (float) (screenX - lastX) / (float) Gdx.graphics.getWidth();
+				
+				camPos.rotate(dx * 90f);
+			}
+			
+			lastX = screenX;
+			lastY = screenY;
+			
+			return true;
+		}
+		
+		@Override
+		public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+			if(button == Buttons.RIGHT){
+				lastX = screenX;
+				lastY = screenY;
+				
+				currentPointer = pointer;
+			}
+			
+			return true;
+		}
+		
+		@Override
+		public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+			if(button == Buttons.RIGHT) currentPointer = -1;
+			
+			return true;
+		}
 	}
 }

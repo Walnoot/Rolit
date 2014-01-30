@@ -49,6 +49,8 @@ public class Connection extends Thread {
 		} finally {
 			running = false;
 			
+			listener.endConnection(this);
+			
 			try {
 				in.close();
 				out.close();

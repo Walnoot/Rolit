@@ -19,6 +19,7 @@ import javax.swing.JFrame;
 import team144.rolit.network.Client;
 import team144.rolit.network.Client.ClientListener;
 import team144.rolit.network.Connection;
+import team144.rolit.network.Info;
 import team144.util.Util;
 
 public class RolitView extends Panel implements Observer, ClientListener {
@@ -26,13 +27,13 @@ public class RolitView extends Panel implements Observer, ClientListener {
 	
 	private static final int WIDTH = 500;
 	private static final int HEIGHT = 700;
-	private static final String FRAME_TITLE = "Rolit";
 
 	private static final boolean COOLMODE = true;
 	
 	private Button[] buttonArray = new Button[Board.DIMENSION * Board.DIMENSION];
 	private ViewApplication application;
 	
+	private final JFrame frame;
 	private TextArea textArea;
 	private TextField textField;
 	private Label infoLabel;
@@ -42,12 +43,14 @@ public class RolitView extends Panel implements Observer, ClientListener {
 	 */
 	private final Player player;
 
+
 	
-	public RolitView(Game game, Client client) {
-		this(game, client, false);
+	public RolitView(JFrame frame, Game game, Client client) {
+		this(frame, game, client, false);
 	}
 	
-	public RolitView(Game game, final Client client, boolean isBot) {
+	public RolitView(JFrame frame, Game game, final Client client, boolean isBot) {
+		this.frame = frame;
 		player = client.getPlayer();
 		if (isBot) {
 			player.setStrategy(new RecursiveStrategy());
@@ -103,7 +106,6 @@ public class RolitView extends Panel implements Observer, ClientListener {
 				} else {
 					client.sendCommand("CHATM", text);
 				}
-				showMessage(text);
 				textField.setText(null);
 			}
 		});
@@ -181,7 +183,7 @@ public class RolitView extends Panel implements Observer, ClientListener {
 //        Game game = new Game(new Player(Tile.BLUE, "Michiel"), new Player(Tile.GREEN, "Willem"));
 //        RolitView rolitView = new RolitView(game, null);
 		
-		JFrame frame = new JFrame(FRAME_TITLE);
+		JFrame frame = new JFrame(Info.PROGRAM_NAME);
 		
 //        frame.setContentPane(rolitView);
 		frame.setContentPane(new LoginPanel(frame));
@@ -198,6 +200,12 @@ public class RolitView extends Panel implements Observer, ClientListener {
 	public void onHello(String flag) {
 	}
 	
+	@Override
+	public void shutDown() {
+		frame.setContentPane(new LoginPanel(frame));
+		frame.validate();
+	}
+	
 	/**
 	 * comes from GTURN
 	 * neccesary to get bots to move
@@ -207,6 +215,12 @@ public class RolitView extends Panel implements Observer, ClientListener {
 		if (player.index == playerIndex) {
 			this.player.requestMove(conn);
 		}
+	}
+	
+	@Override
+	public void closeGame(Client client) {
+		frame.setContentPane(new LobbyPanel(frame, client));
+		frame.validate();
 	}
 	
 	@Override

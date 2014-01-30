@@ -159,13 +159,22 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
 			} else {
 				client.sendCommand("CHATM", text);
 			}
-			chatArea.append(text + "\n");
 			chatField.setText(null);
 		}
 	}
 	
 	@Override
 	public void onHello(String flag) {
+	}
+	
+	@Override
+	public void closeGame(Client client) {
+	}
+	
+	@Override
+	public void shutDown() {
+		frame.setContentPane(new LoginPanel(frame));
+		frame.validate();
 	}
 	
 	@Override
@@ -199,7 +208,7 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
 	 */
 	@Override
 	public void gameReady() {
-		frame.setContentPane(new RolitView(client.getGame(), client, playAsBot.getState()));
+		frame.setContentPane(new RolitView(frame, client.getGame(), client, playAsBot.getState()));
 		frame.validate();
 	}
 	

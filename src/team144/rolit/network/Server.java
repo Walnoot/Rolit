@@ -124,8 +124,9 @@ public class Server implements NetworkListener {
 				String[] params = (peer.getName() + " " + Util.concat(parameters)).split(" ");
 				if (Room.isInRoom(peer)) {
 					sendCommandToRoom(peer, cmd, params); //to game
+				} else{
+					sendCommandToAll(cmd, params); //to lobby
 				}
-				sendCommandToAll(cmd, params); //to lobby
 				break;
 			case ("PLIST"):
 				ArrayList<String> playerList = new ArrayList<String>();
@@ -158,6 +159,9 @@ public class Server implements NetworkListener {
 	@Override
 	public void endConnection(Connection c) {
 		connections.remove(c);
+		
+		if (authorizedConnections.contains(c)) sendCommandToAll("LEAVE", c.getName());
+		
 		authorizedConnections.remove(c);
 		Room.remove(c);
 	}
