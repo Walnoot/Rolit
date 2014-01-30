@@ -65,15 +65,15 @@ public class Board {
 		return field[getIndex(x, y)];
 	}
 	
-	public int getIndex(int x, int y) {
+	public static int getIndex(int x, int y) {
 		return x + y * DIMENSION;
 	}
 	
-	public int getX(int index) {
+	public static int getX(int index) {
 		return index % DIMENSION;
 	}
 	
-	public int getY(int index) {
+	public static int getY(int index) {
 		return index / DIMENSION;
 	}
 	

@@ -148,7 +148,7 @@ public class Server implements NetworkListener {
 	 * - parameters matching the command
 	 */
 	public void sendCommandToRoom(Connection client, String cmd, String... parameters) {
-		Room.getRoom(client).sendCommand(cmd, parameters);
+		Room.getRoom(client).sendCommand(cmd, client, parameters);
 	}
 	
 	/**

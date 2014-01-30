@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import team144.rolit.Board;
 import team144.rolit.Game;
 import team144.rolit.Player;
 import team144.rolit.Tile;
@@ -157,7 +158,7 @@ public class Room {
 						} else {
 							r.removeConnection(player);
 							
-							r.sendCommand(cmd, params[0]);
+							r.sendCommand(cmd, player, params[0]);
 						}
 						return;
 					}
@@ -262,7 +263,7 @@ public class Room {
 	 * @param parameters
 	 * - parameters
 	 */
-	public void sendCommand(String cmd, String... parameters) {
+	public void sendCommand(String cmd, Connection con, String... parameters) {
 		if (cmd.equals("GTURN")) {
 			for (Connection c : connections) {
 				c.write(cmd, Integer.toString(game.getCurrentPlayer().index));
@@ -274,26 +275,26 @@ public class Room {
 			
 			int x = Integer.parseInt(parameters[1]);
 			int y = Integer.parseInt(parameters[2]);
-			boolean valid = game.isValidMove(game.getBoard().getIndex(x, y));
+			boolean valid = game.isValidMove(Board.getIndex(x, y)) && game.getCurrentPlayer().getName().equals(con.getName());
 			if (valid) {
 				boolean gameOver = false;
 				game.makeMove(Integer.parseInt(parameters[0]), x, y);
 				for (Connection c : connections) {
 					c.write(cmd, parameters);
 				}
-				sendCommand("GTURN", parameters[0]);
+				sendCommand("GTURN",con, parameters[0]);
 				if (gameOver) {
-					sendCommand("STATE", "STOPPED");
+					sendCommand("STATE",con, "STOPPED");
 					System.out.println("GAME OVER!");
 				}
 				return;
 			} else {
-				sendCommand("ERROR", "Invalid Move!");
+				sendCommand("ERROR",con, "Invalid Move!");
 				return;
 			}
 		}
 		if (cmd.equals("BOARD")) {
-			sendCommand("BOARD", game.getBoard().toString());
+			sendCommand("BOARD",con, game.getBoard().toString());
 			return;
 		}
 		
