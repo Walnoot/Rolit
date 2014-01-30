@@ -126,7 +126,7 @@ public class Client implements NetworkListener {
                 clientListener.leave(parameters[0]);
                 
                 if (game.findPlayer(parameters[0]) == null) {
-                    
+                    //TODO: dit
                 }
                 break;
             case ("PLIST"):
