@@ -44,23 +44,21 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener 
 		
 		table.addCell(new Label("Username:"));
 		usernameField = new JTextField("test1");
+		usernameField.addActionListener(this);
 		table.addCell(usernameField).width(TEXTFIELD_WIDTH);
 		table.row();
 		
 		table.addCell(new Label("Password:"));
 		passwordField = new JPasswordField("test1");
+		passwordField.addActionListener(this);
 		table.addCell(passwordField).width(TEXTFIELD_WIDTH);
 		table.row();
 		
 		table.addCell(new Label("Server IP:"));
 		ipField = new JTextField("127.0.0.1:" + Server.DEFAULT_PORT);
+		ipField.addActionListener(this);
 		table.addCell(ipField).width(TEXTFIELD_WIDTH);
 		table.row();
-		
-//        table.addCell(new Label("Game Type:"));
-//        gameTypeBox = new JComboBox<GameType>(GameType.values());
-//        table.addCell(gameTypeBox).width(TEXTFIELD_WIDTH);
-//        table.row();
 		
 		Button startButton = new Button("Start Game");
 		startButton.addActionListener(this);
@@ -128,7 +126,7 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener 
 	}
 	
 	@Override
-	public void closeGame(Client client) {
+	public void closeGame(Client client, boolean gameOver, Game game) {
 	}
 	
 	@Override

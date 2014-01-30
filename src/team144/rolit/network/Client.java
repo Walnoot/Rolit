@@ -101,6 +101,9 @@ public class Client implements NetworkListener {
 				int x = Integer.parseInt(parameters[1]);
 				int y = Integer.parseInt(parameters[2]);
 				game.makeMove(Integer.parseInt(parameters[0]), x, y);
+				
+				if(game.isGameOver()) clientListener.closeGame(this, true, game);
+				
 				break;
 			case ("BCAST"): //BCAST text text to client text
 //                controller.showMessage(Util.concat(parameters));
@@ -121,8 +124,8 @@ public class Client implements NetworkListener {
 			case ("LEAVE"):
 				clientListener.leave(parameters[0]);
 				
-				if (game.findPlayer(parameters[0]) != null) {
-					clientListener.closeGame(this);
+				if (game != null && game.findPlayer(parameters[0]) != null) {
+					clientListener.closeGame(this, false, game);
 					game = null;
 				}
 				break;
@@ -186,7 +189,7 @@ public class Client implements NetworkListener {
 	public static interface ClientListener {
 		public void onHello(String flag);
 		
-		public void closeGame(Client client);
+		public void closeGame(Client client, boolean gameOver, Game game);
 
 		public void shutDown();
 

@@ -1,6 +1,3 @@
-veilig afsluiten, terug naar lobby ed
-3D, zeer belangrijk
-dubbel chat bug
 javadocs
 Tests met emma
 JML voor 3 belangrijkste

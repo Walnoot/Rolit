@@ -244,6 +244,23 @@ public class Game extends Observable {
 		return gameOver;
 	}
 	
+	public Player getWinner() {
+		int[] scores = new int[players.length];
+		
+		for (int i = 0; i < Board.DIMENSION * Board.DIMENSION; i++) {
+			for(int j = 0; j < players.length; j++){
+				if(board.getTile(i) == players[j].getTile()) scores[j]++;
+			}
+		}
+		
+		int bestPlayerIndex = 0;
+		for (int i = 0; i < scores.length; i++) {
+			if(scores[i] > scores[bestPlayerIndex]) bestPlayerIndex = i;
+		}
+		
+		return players[bestPlayerIndex];
+	}
+	
 	public Player getCurrentPlayer() {
 		return players[currentPlayerIndex];
 	}

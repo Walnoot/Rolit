@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * random
+ * 'Strategy' that picks its move randomly.
  */
 
 public class RandomStrategy implements Strategy {
@@ -20,5 +20,4 @@ public class RandomStrategy implements Strategy {
 		ArrayList<Integer> moves = game.getLegalMoves();
 		return moves.get(rand.nextInt(moves.size()));
 	}
-	
 }

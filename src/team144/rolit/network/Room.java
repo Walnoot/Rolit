@@ -242,15 +242,19 @@ public class Room {
 			int y = Integer.parseInt(parameters[2]);
 			boolean valid = game.isValidMove(game.getBoard().getIndex(x, y));
 			if (valid) {
-				boolean gameOver = false;
 				game.makeMove(Integer.parseInt(parameters[0]), x, y);
 				for (Connection c : connections) {
 					c.write(cmd, parameters);
 				}
 				sendCommand("GTURN", parameters[0]);
-				if (gameOver) {
+				
+				if (game.isGameOver()) {
 					sendCommand("STATE", "STOPPED");
 					System.out.println("GAME OVER!");
+					
+					for(Connection c : connections){
+						removeConnection(c);
+					}
 				}
 				return;
 			} else {

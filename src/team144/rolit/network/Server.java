@@ -185,9 +185,12 @@ public class Server implements NetworkListener {
 				Room.assignRoom(client, this, cmd, parameters);
 				break;
 			case ("GMOVE"): //GMOVE x y
-				int index = Room.getRoom(client).getGame().findPlayer(client.getName()).index;
-				
-				sendCommandToRoom(client, cmd, Integer.toString(index), parameters[0], parameters[1]);
+				Room room = Room.getRoom(client);
+				if(room != null){
+					int index = room.getGame().findPlayer(client.getName()).index;
+					
+					sendCommandToRoom(client, cmd, Integer.toString(index), parameters[0], parameters[1]);
+				}
 				break;
 			case ("GTURN"): //GTURN player
 				sendCommandToRoom(client, cmd, parameters);

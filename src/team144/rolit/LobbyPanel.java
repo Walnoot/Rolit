@@ -168,7 +168,7 @@ public class LobbyPanel extends Panel implements ActionListener, ClientListener 
 	}
 	
 	@Override
-	public void closeGame(Client client) {
+	public void closeGame(Client client, boolean gameOver, Game game) {
 	}
 	
 	@Override

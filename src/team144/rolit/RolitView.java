@@ -15,6 +15,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import team144.rolit.network.Client;
 import team144.rolit.network.Client.ClientListener;
@@ -144,7 +145,6 @@ public class RolitView extends Panel implements Observer, ClientListener {
 				infoLabel.setText(String
 						.format("%s turn (%s)", currentPlayer, game.getCurrentPlayer().getTile().name()));
 			}
-			
 		} else {
 			throw new IllegalStateException("Can only observe a Game object");
 		}
@@ -218,7 +218,13 @@ public class RolitView extends Panel implements Observer, ClientListener {
 	}
 	
 	@Override
-	public void closeGame(Client client) {
+	public void closeGame(Client client, boolean gameOver, Game game) {
+		if(gameOver){
+			JOptionPane.showMessageDialog(frame, String.format("Game Over! %s has won!", game.getWinner().getName()));
+		}else{
+			JOptionPane.showMessageDialog(frame, "A player has disconnected, returning to lobby.");
+		}
+		
 		frame.setContentPane(new LobbyPanel(frame, client));
 		frame.validate();
 	}

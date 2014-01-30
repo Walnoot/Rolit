@@ -21,6 +21,7 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -212,6 +213,12 @@ public class ViewApplication extends ApplicationAdapter {
 	}
 	
 	private class InputHandler extends InputAdapter {
+		private static final float ZOOM_SPEED = 20f;
+		private static final float SCROLL_ZOOM_SPEED = 10f;
+		private static final float ROTATION_SPEED = 90f;
+		private static final float MAX_FOV = 120f;
+		private static final float MIN_FOV = 30f;
+		
 		private int lastX, lastY;
 		private int currentPointer = -1;
 		
@@ -219,8 +226,11 @@ public class ViewApplication extends ApplicationAdapter {
 		public boolean touchDragged(int screenX, int screenY, int pointer) {
 			if (pointer == currentPointer) {
 				float dx = (float) (screenX - lastX) / (float) Gdx.graphics.getWidth();
+				float dy = (float) (screenY - lastY) / (float) Gdx.graphics.getHeight();
 				
-				camPos.rotate(dx * 90f);
+				camPos.rotate(dx * ROTATION_SPEED);
+				cam.fieldOfView += dy * ZOOM_SPEED;
+				cam.fieldOfView = MathUtils.clamp(cam.fieldOfView, MIN_FOV, MAX_FOV);
 			}
 			
 			lastX = screenX;
@@ -244,6 +254,14 @@ public class ViewApplication extends ApplicationAdapter {
 		@Override
 		public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 			if(button == Buttons.RIGHT) currentPointer = -1;
+			
+			return true;
+		}
+		
+		@Override
+		public boolean scrolled(int amount) {
+			cam.fieldOfView += amount * SCROLL_ZOOM_SPEED;
+			cam.fieldOfView = MathUtils.clamp(cam.fieldOfView, MIN_FOV, MAX_FOV);
 			
 			return true;
 		}
