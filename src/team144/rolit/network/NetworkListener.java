@@ -17,7 +17,7 @@ public interface NetworkListener {
 	 * has ended.
 	 * 
 	 * @param c
-	 *            - The conneciton that has ended.
+	 *            - The connection that has ended.
 	 */
 	public void endConnection(Connection c);
 }
