@@ -121,8 +121,9 @@ public class Client implements NetworkListener {
 			case ("LEAVE"):
 				clientListener.leave(parameters[0]);
 				
-				if (game.findPlayer(parameters[0]) == null) {
-					//TODO: dit
+				if (game.findPlayer(parameters[0]) != null) {
+					clientListener.closeGame(this);
+					game = null;
 				}
 				break;
 			case ("PLIST"):
@@ -158,6 +159,7 @@ public class Client implements NetworkListener {
 	
 	@Override
 	public void endConnection(Connection c) {
+		clientListener.shutDown();
 	}
 	
 	public Game getGame() {
@@ -184,6 +186,10 @@ public class Client implements NetworkListener {
 	public static interface ClientListener {
 		public void onHello(String flag);
 		
+		public void closeGame(Client client);
+
+		public void shutDown();
+
 		public void playerList(String[] players);
 		
 		public void leave(String player);

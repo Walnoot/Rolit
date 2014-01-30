@@ -128,6 +128,14 @@ public class LoginPanel extends Panel implements ActionListener, ClientListener 
 	}
 	
 	@Override
+	public void closeGame(Client client) {
+	}
+	
+	@Override
+	public void shutDown() {
+	}
+	
+	@Override
 	public void lobbyJoin(String player) {
 	}
 	
