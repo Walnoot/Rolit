@@ -174,8 +174,7 @@ public class RolitView extends Panel implements Observer, ClientListener {
 		}
 		
 		public void makeMove(int x, int y) {
-			Board board = game.getBoard();
-			game.makeMove(game.getCurrentPlayer().getName(), board.getIndex(x, y));
+			game.makeMove(game.getCurrentPlayer().getName(), Board.getIndex(x, y));
 		}
 	}
 	

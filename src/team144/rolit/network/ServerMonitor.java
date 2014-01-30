@@ -17,8 +17,8 @@ public class ServerMonitor {
 		new ServerMonitor(null);
 	}
 	
-	private static final int WIDTH = 400;
-	private static final int HEIGHT = 200;
+	private static final int WIDTH = 350;
+	private static final int HEIGHT = 400;
 	private static final String FRAME_TITLE = "Server Monitor";
 	final TextArea textArea;
 	
@@ -32,7 +32,6 @@ public class ServerMonitor {
 		frame.add(textPanel, BorderLayout.CENTER);
 		
 		textArea = new TextArea();
-		// textArea.setEditable(false);
 		textArea.setFocusable(false);
 		textPanel.add(textArea, BorderLayout.CENTER);
 		
@@ -46,7 +45,6 @@ public class ServerMonitor {
 				textArea.append(message + "\n");
 				String[] contents = message.split(" ");
 				server.sendCommandToAll(contents[0], Arrays.copyOfRange(contents, 1, contents.length));
-//              server.sendCommand("SHOW", new String[] { message });
 				textField.setText(null);
 			}
 		});

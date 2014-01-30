@@ -20,12 +20,8 @@ import team144.util.Util;
 
 public class Authenticator implements NetworkListener {
 	
-	//pws
-	private static final String name1 = "player_willemsiers";
-	private static final String pw1 = "Ouleid9E";
-	private static final String name2 = "player_michiel";
-	private static final String pw2 = "paars";
-	
+	private static final String PKI_SERVER_ADDRESS = "ss-security.student.utwente.nl";
+	private static final int PKI_SERVER_PORT = 2013;
 	private Socket socket;
 	private Connection peer;
 	private String name;
@@ -37,8 +33,8 @@ public class Authenticator implements NetworkListener {
 	
 	public Authenticator() {
 		try {
-			InetAddress address = InetAddress.getByName("ss-security.student.utwente.nl");
-			socket = new Socket(address, 2013);
+			InetAddress address = InetAddress.getByName(PKI_SERVER_ADDRESS);
+			socket = new Socket(address, PKI_SERVER_PORT);
 			name = "authenticattooor";
 			peer = new Connection(socket, this);
 			peer.start();
@@ -84,7 +80,6 @@ public class Authenticator implements NetworkListener {
 	
 	@Override
 	public boolean executeCommand(String cmd, String[] parameters, Connection peer) {
-		// System.out.println(cmd + " " + Util.concat(parameters));
 		switch (cmd) {
 			case ("ERROR"):
 				printMessage(Util.concat(parameters)); //wrong user/pw, try again
@@ -197,7 +192,7 @@ public class Authenticator implements NetworkListener {
 	 * @returns default encoded string
 	 */
 	public synchronized static final String generateRandomString(int n) {
-		char[] chars = "qwertyuiopasdfghjklzxcvbnm".toCharArray();
+		char[] chars = "abcdefghijklmnopqrstuvwxyz1234567890".toCharArray();
 		SecureRandom random = new SecureRandom();
 		StringBuilder sb = new StringBuilder();
 		
@@ -209,7 +204,6 @@ public class Authenticator implements NetworkListener {
 	
 	@Override
 	public void endConnection(Connection c) {
-		
 	}
 	
 }

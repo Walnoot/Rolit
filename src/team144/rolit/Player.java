@@ -26,8 +26,10 @@ public class Player {
 	public void requestMove(Connection conn) {
 		if (strategy != null) {
 			int move = strategy.findMove(game, getName());
-			conn.write("GMOVE", Integer.toString(game.getBoard().getX(move)),
-					Integer.toString(game.getBoard().getY(move)));
+			game.getBoard();
+			game.getBoard();
+			conn.write("GMOVE", Integer.toString(Board.getX(move)),
+					Integer.toString(Board.getY(move)));
 		} else {
 			//wait till user pressed a button
 		}
@@ -40,7 +42,9 @@ public class Player {
 	}
 	
 	public void trySendMove(Client client, int i) {
-		trySendMove(client, game.getBoard().getX(i), game.getBoard().getY(i));
+		game.getBoard();
+		game.getBoard();
+		trySendMove(client, Board.getX(i), Board.getY(i));
 	}
 	
 	public void setGame(Game game) {
